@@ -6,21 +6,43 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:extract-legacy": "node scripts/extract-legacy-questions.mjs ../web4.html",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f web",
+    "docker:dev": "docker compose -f compose.dev.yaml up --build",
+    "bank:check": "node scripts/validate-bank.mjs"
   },
   "dependencies": {
+    "better-auth": "^1.7.27",
+    "better-sqlite3": "^13.2.0",
+    "drizzle-orm": "^0.45.4",
+    "katex": "^0.16.22",
+    "lucide-react": "^1.77.0",
+    "motion": "^14.14.0",
     "next": "16.4.6",
+    "qrcode": "^1.5.4",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

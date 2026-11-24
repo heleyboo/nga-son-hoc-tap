@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sản Phẩm STEM THCS Nga Sơn - Chiến Cơ Vũ Trụ Pro</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000205;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: white;
+            user-select: none;
+        }
+        canvas { display: block; cursor: crosshair; }
+
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, rgba(0, 28, 70, 0.92) 0%, rgba(0, 4, 12, 0.98) 100%);
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #hud {
+            position: absolute;
+            top: 15px; left: 20px; right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .hud-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hud-box {
+            background: rgba(0, 20, 45, 0.78);
+            border: 1px solid rgba(0, 242, 255, 0.45);
+            border-radius: 14px;
+            padding: 9px 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00f2ff;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        #combo-badge {
+            color: #ffd000;
+            border-color: rgba(255, 208, 0, 0.45);
+            text-shadow: 0 0 12px rgba(255, 208, 0, 0.8);
+        }
+
+        #timer-badge {
+            color: #38bdf8;
+        }
+
+        #sound-btn {
+            pointer-events: auto;
+            cursor: pointer;
+            background: rgba(0, 20, 45, 0.85);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            border-radius: 14px;
+            padding: 9px 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #00ff88;
+            transition: 0.2s;
+        }
+
+        #sound-btn:hover {
+            background: rgba(0, 255, 136, 0.18);
+            transform: scale(1.05);
+        }
+
+        #progress-wrap {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            z-index: 6;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f2ff, #00ff44);
+            box-shadow: 0 0 12px #00f2ff;
+            transition: width 0.35s ease;
+        }
+
+        .school-tag {
+            background: rgba(0, 242, 255, 0.12);
+            border: 1px solid rgba(0, 242, 255, 0.5);
+            color: #00f2ff;
+            padding: 6px 18px;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            color: #00f2ff;
+            text-shadow: 0 0 28px #00f2ff;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: clamp(18px, 2.5vw, 25px);
+            margin: 0 0 20px 0;
+            letter-spacing: 0.5px;
+            color: #e2f8ff;
+        }
+
+        .mode-panel {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 242, 255, 0.4);
+            background: rgba(0, 25, 55, 0.7);
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .mode-btn.active {
+            border-color: #00ff44;
+            background: rgba(0, 255, 68, 0.18);
+            color: #00ff44;
+            box-shadow: 0 0 16px rgba(0, 255, 68, 0.35);
+        }
+
+        .guide-note {
+            font-size: 15px;
+            color: #94a3b8;
+            margin-bottom: 26px;
+            max-width: 720px;
+            line-height: 1.5;
+        }
+
+        .start-btn {
+            padding: 18px 54px;
+            font-size: 23px;
+            background: linear-gradient(45deg, #00ff44, #00b833);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 800;
+            color: #002200;
+            box-shadow: 0 0 25px rgba(0, 255, 68, 0.7);
+            transition: 0.25s ease;
+            text-transform: uppercase;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.07);
+            box-shadow: 0 0 40px rgba(0, 255, 68, 1);
+        }
+
+        .stats-card {
+            background: rgba(0, 24, 52, 0.8);
+            border: 1px solid rgba(0, 242, 255, 0.4);
+            border-radius: 18px;
+            padding: 18px 32px;
+            margin-bottom: 20px;
+        }
+
+        .rank-text {
+            font-size: 24px;
+            color: #ffd000;
+            margin: 8px 0;
+            font-weight: bold;
+        }
+
+        .sub-stat {
+            font-size: 17px;
+            color: #bae6fd;
+            margin: 6px 0 0 0;
+        }
+
+        /* ===== RESPONSIVE (bổ sung) ===== */
+        html, body { height: 100%; }
+        body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+        .overlay {
+            justify-content: flex-start;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+        }
+        /* căn giữa khi đủ chỗ, cuộn được từ đầu khi không đủ */
+        .overlay > :first-child { margin-top: auto; }
+        .overlay > :last-child { margin-bottom: auto; }
+        .overlay > * { flex-shrink: 0; }
+        .stats-card { max-width: 100%; }
+        @media (max-width: 640px), (max-height: 520px) {
+            #hud { top: 10px; left: 8px; right: 8px; gap: 6px; }
+            .hud-group { gap: 6px; }
+            .hud-box, #sound-btn { padding: 5px 10px; font-size: 13px; border-radius: 10px; }
+            #sound-btn .lbl { display: none; }
+            .school-tag { font-size: 11px; padding: 5px 12px; letter-spacing: .5px; margin-bottom: 10px; }
+            h1 { font-size: clamp(24px, 7.5vw, 34px); letter-spacing: 1px; margin-bottom: 8px; }
+            .subtitle { font-size: 15px; margin-bottom: 14px; }
+            .mode-panel { gap: 8px; margin-bottom: 12px; }
+            .mode-btn { font-size: 14px; padding: 9px 14px; }
+            .guide-note { font-size: 13px; margin-bottom: 16px; }
+            .start-btn { padding: 14px 40px; font-size: 19px; }
+            .stats-card { padding: 14px 16px; }
+            .rank-text { font-size: 18px; }
+            .sub-stat { font-size: 14px; }
+        }
+        @media (max-height: 520px) and (orientation: landscape) {
+            h1 { font-size: 26px; }
+            .subtitle { margin-bottom: 10px; }
+            .guide-note { margin-bottom: 12px; }
+        }
+        @media (hover: none) { .start-btn:hover, #sound-btn:hover { transform: none; } }
+    </style>
+</head>
+<body>
+
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<div id="hud">
+    <div class="hud-group">
+        <div id="stats" class="hud-box">ĐIỂM: 0 | CÂU: 1/30</div>
+        <div id="combo-badge" class="hud-box">COMBO: x1</div>
+    </div>
+    <div class="hud-group">
+        <div id="timer-badge" class="hud-box">⏱️ 00:00</div>
+        <button id="sound-btn" onclick="toggleSound()" aria-label="Bật/tắt âm thanh">🔊<span class="lbl"> Âm thanh: BẬT</span></button>
+    </div>
+</div>
+
+<div id="start-screen" class="overlay">
+    <div class="school-tag">Sản phẩm Dự thi STEM • Trường THCS Nga Sơn</div>
+    <h1>🚀 CHIẾN CƠ KIẾN THỨC</h1>
+    <p class="subtitle">Chào mừng Ban Giám Khảo cùng các thầy cô và các bạn học sinh!</p>
+
+    <div class="mode-panel">
+        <button id="mode-full" class="mode-btn active" onclick="selectMode(30, this)">🌌 Thử thách đầy đủ (30 câu)</button>
+        <button id="mode-quick" class="mode-btn" onclick="selectMode(10, this)">⚡ Trải nghiệm nhanh BGK (10 câu)</button>
+    </div>
+
+    <p class="guide-note">
+        Di chuyển chuột (hoặc phím <b>◀ ▶ / A D</b>) để lái phi thuyền • Click chuột (hoặc <b>Space</b>) để bắn đĩa bay <b>A / B / C</b> mang đáp án đúng.<br>📱 Trên điện thoại/máy tính bảng: <b>kéo ngón tay</b> để lái, <b>chạm</b> để bắn.<br>
+        <i>(Vị trí đáp án đúng được xáo trộn ngẫu nhiên linh hoạt qua từng câu hỏi)</i>
+    </p>
+    <button class="start-btn" onclick="startGame()">KHỞI HÀNH</button>
+</div>
+
+<div id="end-screen" class="overlay" style="display:none;">
+    <div class="school-tag">Tổng kết nhiệm vụ • THCS Nga Sơn</div>
+    <h1>NHIỆM VỤ HOÀN TẤT!</h1>
+    <div class="stats-card">
+        <p id="final-score" class="subtitle" style="color: #00ff44; font-weight: bold; margin-bottom: 6px;"></p>
+        <div id="rank-label" class="rank-text"></div>
+        <p id="detail-stats" class="sub-stat"></p>
+    </div>
+    <p style="color: #ff44ff; font-size: clamp(22px, 3.2vw, 32px); text-shadow: 0 0 15px #ff00ff; margin-bottom: 24px;">
+        Trân trọng cảm ơn và hẹn gặp lại!
+    </p>
+    <button class="start-btn" onclick="restartGame()">CHƠI LẠI</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP WEB AUDIO API ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        const btn = document.getElementById('sound-btn');
+        btn.innerHTML = soundEnabled ? '🔊<span class="lbl"> Âm thanh: BẬT</span>' : '🔇<span class="lbl"> Âm thanh: TẮT</span>';
+        btn.style.color = soundEnabled ? '#00ff88' : '#94a3b8';
+        btn.style.borderColor = soundEnabled ? 'rgba(0, 255, 136, 0.5)' : 'rgba(148, 163, 184, 0.4)';
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'shoot') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(780, now);
+            osc.frequency.exponentialRampToValueAtTime(190, now + 0.11);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+            osc.start(now);
+            osc.stop(now + 0.11);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.16, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+            osc.start(now);
+            osc.stop(now + 0.34);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(85, now + 0.25);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'win') {
+            const notes = [523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                g.gain.setValueAtTime(0.15, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.35);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.35);
+            });
+        }
+    }
+
+    // --- THUẬT TOÁN XÁO TRỘN FISHER-YATES ---
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    /* Bố cục tính theo kích thước màn hình (bổ sung responsive):
+       cỡ chữ, kích thước đĩa bay, vị trí câu hỏi/đáp án và phi thuyền. */
+    let motherUFO = null;
+    let slotCount = 3;
+    const L = { shipY: 0, shipScale: 1, gunY: 0, range: 36 };
+    function computeLayout() {
+        const W = canvas.width, H = canvas.height;
+        L.shipScale = H < 520 ? 0.68 : W < 480 ? 0.82 : 1;
+        L.shipY = H - Math.max(52, 95 * L.shipScale);
+        L.gunY = L.shipY - 40 * L.shipScale;
+        L.range = Math.round(Math.min(36, W * 0.03));
+        L.small = W < 640 || H < 520;
+    }
+    function hudBottom() {
+        const hud = document.getElementById('hud');
+        return hud ? hud.getBoundingClientRect().bottom : 60;
+    }
+    /* Đặt lại vị trí/kích thước đĩa bay của câu hiện tại (gọi khi tạo câu mới hoặc khi xoay/đổi cỡ màn hình) */
+    function layoutLevel() {
+        if (!motherUFO) return;
+        const W = canvas.width;
+        motherUFO.fit(Math.min(500, W * 0.47));
+        motherUFO.startX = motherUFO.x = W / 2;
+        motherUFO.y = hudBottom() + 12 + motherUFO.h;
+        const n = Math.max(1, slotCount);
+        const slot = W / n;
+        const wA = Math.max(40, Math.min(170, slot / 2 - L.range - 6));
+        let maxH = 0;
+        ufos.forEach(u => { u.fit(wA); maxH = Math.max(maxH, u.h); });
+        const top = motherUFO.y + motherUFO.h + 26 + maxH;              // ngay dưới đĩa mẹ, chừa huy hiệu A/B/C
+        const limit = L.gunY - 70 * L.shipScale - maxH;                    // chừa khoảng cho đạn bay
+        const y = Math.max(top, Math.min(limit, motherUFO.y + motherUFO.h + 60 + maxH));
+        ufos.forEach(u => { u.startX = u.x = slot * (u.slot + 0.5); u.y = y; u.baseY = y; });
+    }
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        computeLayout();
+        layoutLevel();
+        if (!gameActive) {
+            mouseX = canvas.width / 2;
+        } else {
+            mouseX = Math.min(Math.max(mouseX, 60), canvas.width - 60);
+        }
+    }
+
+    // --- KHO 30 CÂU HỎI GIẢI TRÍ • LỊCH SỬ • ĐỊA DANH • TỰ NHIÊN ---
+    const questionBank = [
+        { q: "Vịnh Hạ Long được UNESCO công nhận là Di sản thiên nhiên thế giới vào năm nào?", a: ["1994", "2000", "2010"], c: 0 },
+        { q: "Hang động tự nhiên lớn nhất thế giới nằm ở tỉnh nào của Việt Nam?", a: ["Quảng Bình", "Ninh Bình", "Lạng Sơn"], c: 0 },
+        { q: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?", a: ["Fansipan", "Pu Si Lung", "Bà Đen"], c: 0 },
+        { q: "Thành nhà Hồ - di sản văn hóa thế giới độc đáo bằng đá - thuộc tỉnh nào?", a: ["Thanh Hóa", "Nghệ An", "Thừa Thiên Huế"], c: 0 },
+        { q: "Sông nào dài nhất chảy hoàn toàn trong lãnh thổ Việt Nam?", a: ["Sông Đồng Nai", "Sông Đà", "Sông Mã"], c: 0 },
+        { q: "Ai là vị anh hùng dân tộc lãnh đạo khởi nghĩa Lam Sơn chống quân Minh?", a: ["Lê Lợi", "Nguyễn Huệ", "Đinh Bộ Lĩnh"], c: 0 },
+        { q: "Quảng trường Ba Đình - nơi Bác Hồ đọc Tuyên ngôn Độc lập - ở thành phố nào?", a: ["Hà Nội", "Hải Phòng", "Đà Nẵng"], c: 0 },
+        { q: "Hành tinh nào trong Hệ Mặt Trời có vòng đai băng đá nổi bật nhất?", a: ["Sao Thổ", "Sao Hỏa", "Sao Kim"], c: 0 },
+        { q: "Loài vật nào có thể ngủ ở tư thế đứng?", a: ["Ngựa", "Cá heo", "Gấu trúc"], c: 0 },
+        { q: "Đại dương nào có diện tích lớn nhất Trái Đất?", a: ["Thái Bình Dương", "Đại Tây Dương", "Ấn Độ Dương"], c: 0 },
+        { q: "Phố cổ Hội An thuộc tỉnh/thành phố nào của miền Trung?", a: ["Quảng Nam", "Phú Yên", "Khánh Hòa"], c: 0 },
+        { q: "Cây tre Việt Nam thường được ví với phẩm chất nào?", a: ["Thủy chung, kiên cường", "Nhanh nhẹn, khéo léo", "Lặng lẽ, xa cách"], c: 0 },
+        { q: "Bạch tuộc có mấy trái tim?", a: ["3 trái tim", "1 trái tim", "2 trái tim"], c: 0 },
+        { q: "Kinh thành Huế nằm bên dòng sông thơ mộng nào?", a: ["Sông Hương", "Sông Hàn", "Sông Thu Bồn"], c: 0 },
+        { q: "Kim tự tháp Kheops nổi tiếng thuộc quốc gia nào?", a: ["Ai Cập", "Hy Lạp", "Mexico"], c: 0 },
+        { q: "Mùa nào trong năm thường có hiện tượng 'hoa phượng nở rực đỏ' ở Việt Nam?", a: ["Mùa hè", "Mùa đông", "Mùa thu"], c: 0 },
+        { q: "Đảo ngọc Phú Quốc thuộc tỉnh nào của nước ta?", a: ["Kiên Giang", "Bà Rịa - Vũng Tàu", "Bình Thuận"], c: 0 },
+        { q: "Đố vui: Càng kéo càng ngắn là cái gì?", a: ["Điếu thuốc", "Sợi dây", "Chiếc thước"], c: 0 },
+        { q: "Hồ Gươm còn có tên gọi cổ xưa nào gắn với truyền thuyết trả gươm?", a: ["Hồ Hoàn Kiếm", "Hồ Tây", "Hồ Ba Bể"], c: 0 },
+        { q: "Loại gió nào thổi theo mùa ở khu vực Nam và Đông Nam Á, tạo nên mùa mưa và mùa khô?", a: ["Gió mùa", "Gió Phơn", "Gió đất"], c: 0 },
+        { q: "Tháp Eiffel nằm ở thủ đô nào của châu Âu?", a: ["Paris", "London", "Rome"], c: 0 },
+        { q: "Cầu Rồng phun lửa, phun nước là biểu tượng du lịch của thành phố nào?", a: ["Đà Nẵng", "Cần Thơ", "Nha Trang"], c: 0 },
+        { q: "Đố vui: Tháng nào trong năm có 28 ngày?", a: ["Tháng nào cũng có", "Chỉ tháng 2", "Chỉ năm nhuận"], c: 0 },
+        { q: "Vườn quốc gia Phong Nha - Kẻ Bàng nổi tiếng với hệ thống gì?", a: ["Hang động karst", "Rừng ngập mặn", "Đồi cát trắng"], c: 0 },
+        { q: "Vị vua nào dời đô từ Hoa Lư ra thành Thăng Long năm 1010?", a: ["Lý Thái Tổ", "Trần Nhân Tông", "Ngô Quyền"], c: 0 },
+        { q: "Tầng khí quyển nào chứa lớp ô-zôn giúp bảo vệ sinh vật khỏi tia cực tím?", a: ["Tầng bình lưu", "Tầng đối lưu", "Tầng ngoại quyển"], c: 0 },
+        { q: "Cao nguyên nào được mệnh danh là 'thủ phủ cà phê' của Việt Nam?", a: ["Đắk Lắk", "Mộc Châu", "Đồng Văn"], c: 0 },
+        { q: "Đố vui: Con gì không chân, không cánh mà đi khắp thế gian?", a: ["Con sông", "Con kiến", "Con ong"], c: 0 },
+        { q: "Cột cờ Lũng Cú nằm ở điểm cực nào của Tổ quốc?", a: ["Điểm cực Bắc", "Điểm cực Nam", "Điểm cực Đông"], c: 0 },
+        { q: "Hiện tượng cầu vồng thường xuất hiện khi nào?", a: ["Nắng chiếu qua mưa", "Gió thổi mạnh", "Trời sắp tối"], c: 0 }
+    ];
+
+    let activeQuestions = [];
+    let selectedQuestionCount = 30;
+    let currentIdx = 0, score = 0, combo = 1, correctCount = 0, totalShots = 0, totalHits = 0;
+    let gameActive = false, tick = 0, shakeTime = 0, animId = null;
+    let startTime = 0, elapsedSeconds = 0;
+    let bullets = [], ufos = [], stars = [], particles = [], floatTexts = [], shockwaves = [];
+    let mouseX = window.innerWidth / 2;
+    let prevMouseX = mouseX;
+    let keys = { left: false, right: false };
+
+    function selectMode(count, btnEl) {
+        selectedQuestionCount = count;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    for (let i = 0; i < 230; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            s: Math.random() * 2.2 + 0.5,
+            o: Math.random(),
+            sp: Math.random() * 0.7 + 0.25
+        });
+    }
+
+    function wrapText(text, maxWidth, font) {
+        ctx.font = font;
+        const words = text.split(' ');
+        const lines = [];
+        let line = '';
+        for (let w of words) {
+            const test = line ? line + ' ' + w : w;
+            if (ctx.measureText(test).width > maxWidth && line) {
+                lines.push(line);
+                line = w;
+            } else {
+                line = test;
+            }
+        }
+        if (line) lines.push(line);
+        return lines;
+    }
+
+    class Bullet {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.vy = 23;
+        }
+        update() {
+            this.y -= this.vy;
+        }
+        draw() {
+            ctx.save();
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = "#ff2a55";
+            ctx.fillStyle = '#ff2a55';
+            ctx.fillRect(this.x - 4, this.y + 4, 8, 18);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(this.x - 2, this.y, 4, 24);
+            ctx.restore();
+        }
+    }
+
+    class Shockwave {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.radius = 12;
+            this.color = color;
+            this.life = 1;
+        }
+        update() {
+            this.radius += 7;
+            this.life -= 0.045;
+        }
+        draw() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    class Particle {
+        constructor(x, y, color) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5.5 + 1.5;
+            this.x = x;
+            this.y = y;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.life = 1;
+            this.decay = Math.random() * 0.03 + 0.02;
+            this.color = color;
+            this.size = Math.random() * 4 + 2;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx *= 0.96;
+            this.vy *= 0.96;
+            this.life -= this.decay;
+        }
+        draw() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    class FloatText {
+        constructor(x, y, text, color) {
+            this.x = x;
+            this.y = y;
+            this.text = text;
+            this.color = color;
+            this.life = 1;
+        }
+        update() {
+            this.y -= 1.6;
+            this.life -= 0.022;
+        }
+        draw() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.font = 'bold 25px "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = this.color;
+            ctx.fillText(this.text, this.x, this.y);
+            ctx.restore();
+        }
+    }
+
+    class UFO {
+        constructor(x, y, text, isCorrect = false, isMother = false, slotLabel = '') {
+            this.x = x;
+            this.y = y;
+            this.text = text;
+            this.isCorrect = isCorrect;
+            this.isMother = isMother;
+            this.slotLabel = slotLabel;
+            this.speed = isMother ? 0.65 : ((Math.random() > 0.5 ? 1 : -1) * (1.1 + Math.random() * 0.8));
+            this.startX = x;
+            this.bobOffset = Math.random() * Math.PI * 2;
+            this.slot = 0;
+            this.fit(isMother ? Math.min(500, canvas.width * 0.45) : Math.min(190, canvas.width * 0.155));
+        }
+
+        /* Tính cỡ chữ, ngắt dòng và chiều cao đĩa theo bán kính ngang w */
+        fit(w) {
+            this.w = w;
+            const W = canvas.width;
+            if (this.isMother) this.fs = W < 400 ? 14 : W < 640 ? 16 : W < 1000 ? 19 : 21;
+            else this.fs = w < 60 ? 12 : w < 90 ? 13.5 : w < 130 ? 15 : 17;
+            this.font = `bold ${this.fs}px "Segoe UI", sans-serif`;
+            this.lh = Math.round(this.fs * 1.2);
+            this.lines = wrapText(this.text, this.w * (this.isMother ? 1.62 : 1.5), this.font);
+            const textH = this.lines.length * this.lh;
+            this.h = this.isMother
+                ? Math.max(L.small ? 50 : 70, Math.min(130, textH * 0.62 + 26))
+                : Math.max(L.small ? 32 : 44, Math.min(80, textH * 0.62 + 16));
+            this.badge = L.small ? 11 : 15;
+        }
+
+        update() {
+            this.x += this.speed;
+            const range = this.isMother ? Math.min(42, L.range + 6) : L.range;
+            if (this.x > this.startX + range || this.x < this.startX - range) {
+                this.speed *= -1;
+            }
+            this.y += Math.sin(tick * 0.04 + this.bobOffset) * 0.35;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            const color = this.isMother ? "#ff00ff" : "#00f2ff";
+            const font = this.font;
+            const lines = this.lines;
+
+            ctx.shadowBlur = 18 + Math.sin(tick * 0.1) * 6;
+            ctx.shadowColor = color;
+
+            // Thân đĩa bay
+            ctx.fillStyle = '#141b2d';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, this.w, this.h, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Mái vòm kính
+            const grad = ctx.createLinearGradient(0, -this.h, 0, 0);
+            grad.addColorStop(0, 'rgba(255,255,255,0.55)');
+            grad.addColorStop(1, 'rgba(0,242,255,0.12)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(0, -this.h * 0.35, Math.min(this.w * 0.38, this.h * 1.1), 0, Math.PI, true);
+            ctx.fill();
+
+            // Huy hiệu A / B / C trên đĩa đáp án
+            if (!this.isMother && this.slotLabel) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ffd000';
+                ctx.fillStyle = '#ffd000';
+                ctx.beginPath();
+                ctx.arc(0, -this.h - 6, this.badge, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#090d16';
+                ctx.font = `bold ${this.badge + 1}px "Segoe UI", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.slotLabel, 0, -this.h - 6);
+            }
+
+            // Đèn viền xoay quanh đĩa bay
+            const lightCount = this.isMother ? 10 : (this.w < 70 ? 4 : 6);
+            for (let i = 0; i < lightCount; i++) {
+                const angle = tick * 0.05 + (i * Math.PI * 2) / lightCount;
+                const lx = Math.cos(angle) * (this.w - 14);
+                const ly = Math.sin(angle) * (this.h - 10);
+                ctx.fillStyle = (Math.floor(tick / 10) + i) % 2 === 0 ? "#ffffff" : color;
+                ctx.beginPath();
+                ctx.arc(lx, ly, L.small ? 2.5 : 3.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Chữ câu hỏi hoặc đáp án
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = font;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const lineHeight = this.lh;
+            const startY = -((lines.length - 1) * lineHeight) / 2;
+            lines.forEach((ln, idxLine) => {
+                ctx.fillText(ln, 0, startY + idxLine * lineHeight);
+            });
+
+            ctx.restore();
+        }
+    }
+
+
+    function spawnExplosion(x, y, color, count = 26) {
+        shockwaves.push(new Shockwave(x, y, color));
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle(x, y, color));
+        }
+    }
+
+    function formatTime(sec) {
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function updateHUD() {
+        const total = activeQuestions.length;
+        const displayIdx = Math.min(currentIdx + 1, total);
+        document.getElementById('stats').innerText = `ĐIỂM: ${score} | CÂU: ${displayIdx}/${total}`;
+        document.getElementById('combo-badge').innerText = `COMBO: x${combo}`;
+        document.getElementById('progress-bar').style.width = `${(currentIdx / total) * 100}%`;
+    }
+
+    function getRank(pts, totalQ) {
+        const ratio = pts / (totalQ * 10);
+        if (ratio >= 0.9) return "🏅 HẠNG: CHỈ HUY TỐI CAO VŨ TRỤ";
+        if (ratio >= 0.65) return "🥈 HẠNG: PHI CÔNG TINH NHUỆ";
+        if (ratio >= 0.35) return "🥉 HẠNG: CHIẾN BINH TRI THỨC";
+        return "🚀 HẠNG: TÂN BINH KHÁM PHÁ";
+    }
+
+    function initLevel() {
+        if (currentIdx >= activeQuestions.length) {
+            gameActive = false;
+            playSound('win');
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('end-screen').style.display = 'flex';
+            const totalQ = activeQuestions.length;
+            const accuracy = totalShots > 0 ? Math.round((totalHits / totalShots) * 100) : 100;
+            document.getElementById('final-score').innerText = `TỔNG ĐIỂM: ${score} (Đúng ${correctCount}/${totalQ} câu)`;
+            document.getElementById('rank-label').innerText = getRank(score, totalQ);
+            document.getElementById('detail-stats').innerText = `⏱️ Thời gian hoàn thành: ${formatTime(elapsedSeconds)}  •  🎯 Độ chính xác bắn: ${accuracy}%`;
+            return;
+        }
+
+        bullets = [];
+        ufos = [];
+        const q = activeQuestions[currentIdx];
+        updateHUD();
+
+        motherUFO = new UFO(canvas.width / 2, 132, `Câu ${currentIdx + 1}: ${q.q}`, false, true);
+
+        // Xáo trộn vị trí 3 đáp án để đáp án đúng xuất hiện ngẫu nhiên ở A (Trái), B (Giữa), hoặc C (Phải)
+        const labeledAnswers = q.a.map((ansText, idx) => ({
+            text: ansText,
+            isCorrect: idx === q.c
+        }));
+        const shuffledAnswers = shuffleArray(labeledAnswers);
+        const slotLetters = ['A', 'B', 'C', 'D'];
+
+        const ansCount = shuffledAnswers.length;
+        const spacing = canvas.width / (ansCount + 1);
+        shuffledAnswers.forEach((item, i) => {
+            const u = new UFO(spacing * (i + 1), 372, item.text, item.isCorrect, false, slotLetters[i]);
+            u.slot = i;
+            ufos.push(u);
+        });
+        slotCount = ansCount;
+        layoutLevel();
+    }
+
+    function startGame() {
+        initAudio();
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+
+        // Xáo trộn thứ tự câu hỏi mỗi lần chơi mới
+        activeQuestions = shuffleArray(questionBank).slice(0, selectedQuestionCount);
+
+        currentIdx = 0;
+        score = 0;
+        combo = 1;
+        correctCount = 0;
+        totalShots = 0;
+        totalHits = 0;
+        particles = [];
+        floatTexts = [];
+        shockwaves = [];
+        mouseX = canvas.width / 2;
+        prevMouseX = mouseX;
+        startTime = Date.now();
+        elapsedSeconds = 0;
+        document.getElementById('timer-badge').innerText = '⏱️ 00:00';
+        gameActive = true;
+        initLevel();
+        if (animId) cancelAnimationFrame(animId);
+        animate();
+    }
+
+    function restartGame() {
+        startGame();
+    }
+
+    function shootBullet() {
+        if (!gameActive) return;
+        totalShots++;
+        playSound('shoot');
+        bullets.push(new Bullet(mouseX, L.gunY));
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = Math.min(Math.max(e.clientX, 46 * L.shipScale + 8), canvas.width - 46 * L.shipScale - 8);
+    });
+
+    window.addEventListener('mousedown', (e) => {
+        if (e.button === 0 && e.target === canvas) shootBullet();
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+        if (e.code === 'Space' && gameActive) {
+            e.preventDefault();
+            shootBullet();
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+    });
+
+    function drawBackgroundNebula() {
+        const g1 = ctx.createRadialGradient(canvas.width * 0.25, canvas.height * 0.3, 20, canvas.width * 0.25, canvas.height * 0.3, canvas.width * 0.45);
+        g1.addColorStop(0, 'rgba(0, 90, 180, 0.14)');
+        g1.addColorStop(1, 'transparent');
+        ctx.fillStyle = g1;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const g2 = ctx.createRadialGradient(canvas.width * 0.78, canvas.height * 0.65, 20, canvas.width * 0.78, canvas.height * 0.65, canvas.width * 0.4);
+        g2.addColorStop(0, 'rgba(140, 0, 220, 0.11)');
+        g2.addColorStop(1, 'transparent');
+        ctx.fillStyle = g2;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function drawPlayer() {
+        const vx = mouseX - prevMouseX;
+        const tilt = Math.max(-0.22, Math.min(0.22, vx * 0.015));
+        prevMouseX = mouseX;
+
+        ctx.save();
+        ctx.translate(mouseX, L.shipY);
+        ctx.rotate(tilt);
+        ctx.scale(L.shipScale, L.shipScale);
+
+        // Ngọn lửa phản lực
+        const flameH = 22 + Math.random() * 20;
+        const fGrad = ctx.createLinearGradient(0, 20, 0, 20 + flameH);
+        fGrad.addColorStop(0, '#ffbb00');
+        fGrad.addColorStop(0.5, '#ff5500');
+        fGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = fGrad;
+        ctx.beginPath();
+        ctx.moveTo(-14, 20);
+        ctx.lineTo(14, 20);
+        ctx.lineTo(0, 20 + flameH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Thân chính chiến cơ
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#00ff44";
+        ctx.fillStyle = "#00cc36";
+        ctx.beginPath();
+        ctx.moveTo(0, -58);
+        ctx.lineTo(-38, 20);
+        ctx.lineTo(38, 20);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cánh phụ và nòng laser
+        ctx.fillStyle = "#007a29";
+        ctx.fillRect(-46, 2, 14, 22);
+        ctx.fillRect(32, 2, 14, 22);
+
+        // Buồng lái
+        ctx.fillStyle = "#e0faff";
+        ctx.beginPath();
+        ctx.arc(0, -18, 11, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function animate() {
+        if (!gameActive) return;
+        tick++;
+
+        elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('timer-badge').innerText = `⏱️ ${formatTime(elapsedSeconds)}`;
+
+        if (keys.left) mouseX = Math.max(46 * L.shipScale + 8, mouseX - 9);
+        if (keys.right) mouseX = Math.min(canvas.width - 46 * L.shipScale - 8, mouseX + 9);
+
+        ctx.save();
+        if (shakeTime > 0) {
+            const mag = shakeTime * 0.7;
+            ctx.translate((Math.random() - 0.5) * mag, (Math.random() - 0.5) * mag);
+            shakeTime--;
+        }
+
+        ctx.fillStyle = '#00030a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawBackgroundNebula();
+
+        stars.forEach(s => {
+            ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(tick * 0.025 + s.o * 10));
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+            ctx.fill();
+            s.y += s.sp;
+            if (s.y > canvas.height) {
+                s.y = 0;
+                s.x = Math.random() * canvas.width;
+            }
+        });
+        ctx.globalAlpha = 1;
+
+        drawPlayer();
+
+        for (let bi = bullets.length - 1; bi >= 0; bi--) {
+            const b = bullets[bi];
+            b.update();
+            b.draw();
+
+            let hit = false;
+            for (let ui = ufos.length - 1; ui >= 0; ui--) {
+                const u = ufos[ui];
+                if (Math.abs(b.x - u.x) < u.w * 0.85 && Math.abs(b.y - u.y) < u.h + 10) {
+                    hit = true;
+                    bullets.splice(bi, 1);
+
+                    if (u.isCorrect) {
+                        totalHits++;
+                        const gained = 10 * combo;
+                        score += gained;
+                        correctCount++;
+                        combo = Math.min(combo + 1, 5);
+                        playSound('correct');
+                        spawnExplosion(u.x, u.y, '#00ff66', 30);
+                        floatTexts.push(new FloatText(u.x, u.y - 15, `+${gained}`, '#00ff66'));
+                        currentIdx++;
+                        updateHUD();
+                        initLevel();
+                    } else {
+                        combo = 1;
+                        score = Math.max(0, score - 5);
+                        shakeTime = 10;
+                        playSound('wrong');
+                        spawnExplosion(u.x, u.y, '#ff3355', 18);
+                        floatTexts.push(new FloatText(u.x, u.y - 15, `-5`, '#ff4d6d'));
+                        ufos.splice(ui, 1);
+                        updateHUD();
+                    }
+                    break;
+                }
+            }
+
+            if (!hit && b.y < -30) {
+                bullets.splice(bi, 1);
+            }
+        }
+
+        if (motherUFO) {
+            motherUFO.update();
+            motherUFO.draw();
+        }
+        ufos.forEach(u => {
+            u.update();
+            u.draw();
+        });
+
+        for (let si = shockwaves.length - 1; si >= 0; si--) {
+            shockwaves[si].update();
+            shockwaves[si].draw();
+            if (shockwaves[si].life <= 0) shockwaves.splice(si, 1);
+        }
+
+        for (let pi = particles.length - 1; pi >= 0; pi--) {
+            particles[pi].update();
+            particles[pi].draw();
+            if (particles[pi].life <= 0) particles.splice(pi, 1);
+        }
+
+        for (let fi = floatTexts.length - 1; fi >= 0; fi--) {
+            floatTexts[fi].update();
+            floatTexts[fi].draw();
+            if (floatTexts[fi].life <= 0) floatTexts.splice(fi, 1);
+        }
+
+        ctx.restore();
+        animId = requestAnimationFrame(animate);
+    }
+</script>
+<script>
+/* Điều khiển cảm ứng (bổ sung khi đưa vào Next.js): kéo để lái, chạm để bắn.
+   preventDefault chặn trình duyệt giả lập thêm sự kiện chuột (tránh bắn 2 lần) và chặn cuộn trang. */
+(function () {
+    const cv = document.getElementById('gameCanvas');
+    if (!cv) return;
+    cv.style.touchAction = 'none';
+    const steer = (t) => { mouseX = Math.min(Math.max(t.clientX, 46 * L.shipScale + 8), canvas.width - 46 * L.shipScale - 8); };
+    cv.addEventListener('touchstart', (e) => { e.preventDefault(); steer(e.touches[0]); shootBullet(); }, { passive: false });
+    cv.addEventListener('touchmove', (e) => { e.preventDefault(); steer(e.touches[0]); }, { passive: false });
+})();
+</script>
+</body>
+</html>

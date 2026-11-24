@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sản Phẩm STEM THCS Nga Sơn - Tàu Ngầm Xanh Đại Dương Pro</title>
+    <style>:root {--brand:#0891b2; --deep:#1e40af; --soft:#d6eff4; --ink:#145c76; --cta:#086a88;}</style>
+    <link rel="stylesheet" href="chien-co/interface.css">
+    <script src="chien-co/art.js"></script>
+    <script src="ket-qua.js"></script>
+</head>
+<body>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<div id="hud">
+    <div class="hud-group">
+        <div class="hud-box" id="score-box"><i data-icon="star" title="Điểm"></i><span class="lbl">Điểm</span><span id="points">0</span><span id="lives"></span></div>
+        <div class="hud-box" id="combo-box" style="color:#fde047;"><i data-icon="bolt" title="Combo"></i><span class="lbl">Combo</span><span id="combo">×1</span></div>
+    </div>
+    <div class="hud-group">
+        <div class="hud-box">
+            <i data-icon="wave"></i><span class="lbl"> BIỂN XANH:</span> <span id="clean-pct">20%</span>
+            <div class="bar-wrap"><div id="clean-bar"></div></div>
+            <span id="zone-label" style="color:#fde047;">• Vùng Ven Bờ</span>
+        </div>
+        <div class="hud-box">
+            <i data-icon="sonar"></i><span class="lbl"> SONAR:</span>
+            <div class="bar-wrap" id="sonar-bar-wrap" ><div id="sonar-bar"></div></div>
+        </div>
+        <div class="hud-box" id="pearl-box"><i data-icon="pearl"></i><span class="lbl"> CÂU HỎI:</span> <span id="pearls">0/10</span></div>
+        <button id="sound-btn" onclick="toggleSound()" aria-label="Bật/tắt âm thanh">Âm thanh</button>
+    </div>
+</div>
+
+<div id="action-bar">
+    <button class="pad-btn" id="m-left" aria-label="Lái sang trái">◀</button>
+    <button aria-label="Phát sóng sonar" id="sonar-btn" onclick="triggerSonar()">SÓNG SONAR (Chưa đầy)</button>
+    <button class="pad-btn" id="m-right" aria-label="Lái sang phải">▶</button>
+</div>
+
+<!-- MÀN HÌNH BẮT ĐẦU & GIỚI THIỆU CÁCH CHƠI -->
+<div id="start-screen" class="overlay">
+    <header class="mast"><span class="mark" data-icon="orbit"></span><div><b>THCS Nga Sơn</b><small>Sản phẩm dự thi STEM</small></div></header>
+    <div class="launch">
+        <picture class="poster"><source media="(max-width:740px), (max-width:900px) and (orientation:portrait)" srcset="tau-ngam/banner.svg"><img src="tau-ngam/poster.svg" alt="" /></picture>
+        <section class="brief"><div class="topics">Biển đảo · Bảo vệ đại dương</div><h1>Tàu Ngầm Xanh<br><em>Đại Dương</em></h1>
+            <p class="intro"><img src="chien-co/coi.svg" alt="Cói"><span><b>Cói chào thuyền trưởng!</b><br>Gom rác và nhặt ngọc trai để hồi sinh ba tầng biển.</span></p>
+            <fieldset><legend>Chọn chế độ</legend><div class="modes"><button class="mode-btn active" id="mode-10" aria-pressed="true" aria-label="Hành trình đầy đủ, 10 câu hỏi" onclick="selectGameMode(10, this)">Hành trình đầy đủ<small>10 câu hỏi</small></button><button class="mode-btn" id="mode-5" aria-pressed="false" aria-label="Trải nghiệm BGK, 5 câu hỏi" onclick="selectGameMode(5, this)">Trải nghiệm BGK<small>5 câu hỏi</small></button></div></fieldset>
+            <button class="primary" id="launch" aria-label="Lặn xuống đại dương" onclick="beginJourney(this, startGame)">Lặn xuống đại dương →</button>
+            <div class="guide"><p><i data-icon="touch"></i>Kéo, di chuột hoặc dùng A/D, ◀ ▶ để lái. Nhấn Space hoặc nút Sonar khi đầy để quét rác và nguy hiểm.</p>
+<details><summary>Vật phẩm và ba tầng biển</summary><p>Thu rác liên tiếp để tăng combo và nạp sonar. Để rác lọt đáy sẽ mất chuỗi.</p>
+<p>Vùng Ven Bờ từ 20%, Rạn San Hô từ 45%, Vực Thẳm Xanh từ 75% đến 100%.</p><div class="items-guide"><p><img src="tau-ngam/bottle.svg" width="28" height="28" alt="">Thu rác để tích combo</p><p><img src="tau-ngam/pearl.svg" width="28" height="28" alt="">Ngọc trai mở câu A/B/C xáo trộn · đúng +30 điểm</p><p><img src="tau-ngam/magnet.svg" width="28" height="28" alt="">Nam châm hút rác</p><p><img src="tau-ngam/shield.svg" width="28" height="28" alt="">Khiên chặn một va chạm</p><p><img src="tau-ngam/heart.svg" width="28" height="28" alt="">Hồi một tim</p><p><img src="tau-ngam/mine.svg" width="28" height="28" alt="">Tránh thủy lôi và lưới</p></div></details></div>
+        </section>
+    </div>
+</div>
+
+<div id="quiz-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-question">
+    <div class="quiz-card">
+        <div class="quiz-header-row">
+            <span class="quiz-tag" id="quiz-progress-tag">CÂU HỎI BẢO VỆ ĐẠI DƯƠNG</span>
+        </div>
+        <div class="quiz-q-box">
+            <p class="quiz-q" id="quiz-question"></p>
+        </div>
+        <div class="quiz-opts" id="quiz-options"></div>
+        <div class="next-banner" id="next-banner">
+            <img src="chien-co/coi.svg" width="40" height="40" alt="Cói"><p class="next-banner-title" id="next-banner-title">Tuyệt vời! Mời bạn chuyển câu tiếp theo!</p>
+            <p class="next-banner-fact" id="next-banner-fact"></p>
+            <button class="btn-continue" aria-label="Tiếp tục hành trình" id="btn-continue-dive" onclick="continueAfterQuiz()">Tiếp tục lặn & chuyển câu tiếp theo ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- MÀN HÌNH KẾT THÚC -->
+<div id="end-screen" class="overlay" style="display:none"><section class="result">
+    <img src="chien-co/coi.svg" alt="Cói"><p class="school-tag">Tổng kết nhiệm vụ · THCS Nga Sơn</p>
+    <h1 id="end-title">Hoàn thành sứ mệnh!</h1><p class="stats" id="end-summary"></p><p>Chung tay giảm rác thải nhựa — Giữ mãi màu xanh đại dương!</p>
+    <button class="primary" aria-label="Chơi lại" onclick="startGame()">Chơi lại →</button>
+</section></div>
+
+<canvas id="oceanCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('oceanCanvas');
+    const ctx = canvas.getContext('2d');
+    document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = gameIcon(el.dataset.icon); });
+    syncSound(true);
+    const fwCanvas = document.getElementById('fireworksCanvas');
+    const fwCtx = fwCanvas.getContext('2d');
+
+    let viewW = window.innerWidth;
+    let viewH = window.innerHeight;
+    let isPortrait = viewH > viewW;
+
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP WEB AUDIO API ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        syncSound(soundEnabled);
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'pickup') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(840, now + 0.09);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.start(now);
+            osc.stop(now + 0.09);
+        } else if (type === 'powerup') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.setValueAtTime(660, now + 0.07);
+            osc.frequency.setValueAtTime(880, now + 0.14);
+            gain.gain.setValueAtTime(0.11, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+            osc.start(now);
+            osc.stop(now + 0.24);
+        } else if (type === 'sonar') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(280, now);
+            osc.frequency.exponentialRampToValueAtTime(980, now + 0.35);
+            gain.gain.setValueAtTime(0.16, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'hit') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.linearRampToValueAtTime(65, now + 0.25);
+            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'win') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                g.gain.setValueAtTime(0.14, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.36);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.36);
+            });
+        }
+    }
+
+    // --- THUẬT TOÁN XÁO TRỘN FISHER-YATES ---
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    // --- KHO 12 CÂU HỎI KIẾN THỨC ĐẠI DƯƠNG & MÔI TRƯỜNG BIỂN ---
+    const questionBank = [
+        {
+            q: "Trung bình một chiếc túi nilon hoặc chai nhựa cần bao lâu để phân hủy ngoài tự nhiên?",
+            a: ["Hàng trăm năm (400 - 1.000 năm)", "Khoảng 1 tháng", "Chỉ mất 1 năm"],
+            c: 0,
+            fact: "Rác thải nhựa tồn tại hàng trăm năm và vỡ thành vi nhựa đi vào chuỗi thức ăn của sinh vật biển."
+        },
+        {
+            q: "Loài sinh vật biển nào thường ăn nhầm túi nilon vì tưởng đó là sứa?",
+            a: ["Rùa biển", "Cá mập trắng", "Sao biển"],
+            c: 0,
+            fact: "Túi nilon trôi nổi trong nước trông rất giống sứa — món ăn yêu thích của rùa biển."
+        },
+        {
+            q: "Rạn san hô được ví như gì của đại dương?",
+            a: ["Rừng nhiệt đới dưới đáy biển", "Sa mạc cát trắng", "Băng trôi vĩnh cửu"],
+            c: 0,
+            fact: "Rạn san hô chỉ chiếm chưa tới 1% đáy biển nhưng là ngôi nhà của khoảng 25% sinh vật biển."
+        },
+        {
+            q: "Hành động nào sau đây giúp bảo vệ môi trường biển thiết thực nhất?",
+            a: ["Dùng bình nước cá nhân, hạn chế nhựa dùng một lần", "Vứt rác xuống cống thoát nước", "Bẻ san hô mang về làm kỷ niệm"],
+            c: 0,
+            fact: "Giảm rác thải nhựa từ đất liền giúp ngăn chặn hơn 80% nguồn rác đổ ra đại dương."
+        },
+        {
+            q: "Vịnh biển nổi tiếng nào của Việt Nam có gần 2.000 hòn đảo đá vôi kỳ vĩ?",
+            a: ["Vịnh Hạ Long", "Vịnh Cam Ranh", "Vịnh Vân Phong"],
+            c: 0,
+            fact: "Vịnh Hạ Long (Quảng Ninh) là Di sản Thiên nhiên Thế giới được UNESCO công nhận nhiều lần."
+        },
+        {
+            q: "Phần lớn lượng khí Oxychúng ta hít thở hằng ngày được tạo ra từ đâu?",
+            a: ["Thực vật phù du và tảo biển trong đại dương", "Chỉ từ các nhà máy", "Từ mây trên trời"],
+            c: 0,
+            fact: "Đại dương tạo ra hơn 50% lượng oxy trên Trái Đất và hấp thụ lượng lớn khí CO2."
+        },
+        {
+            q: "Hiện tượng 'lưới ma' (ghost nets) dưới đại dương gây ra tác hại gì?",
+            a: ["Mắc kẹt và làm chết cá, rùa, cá heo suốt nhiều năm", "Giúp cá bơi nhanh hơn", "Làm nước biển ngọt hơn"],
+            c: 0,
+            fact: "Ngư cụ bị bỏ quên trôi nổi trên biển tiếp tục bẫy và gây hại cho sinh vật biển trong thời gian dài."
+        },
+        {
+            q: "Rừng ngập mặn ven biển có vai trò quan trọng nào đối với con người và thiên nhiên?",
+            a: ["Chắn sóng bão, chống xói lở và nuôi dưỡng thủy sản", "Làm nước biển nóng lên", "Ngăn cản mưa rơi"],
+            c: 0,
+            fact: "Rừng ngập mặn là 'lá chắn xanh' bảo vệ đê biển và là vườn ươm của tôm, cua, cá."
+        },
+        {
+            q: "Vùng biển Việt Nam thuộc biển nào?",
+            a: ["Biển Đông", "Biển Đỏ", "Biển Đen"],
+            c: 0,
+            fact: "Việt Nam có đường bờ biển dài hơn 3.260 km trải dài từ Bắc vào Nam."
+        },
+        {
+            q: "Ngày Đại dương Thế giới (World Oceans Day) được tổ chức vào ngày nào hằng năm?",
+            a: ["Ngày 8 tháng 6", "Ngày 2 tháng 9", "Ngày 20 tháng 11"],
+            c: 0,
+            fact: "Ngày 8/6 hằng năm là dịp toàn thế giới cùng hành động vì một đại dương xanh, sạch, bền vững."
+        },
+        {
+            q: "Hai quần đảo lớn của Việt Nam nằm giữa Biển Đông là gì?",
+            a: ["Hoàng Sa và Trường Sa", "Cát Bà và Cô Tô", "Phú Quốc và Côn Đảo"],
+            c: 0,
+            fact: "Quần đảo Hoàng Sa và Trường Sa là phần lãnh thổ thiêng liêng không thể tách rời của Tổ quốc Việt Nam."
+        },
+        {
+            q: "Vì sao không nên đổ dầu ăn thừa hoặc hóa chất tẩy rửa xuống cống thoát nước?",
+            a: ["Dòng chảy sẽ cuốn ra sông, biển làm đầu độc nguồn nước", "Làm cống thơm hơn", "Giúp cá lớn nhanh hơn"],
+            c: 0,
+            fact: "Một lít dầu thải có thể làm ô nhiễm hàng nghìn lít nước và tạo màng ngăn oxy hòa tan trong nước."
+        }
+    ];
+
+    let activeQuestions = [];
+    let selectedQuestionCount = 10;
+    let gameActive = false, paused = false, animId = null, tick = 0, shakeTime = 0;
+    let score = 0, lives = 3, cleanliness = 20, pearlsSolved = 0, correctAnswers = 0, qIndex = 0;
+    let combo = 1, sonarCharge = 0, magnetTimer = 0, hasShield = false;
+    let subX = viewW / 2, subY = viewH - 130;
+    const art = loadArt('tau-ngam', ['submarine', 'bottle', 'bag', 'cup', 'can', 'pearl', 'shield', 'heart', 'magnet', 'mine', 'net', 'fish', 'coral', 'kelp', 'vent']);
+    const paintSeafloor = sceneryCache();
+    let voyage = 0, celebrationUntil = 0;
+    let items = [], bubbles = [], fishes = [], particles = [], floatTexts = [], fireworks = [], sonarWaves = [];
+    let keys = { left: false, right: false };
+    let touchDrag = { active: false, lastX: 0 };
+
+    function selectGameMode(count, btnEl) {
+        selectedQuestionCount = count;
+        document.querySelectorAll('.mode-btn').forEach(b => {
+            b.classList.toggle('active', b === btnEl);
+            b.setAttribute('aria-pressed', String(b === btnEl));
+        });
+
+    }
+
+    function resize() {
+        viewW = window.innerWidth || 800;
+        viewH = window.innerHeight || 600;
+        isPortrait = viewH > viewW;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(viewW * dpr);
+        canvas.height = Math.floor(viewH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        fwCanvas.width = Math.floor(viewW * dpr);
+        fwCanvas.height = Math.floor(viewH * dpr);
+        fwCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        subY = isPortrait ? viewH - 135 : viewH - 110;
+        subX = Math.min(Math.max(subX, 45), viewW - 45);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function launchFireworks(bursts = 4) {
+        if (reducedMotion.matches) return;
+        const currentVoyage = voyage;
+        const colors = ['#fde047', '#38f9d7', '#43e97b', '#38bdf8', '#f472b6', '#ffffff'];
+        for (let b = 0; b < bursts; b++) {
+            setTimeout(() => {
+                if (currentVoyage !== voyage) return;
+                const bx = viewW * (0.2 + Math.random() * 0.6);
+                const by = viewH * (0.18 + Math.random() * 0.42);
+                for (let i = 0; i < 18; i++) {
+                    const ang = (Math.PI * 2 * i) / 18;
+                    const spd = 2 + Math.random() * 4;
+                    fireworks.push({
+                        x: bx, y: by,
+                        vx: Math.cos(ang) * spd,
+                        vy: Math.sin(ang) * spd,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1,
+                        size: 2.5 + Math.random() * 2
+                    });
+                }
+            }, b * 220);
+        }
+    }
+
+    function drawFireworks() {
+        fwCtx.clearRect(0, 0, viewW, viewH);
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.05;
+            p.vx *= 0.97;
+            p.vy *= 0.97;
+            p.life -= 0.02;
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+                continue;
+            }
+            fwCtx.save();
+            fwCtx.globalAlpha = Math.max(0, p.life);
+            fwCtx.fillStyle = p.color;
+            fwCtx.beginPath();
+            fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fwCtx.fill();
+            fwCtx.restore();
+        }
+    }
+
+    function initDecor() {
+        bubbles = [];
+        fishes = [];
+        for (let i = 0; i < 42; i++) {
+            bubbles.push({
+                x: Math.random() * viewW,
+                y: Math.random() * viewH,
+                r: Math.random() * 4 + 1.5,
+                sp: Math.random() * 1.2 + 0.4
+            });
+        }
+        for (let i = 0; i < 14; i++) {
+            fishes.push({
+                x: Math.random() * viewW,
+                y: 90 + Math.random() * (viewH - 220),
+                dir: Math.random() > 0.5 ? 1 : -1,
+                sp: Math.random() * 1.2 + 0.5,
+                size: Math.random() * 8 + 9
+            });
+        }
+    }
+
+    function getZoneName() {
+        if (cleanliness >= 75) return "Vực Thẳm Xanh";
+        if (cleanliness >= 45) return "Rạn San Hô";
+        return "Vùng Ven Bờ";
+    }
+
+    function updateHUD() {
+        document.querySelector('#points').textContent = score;
+        const hearts = document.getElementById('lives');
+        hearts.innerHTML = gameIcon('heart') + lives + (hasShield ? gameIcon('shield') : '') + (magnetTimer > 0 ? gameIcon('magnet') : '');
+        hearts.setAttribute('aria-label', lives + ' tim' + (hasShield ? ', có khiên' : '') + (magnetTimer > 0 ? ', có nam châm' : ''));
+        document.querySelector('#combo').textContent = '×' + combo;
+        document.getElementById('clean-pct').innerText = `${cleanliness}%`;
+        document.getElementById('clean-bar').style.width = `${cleanliness}%`;
+        document.getElementById('zone-label').innerText = `• ${getZoneName()}`;
+        document.getElementById('pearls').textContent = pearlsSolved + '/' + activeQuestions.length;
+
+        const sonarPct = Math.min(100, sonarCharge);
+        document.getElementById('sonar-bar').style.width = `${sonarPct}%`;
+        const sBtn = document.getElementById('sonar-btn');
+        sBtn.classList.toggle('ready', sonarPct >= 100);
+        sBtn.setAttribute('aria-label', sonarPct >= 100 ? 'Phát sóng sonar' : 'Sonar đang nạp ' + sonarPct + '%');
+        sBtn.innerHTML = gameIcon('sonar') + '<span class="lbl"> Sonar </span>' + sonarPct + '%';
+    }
+
+    function triggerSonar() {
+        if (!gameActive || paused || sonarCharge < 100) return;
+        sonarCharge = 0;
+        playSound('sonar');
+        sonarWaves.push({ x: subX, y: subY, r: 20, life: 1 });
+
+        let clearedCount = 0;
+        for (let i = items.length - 1; i >= 0; i--) {
+            const it = items[i];
+            if (it.type === 'trash') {
+                clearedCount++;
+                score += 10 * combo;
+                cleanliness = Math.min(100, cleanliness + 2);
+                addBurst(it.x, it.y, '#38f9d7', 10);
+                items.splice(i, 1);
+            } else if (it.type === 'hazard') {
+                addBurst(it.x, it.y, '#fde047', 12);
+                items.splice(i, 1);
+            }
+        }
+        addFloatText(subX, subY - 40, `SÓNG SONAR QUÉT SẠCH! (+${clearedCount * 10 * combo})`, '#fde047');
+        updateHUD();
+        if (cleanliness >= 100) endGame(true);
+    }
+
+    function spawnItem() {
+        const margin = 42;
+        const x = margin + Math.random() * (viewW - margin * 2);
+        const r = Math.random();
+        let type = 'trash';
+        let icon = ['bottle', 'bag', 'cup', 'can'][Math.floor(Math.random() * 4)];
+
+        if (r < 0.21 && pearlsSolved < activeQuestions.length && !items.some(it => it.type === 'pearl')) {
+            type = 'pearl';
+            icon = 'pearl';
+        } else if (r < 0.27 && !hasShield && !items.some(it => it.type === 'shield')) {
+            type = 'shield';
+            icon = 'shield';
+        } else if (r < 0.33 && magnetTimer <= 0 && !items.some(it => it.type === 'magnet')) {
+            type = 'magnet';
+            icon = 'magnet';
+        } else if (r < 0.38 && lives < 3 && !items.some(it => it.type === 'heart')) {
+            type = 'heart';
+            icon = 'heart';
+        } else if (r < 0.62) {
+            type = 'hazard';
+            icon = Math.random() > 0.5 ? 'mine' : 'net';
+        }
+
+        const zoneBonus = cleanliness >= 75 ? 0.9 : (cleanliness >= 45 ? 0.45 : 0);
+        const baseSpeed = isPortrait ? 2.5 : 2.9;
+        items.push({
+            x,
+            y: -35,
+            type,
+            icon,
+            vy: baseSpeed + Math.random() * 1.3 + zoneBonus,
+            sway: Math.random() * Math.PI * 2
+        });
+    }
+
+    function addFloatText(x, y, text, color) {
+        floatTexts.push({ x, y, text, color, life: 1 });
+    }
+
+    function addBurst(x, y, color, count = 14) {
+        if (reducedMotion.matches) count = Math.min(3, count);
+        for (let i = 0; i < count; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const spd = Math.random() * 4 + 1;
+            particles.push({
+                x, y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd,
+                color,
+                life: 1
+            });
+        }
+    }
+
+    function openQuizModal() {
+        if (qIndex >= activeQuestions.length) return;
+        paused = true;
+        const qObj = activeQuestions[qIndex];
+        document.getElementById('quiz-progress-tag').innerText = `CÂU HỎI ${qIndex + 1}/${activeQuestions.length} • ${getZoneName().toUpperCase()}`;
+        document.getElementById('quiz-question').innerText = qObj.q;
+
+        const bannerEl = document.getElementById('next-banner');
+        bannerEl.style.display = 'none';
+        bannerEl.classList.remove('warn-banner');
+
+        const optsBox = document.getElementById('quiz-options');
+        optsBox.innerHTML = '';
+
+        // Xáo trộn vị trí 3 đáp án A / B / C
+        const mapped = qObj.a.map((text, idx) => ({
+            text,
+            isCorrect: idx === qObj.c
+        }));
+        const shuffledOpts = shuffleArray(mapped);
+        const letters = ['A', 'B', 'C'];
+
+        shuffledOpts.forEach((optItem, sIdx) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            btn.setAttribute('aria-label', letters[sIdx] + '. ' + optItem.text);
+            btn.innerHTML = `
+                <span class="opt-letter">${letters[sIdx]}</span>
+                <span class="opt-text">${optItem.text}</span>
+                <span class="opt-mark"></span>
+            `;
+            btn.onclick = () => handleQuizAnswer(optItem.isCorrect, btn, shuffledOpts, qObj);
+            optsBox.appendChild(btn);
+        });
+
+        document.getElementById('quiz-modal').scrollTop = 0;
+        document.getElementById('quiz-modal').style.display = 'flex';
+    }
+
+    function handleQuizAnswer(isCorrect, btn, shuffledOpts, qObj) {
+        const allBtns = document.querySelectorAll('.quiz-opt');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.querySelector('.opt-mark').innerText = '✓';
+            correctAnswers++;
+            score += 30;
+            cleanliness = Math.min(100, cleanliness + 10);
+            sonarCharge = Math.min(100, sonarCharge + 40);
+            playSound('correct');
+            launchFireworks(5);
+            document.getElementById('next-banner-title').innerText = "Chính xác! (+30 điểm • +10% Biển Xanh • +40% Sonar)";
+        } else {
+            btn.classList.add('wrong');
+            btn.querySelector('.opt-mark').innerText = '✕';
+            shuffledOpts.forEach((item, idx) => {
+                if (item.isCorrect) {
+                    allBtns[idx].classList.add('correct');
+                    allBtns[idx].querySelector('.opt-mark').innerText = '✓';
+                }
+            });
+            document.getElementById('next-banner').classList.add('warn-banner');
+            playSound('hit');
+            launchFireworks(2);
+            document.getElementById('next-banner-title').innerText = "Đáp án đúng đã được làm nổi bật màu xanh!";
+        }
+
+        document.getElementById('next-banner-fact').innerText = `Kiến thức môi trường: ${qObj.fact}`;
+        document.getElementById('btn-continue-dive').innerText =
+            (pearlsSolved + 1 >= activeQuestions.length || cleanliness >= 100)
+                ? "Xem tổng kết hành trình"
+                : "Tiếp tục lặn & chuyển câu tiếp theo ▶";
+        document.getElementById('next-banner').style.display = 'block';
+
+        pearlsSolved++;
+        qIndex++;
+        updateHUD();
+    }
+
+    function continueAfterQuiz() {
+        document.getElementById('quiz-modal').style.display = 'none';
+        paused = false;
+        if (pearlsSolved >= activeQuestions.length || cleanliness >= 100) {
+            endGame(true);
+        }
+    }
+
+    function startGame() {
+        initAudio();
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('quiz-modal').style.display = 'none';
+        document.getElementById('action-bar').style.display = 'flex';
+
+        voyage++;
+        activeQuestions = shuffleArray(questionBank).slice(0, selectedQuestionCount);
+        window.nsGame && nsGame.start();
+
+        score = 0;
+        lives = 3;
+        cleanliness = 20;
+        pearlsSolved = 0;
+        correctAnswers = 0;
+        qIndex = 0;
+        combo = 1;
+        sonarCharge = 0;
+        magnetTimer = 0;
+        hasShield = false;
+        items = [];
+        particles = [];
+        floatTexts = [];
+        fireworks = [];
+        sonarWaves = [];
+        subX = viewW / 2;
+        gameActive = true;
+        paused = false;
+
+        initDecor();
+        updateHUD();
+        if (animId) cancelAnimationFrame(animId);
+        loop();
+    }
+
+    function endGame(victory) {
+        gameActive = false;
+        if (victory) {
+            playSound('win');
+            launchFireworks(7);
+            celebrationUntil = reducedMotion.matches ? 0 : performance.now() + 1900;
+        }
+        document.getElementById('action-bar').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'flex';
+        document.getElementById('end-title').innerText = victory
+            ? 'ĐẠI DƯƠNG ĐÃ XANH TRỞ LẠI!'
+            : 'TÀU NGẦM CẦN BẢO TRÌ!';
+        document.getElementById('end-summary').innerText =
+            `Tổng điểm: ${score} • Độ sạch đại dương: ${cleanliness}% (${getZoneName()}) • Trả lời đúng: ${correctAnswers}/${pearlsSolved} câu hỏi`;
+        window.nsGame && nsGame.result({ game: 'tau-ngam', score: score, correct: correctAnswers, answered: pearlsSolved, total: activeQuestions.length, victory: !!victory });
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        if (!gameActive || paused || touchDrag.active) return;
+        subX = Math.min(Math.max(e.clientX, 45), viewW - 45);
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+        if (!gameActive || paused || e.touches.length === 0) return;
+        touchDrag.active = true;
+        touchDrag.lastX = e.touches[0].clientX;
+        subX = Math.min(Math.max(e.touches[0].clientX, 45), viewW - 45);
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (!gameActive || paused || !touchDrag.active || e.touches.length === 0) return;
+        const dx = e.touches[0].clientX - touchDrag.lastX;
+        touchDrag.lastX = e.touches[0].clientX;
+        subX = Math.min(Math.max(subX + dx * 1.15, 45), viewW - 45);
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', () => { touchDrag.active = false; }, { passive: true });
+
+    function bindPad(id, prop) {
+        const el = document.getElementById(id);
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[prop] = true; }, { passive: false });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); keys[prop] = false; }, { passive: false });
+        el.addEventListener('touchcancel', () => { keys[prop] = false; });
+        el.addEventListener('mousedown', () => keys[prop] = true);
+        el.addEventListener('mouseup', () => keys[prop] = false);
+        el.addEventListener('mouseleave', () => keys[prop] = false);
+    }
+    bindPad('m-left', 'left');
+    bindPad('m-right', 'right');
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+        if (e.code === 'Space' && gameActive && !paused) {
+            e.preventDefault();
+            triggerSonar();
+        }
+    });
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+    });
+
+    // Chỉ xây lại địa hình khi độ sạch hoặc kích thước khung chơi thay đổi.
+    function drawSeafloor(brush) {
+        const reef = cleanliness >= 45 && cleanliness < 75;
+        const abyss = cleanliness >= 75;
+        const clarity = cleanliness / 100;
+        const sea = brush.createLinearGradient(0, 0, 0, viewH);
+        sea.addColorStop(0, 'rgb(21,' + Math.round(73 + clarity * 65) + ',' + Math.round(103 + clarity * 48) + ')');
+        sea.addColorStop(.62, abyss ? '#16375b' : reef ? '#17546a' : '#244962');
+        sea.addColorStop(1, '#142d48');
+        brush.fillStyle = sea;
+        brush.fillRect(0, 0, viewW, viewH);
+        brush.fillStyle = abyss ? '#a2d6dd0c' : '#c5e9d916';
+        for (let i = 0; i < 5; i++) {
+            const x = viewW * (i + .5) / 5;
+            brush.beginPath();
+            brush.moveTo(x, 0);
+            brush.lineTo(x + viewW * .09, 0);
+            brush.lineTo(x - viewW * .12, viewH * .8);
+            brush.closePath();
+            brush.fill();
+        }
+        for (let band = 0; band < 3; band++) {
+            brush.fillStyle = ['#306077', '#23475e', '#19344c'][band];
+            brush.beginPath();
+            brush.moveTo(0, viewH);
+            for (let i = 0; i <= 36; i++) {
+                const t = i / 36;
+                const ridge = abyss ? Math.abs(t - .5) * .42 : reef ? .08 * Math.abs(Math.sin(t * 10)) : .04 * Math.cos(t * 8);
+                brush.lineTo(t * viewW, viewH * (.89 + band * .046 - ridge + .019 * Math.sin(t * 19 + band)));
+            }
+            brush.lineTo(viewW, viewH);
+            brush.fill();
+        }
+        const count = Math.max(7, Math.round(viewW / 65));
+        for (let i = 0; i < count; i++) {
+            const x = (i + .3) / count * viewW;
+            const size = Math.min(viewH * .17, 64 + (i * 37 % 70));
+            const type = abyss ? 'vent' : reef && i % 4 !== 0 ? 'coral' : 'kelp';
+            const floor = abyss ? viewH * (1 - .23 * Math.abs(2 * x / viewW - 1)) : viewH;
+            drawSprite(brush, art.sprites[type], x, floor - size * .3, size, size, '⋔');
+        }
+        if (abyss) {
+            brush.fillStyle = '#97ded5';
+            for (let i = 0; i < 34; i++) {
+                const x = viewW * ((i * 157) % 97) / 97;
+                brush.beginPath();
+                brush.arc(x, viewH * (.71 + .23 * ((i * 29) % 41) / 41), 1 + i % 2, 0, Math.PI * 2);
+                brush.fill();
+            }
+        }
+    }
+
+    function drawBackground() {
+        paintSeafloor(ctx, viewW, viewH, cleanliness, drawSeafloor);
+        const visibleFish = Math.max(3, Math.floor((cleanliness / 100) * fishes.length));
+        for (let i = 0; i < visibleFish; i++) {
+            const f = fishes[i];
+            f.x += f.sp * f.dir;
+            if (f.x > viewW + 30) f.x = -30;
+            if (f.x < -30) f.x = viewW + 30;
+
+            ctx.save();
+            ctx.translate(f.x, f.y + Math.sin(tick * 0.04 + i) * 4);
+            ctx.scale(f.dir, 1);
+            drawSprite(ctx, art.sprites.fish, 0, 0, f.size * 3, f.size * 3, '›');
+            ctx.restore();
+        }
+
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.45)';
+        bubbles.forEach(b => {
+            b.y -= b.sp;
+            if (b.y < -10) {
+                b.y = viewH + 10;
+                b.x = Math.random() * viewW;
+            }
+            ctx.beginPath();
+            ctx.arc(b.x + Math.sin(tick * 0.03 + b.y * 0.02) * 3, b.y, b.r, 0, Math.PI * 2);
+            ctx.stroke();
+        });
+    }
+
+    function drawSubmarine() {
+        const scale = isPortrait ? 0.85 : 1;
+        ctx.save();
+        ctx.translate(subX, subY);
+        ctx.scale(scale, scale);
+
+        if (magnetTimer > 0) {
+            ctx.beginPath();
+            ctx.arc(0, -10, 95 + Math.sin(tick * 0.15) * 6, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+            ctx.setLineDash([6, 6]);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        const beam = ctx.createLinearGradient(0, -10, 0, -170);
+        beam.addColorStop(0, 'rgba(56, 249, 215, 0.25)');
+        beam.addColorStop(1, 'transparent');
+        ctx.fillStyle = beam;
+        ctx.beginPath();
+        ctx.moveTo(-18, -15);
+        ctx.lineTo(18, -15);
+        ctx.lineTo(65, -170);
+        ctx.lineTo(-65, -170);
+        ctx.closePath();
+        ctx.fill();
+
+        drawSprite(ctx, art.sprites.submarine, 0, -5, 114, 87, '◉');
+
+        if (hasShield) {
+            ctx.beginPath();
+            ctx.ellipse(0, -4, 56, 36 + Math.sin(tick * 0.12) * 2, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(56, 249, 215, 0.85)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+
+    const itemMarks = {trash: '+', pearl: '?', shield: '◇', magnet: 'U', heart: '♥', hazard: '!'};
+    function drawItem(item) {
+        const size = isPortrait ? 39 : 45;
+        drawSprite(ctx, art.sprites[item.icon], item.x, item.y, size, size, itemMarks[item.type]);
+    }
+
+    function loop() {
+        if (!gameActive) {
+            drawFireworks();
+            if (fireworks.length || performance.now() < celebrationUntil) animId = requestAnimationFrame(loop);
+            return;
+        }
+
+        ctx.save();
+        if (shakeTime > 0) {
+            const mag = shakeTime * 0.7;
+            ctx.translate((Math.random() - 0.5) * mag, (Math.random() - 0.5) * mag);
+            shakeTime--;
+        }
+
+        if (!paused) {
+            tick++;
+            if (magnetTimer > 0) {
+                magnetTimer--;
+                if (magnetTimer === 0) updateHUD();
+            }
+            const step = isPortrait ? 7 : 8.5;
+            if (keys.left) subX = Math.max(45, subX - step);
+            if (keys.right) subX = Math.min(viewW - 45, subX + step);
+
+            if (tick % (isPortrait ? 38 : 32) === 0) {
+                spawnItem();
+            }
+        }
+
+        drawBackground();
+        drawSubmarine();
+
+        for (let si = sonarWaves.length - 1; si >= 0; si--) {
+            const sw = sonarWaves[si];
+            sw.r += 16;
+            sw.life -= 0.025;
+            if (sw.life <= 0) {
+                sonarWaves.splice(si, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = sw.life;
+            ctx.strokeStyle = '#fde047';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        for (let i = items.length - 1; i >= 0; i--) {
+            const it = items[i];
+            if (!paused) {
+                it.y += it.vy;
+                it.x += Math.sin(tick * 0.04 + it.sway) * 0.7;
+
+                if (magnetTimer > 0 && it.type === 'trash') {
+                    const dx = subX - it.x;
+                    const dy = subY - it.y;
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < 240 && dist > 1) {
+                        it.x += (dx / dist) * 5.2;
+                        it.y += (dy / dist) * 5.2;
+                    }
+                }
+            }
+
+            if (['pearl', 'shield', 'magnet', 'heart'].includes(it.type)) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(it.x, it.y, 24 + Math.sin(tick * 0.12) * 4, 0, Math.PI * 2);
+                ctx.fillStyle = it.type === 'pearl' ? 'rgba(56, 249, 215, 0.25)' : 'rgba(250, 204, 21, 0.22)';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            drawItem(it);
+
+            if (!paused && Math.abs(it.x - subX) < 46 && Math.abs(it.y - subY) < 34) {
+                items.splice(i, 1);
+                if (it.type === 'trash') {
+                    const gained = 10 * combo;
+                    score += gained;
+                    cleanliness = Math.min(100, cleanliness + 3);
+                    sonarCharge = Math.min(100, sonarCharge + 15);
+                    combo = Math.min(combo + 1, 4);
+                    playSound('pickup');
+                    addBurst(it.x, it.y, '#38f9d7', 12);
+                    addFloatText(it.x, it.y - 12, `+${gained} (x${combo})`, '#38f9d7');
+                    updateHUD();
+                    if (cleanliness >= 100) endGame(true);
+                } else if (it.type === 'pearl') {
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#fde047', 18);
+                    openQuizModal();
+                } else if (it.type === 'shield') {
+                    hasShield = true;
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#60a5fa', 16);
+                    addFloatText(it.x, it.y - 12, 'KHIÊN BẢO VỆ', '#93c5fd');
+                    updateHUD();
+                } else if (it.type === 'magnet') {
+                    magnetTimer = 420;
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#fde047', 16);
+                    addFloatText(it.x, it.y - 12, 'NAM CHÂM HÚT RÁC', '#fde047');
+                    updateHUD();
+                } else if (it.type === 'heart') {
+                    lives = Math.min(3, lives + 1);
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#f472b6', 16);
+                    addFloatText(it.x, it.y - 12, 'HỒI PHỤC +1', '#f9a8d4');
+                    updateHUD();
+                } else if (it.type === 'hazard') {
+                    if (hasShield) {
+                        hasShield = false;
+                        playSound('pickup');
+                        addBurst(it.x, it.y, '#38f9d7', 18);
+                        addFloatText(it.x, it.y - 12, 'KHIÊN ĐÃ CHẶN!', '#38f9d7');
+                    } else {
+                        lives--;
+                        combo = 1;
+                        shakeTime = reducedMotion.matches ? 0 : 12;
+                        cleanliness = Math.max(0, cleanliness - 5);
+                        playSound('hit');
+                        addBurst(it.x, it.y, '#ef4444', 18);
+                        addFloatText(it.x, it.y - 12, 'VA CHẠM! -1', '#f87171');
+                    }
+                    updateHUD();
+                    if (lives <= 0) endGame(false);
+                }
+                continue;
+            }
+
+            if (it.y > viewH + 35) {
+                if (!paused && it.type === 'trash' && combo > 1) {
+                    combo = 1;
+                    updateHUD();
+                }
+                items.splice(i, 1);
+            }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.03;
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        for (let i = floatTexts.length - 1; i >= 0; i--) {
+            const ft = floatTexts[i];
+            ft.y -= 1.3;
+            ft.life -= 0.025;
+            if (ft.life <= 0) {
+                floatTexts.splice(i, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = ft.life;
+            ctx.font = 'bold 18px "Be Vietnam Pro", "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = ft.color;
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.restore();
+        }
+
+        ctx.restore();
+        drawFireworks();
+        animId = requestAnimationFrame(loop);
+    }
+</script>
+</body>
+</html>

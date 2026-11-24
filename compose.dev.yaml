@@ -1,0 +1,20 @@
+# Dev có hot-reload: docker compose -f compose.dev.yaml up --build
+services:
+  web:
+    build:
+      context: .
+      target: dev
+    container_name: nga-son-hoc-tap-dev
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_PATH: /app/data/app.db
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+      - ./data:/app/data

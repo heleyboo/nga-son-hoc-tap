@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" fill="none">
+<title>Chiến cơ hai động cơ với kính lái xanh và cánh chớp cam</title>
+<defs>
+  <linearGradient id="hull" x2=".45" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#fff7da"/><stop offset=".55" stop-color="#edf6fa"/><stop offset="1" stop-color="#8ca9cf"/></linearGradient>
+  <linearGradient id="glass" x2=".6" y2="1"><stop stop-color="#a0fff2"/><stop offset=".45" stop-color="#33c8df"/><stop offset="1" stop-color="#30659c"/></linearGradient>
+  <linearGradient id="flame"><stop stop-color="#ff853f" stop-opacity="0"/><stop offset=".6" stop-color="#ffb648"/><stop offset="1" stop-color="#fff6b1"/></linearGradient>
+</defs>
+<g fill="url(#flame)"><path d="m4 63 99 6 2 20-91-10 58-3z"/><path d="m2 184 102-13 3 19-85 12 40-13z"/><path d="m18 125 88-15v29z"/></g>
+<g stroke="#173764" stroke-width="3.8" stroke-linejoin="round">
+  <path d="m190 107-88-88-40-4 47 90z" fill="url(#hull)"/>
+  <path d="m70 27 25 3 59 67-21-1z" fill="#5268bd" stroke="none"/>
+  <path d="m68 18 29 3 12 13-34-3z" fill="#ff9861" stroke="none"/>
+  <path d="m80 64 85 16 28 21-103-9-16-10z" fill="#455e95"/>
+  <path d="m86 63 66 11 16 10-80-9z" fill="#ffb36a" stroke="none"/>
+  <path d="m98 96 54-3 85 3q46 1 85 16l23 10-25 9q-38 13-99 18l-94 5-38-15 1-26z" fill="url(#hull)"/>
+  <path d="m101 119 82 9 149-6-31 12-107 16-72-2-28-13z" fill="#859ac5" stroke="none"/>
+  <path d="m145 126-74 95 41-6 116-81z" fill="url(#hull)"/>
+  <path d="m80 213 27-5 87-68-31 9z" fill="#4456a4" stroke="none"/>
+  <path d="m81 209 31-6 15-12-31 4z" fill="#ff9861" stroke="none"/>
+  <path d="m77 172 69-12 34-20-16 24-25 15-59 15-9-6z" fill="#4d659d"/>
+  <path d="m81 173 71-16-16 11-57 14z" fill="#ffb36a" stroke="none"/>
+  <path d="m97 107 29-9 38 6-16 7-38 3-2 19-15-4z" fill="#46598f"/>
+  <path d="m194 100 33-15q34-2 66 18l11 9-34 4-47-1-33-4z" fill="url(#glass)"/>
+  <path d="m218 96 14-6q21 0 32 5l-32 8-17 1z" fill="#d7ffed" stroke="none"/>
+  <path d="m268 95-2 18m-68 7 23 3 74-4" stroke-width="2.5"/>
+  <path d="m141 118 16-4 13 4-13 4z" fill="#ff9c50" stroke-width="1.6"/>
+  <path d="m296 130 15-3m-189 7 11 3m-20-5 4 1" stroke-width="2"/>
+</g>
+</svg>

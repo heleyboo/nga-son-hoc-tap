@@ -1,0 +1,2720 @@
+[
+  {
+    "code": "6-CB-001",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tập hợp N* bao gồm các số nào?",
+    "options": [
+      "Các số tự nhiên bắt đầu từ 0",
+      "Các số tự nhiên khác 0",
+      "Chỉ gồm các số lẻ",
+      "Chỉ gồm các số chẵn"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 6"
+  },
+  {
+    "code": "6-CB-002",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số nào sau đây chia hết cho cả 2 và 5?",
+    "options": [
+      "12",
+      "25",
+      "30",
+      "43"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 6"
+  },
+  {
+    "code": "6-CB-003",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Kết quả của phép tính 2^3 là?",
+    "options": [
+      "6",
+      "8",
+      "9",
+      "5"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 6"
+  },
+  {
+    "code": "6-CB-004",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số nguyên âm nhỏ hơn 0 đúng hay sai?",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN 6"
+  },
+  {
+    "code": "6-CB-005",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Hình nào sau đây có 4 cạnh bằng nhau và 4 góc vuông?",
+    "options": [
+      "Hình chữ nhật",
+      "Hình thoi",
+      "Hình vuông",
+      "Hình bình hành"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 6"
+  },
+  {
+    "code": "6-CB-006",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Truyện 'Thánh Gióng' thuộc thể loại dân gian nào?",
+    "options": [
+      "Cổ tích",
+      "Truyền thuyết",
+      "Thần thoại",
+      "Ngụ ngôn"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 6"
+  },
+  {
+    "code": "6-CB-007",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Từ nào sau đây là từ phức?",
+    "options": [
+      "Nhà",
+      "Xe",
+      "Học sinh",
+      "Ăn"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 6"
+  },
+  {
+    "code": "6-CB-008",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Nhân vật Cám trong truyện cổ tích 'Tấm Cám' là nhân vật thuộc tuyến nào?",
+    "options": [
+      "Tuyến chính nghĩa",
+      "Tuyến phản diện",
+      "Nhân vật thần kỳ",
+      "Nhân vật dũng sĩ"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 6"
+  },
+  {
+    "code": "6-CB-009",
+    "grade": 6,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Đơn vị đo độ dài trong hệ thống đo lường hợp pháp của Việt Nam là gì?",
+    "options": [
+      "Mét (m)",
+      "Gam (g)",
+      "Lít (l)",
+      "Giây (s)"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "KHTN 6"
+  },
+  {
+    "code": "6-CB-010",
+    "grade": 6,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Khí nào chiếm thể tích lớn nhất trong không khí?",
+    "options": [
+      "Khí Oxi",
+      "Khí Nitơ",
+      "Khí Cacbonic",
+      "Khí Hiđrô"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 6"
+  },
+  {
+    "code": "6-CB-011",
+    "grade": 6,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Trạng thái nào KHÔNG phải là trạng thái cơ bản của chất?",
+    "options": [
+      "Rắn",
+      "Lỏng",
+      "Khí",
+      "Dẻo"
+    ],
+    "answerIndex": 3,
+    "explanation": null,
+    "legacyLabel": "KHTN 6"
+  },
+  {
+    "code": "6-CB-012",
+    "grade": 6,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Tế bào là đơn vị cơ sở của?",
+    "options": [
+      "Chất vô cơ",
+      "Mọi cơ thể sống",
+      "Đá vôi",
+      "Kim loại"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 6"
+  },
+  {
+    "code": "6-CB-013",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Từ nào dùng để hỏi về tuổi?",
+    "options": [
+      "What",
+      "Where",
+      "How old",
+      "When"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 6"
+  },
+  {
+    "code": "6-CB-014",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "She ______ to school every day.",
+    "options": [
+      "go",
+      "goes",
+      "going",
+      "went"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 6"
+  },
+  {
+    "code": "6-CB-015",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Từ trái nghĩa với 'Big' là?",
+    "options": [
+      "Tall",
+      "Small",
+      "Short",
+      "Long"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 6"
+  },
+  {
+    "code": "6-CB-016",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Trái Đất là hành tinh thứ mấy tính từ Mặt Trời ra?",
+    "options": [
+      "Thứ 2",
+      "Thứ 3",
+      "Thứ 4",
+      "Thứ 5"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 6"
+  },
+  {
+    "code": "6-CB-017",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Thành tựu văn hóa nổi bật của người Việt cổ thời Văn Lang - Âu Lạc là?",
+    "options": [
+      "Trống đồng Đông Sơn",
+      "Chùa Một Cột",
+      "Tháp Chàm",
+      "Kinh thành Huế"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 6"
+  },
+  {
+    "code": "6-CB-018",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "Thiết bị nào sau đây là thiết bị vào (Input)?",
+    "options": [
+      "Màn hình",
+      "Bàn phím",
+      "Máy in",
+      "Loa"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 6"
+  },
+  {
+    "code": "6-CB-019",
+    "grade": 6,
+    "level": "basic",
+    "subject": "GDCD",
+    "topic": null,
+    "content": "Hành vi nào thể hiện sự tôn trọng kỉ luật?",
+    "options": [
+      "Đi học muộn",
+      "Xả rác bừa bãi",
+      "Nộp bài đúng hạn",
+      "Nói chuyện trong giờ"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "GDCD 6"
+  },
+  {
+    "code": "6-CB-020",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Hình có 3 cạnh bằng nhau và 3 góc bằng nhau là?",
+    "options": [
+      "Tam giác cân",
+      "Tam giác vuông",
+      "Tam giác đều",
+      "Tam giác thường"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 6"
+  },
+  {
+    "code": "6-CB-021",
+    "grade": 6,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Dụng cụ nào dùng để đo nhiệt độ?",
+    "options": [
+      "Cân",
+      "Thước",
+      "Nhiệt kế",
+      "Đồng hồ"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "KHTN 6"
+  },
+  {
+    "code": "6-CB-022",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Trong câu 'Mặt trời mọc ở hướng Đông', 'Mặt trời' đóng vai trò là gì?",
+    "options": [
+      "Chủ ngữ",
+      "Vị ngữ",
+      "Trạng ngữ",
+      "Tân ngữ"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 6"
+  },
+  {
+    "code": "6-CB-023",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Số 20 trong tiếng Anh viết là?",
+    "options": [
+      "Twelve",
+      "Twenty",
+      "Thirteen",
+      "Ten"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 6"
+  },
+  {
+    "code": "6-CB-024",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Kinh tuyến 0 độ đi qua đài thiên văn Greenwich thuộc quốc gia nào?",
+    "options": [
+      "Pháp",
+      "Mỹ",
+      "Anh",
+      "Nga"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 6"
+  },
+  {
+    "code": "6-CB-025",
+    "grade": 6,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "1 Byte bằng bao nhiêu Bit?",
+    "options": [
+      "2 Bit",
+      "8 Bit",
+      "10 Bit",
+      "1024 Bit"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 6"
+  },
+  {
+    "code": "6-NC-001",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tìm số nguyên n để (n+3) chia hết cho (n+1)?",
+    "options": [
+      "n=0",
+      "n=1",
+      "n=0 và n=1",
+      "n=2"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-002",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số dư khi chia 2^100 cho 7 là?",
+    "options": [
+      "1",
+      "2",
+      "4",
+      "0"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-003",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Tại sao cốc thủy tinh dày dễ vỡ hơn cốc mỏng khi rót nước sôi?",
+    "options": [
+      "Do cốc dày cứng hơn",
+      "Sự giãn nở nhiệt không đều giữa trong và ngoài",
+      "Cốc dày chứa nhiều tạp chất",
+      "Cốc mỏng truyền nhiệt nhanh hơn"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 6 NC"
+  },
+  {
+    "code": "6-NC-004",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Find the word with different stress: 'English, Student, Teacher, Maintain'",
+    "options": [
+      "English",
+      "Student",
+      "Teacher",
+      "Maintain"
+    ],
+    "answerIndex": 3,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "6-NC-005",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Ước chung lớn nhất của 2n+1 và 6n+5 là?",
+    "options": [
+      "1",
+      "2",
+      "n",
+      "3"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-006",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Hành tinh nào có kích thước gần giống Trái Đất nhất?",
+    "options": [
+      "Sao Hỏa",
+      "Sao Kim",
+      "Sao Thủy",
+      "Sao Thổ"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 6 NC"
+  },
+  {
+    "code": "6-NC-007",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "I ______ to school since I was six.",
+    "options": [
+      "go",
+      "went",
+      "have gone",
+      "has gone"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "6-NC-008",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số nguyên tố chẵn duy nhất là?",
+    "options": [
+      "0",
+      "2",
+      "4",
+      "6"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-009",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tổng các số nguyên x thỏa mãn -5 < x < 5 là?",
+    "options": [
+      "10",
+      "5",
+      "0",
+      "-5"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-010",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Tế bào nào dài nhất trong cơ thể người?",
+    "options": [
+      "Tế bào cơ",
+      "Tế bào xương",
+      "Tế bào thần kinh",
+      "Tế bào máu"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "KHTN 6 NC"
+  },
+  {
+    "code": "6-NC-011",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "They ______ for 2 hours.",
+    "options": [
+      "sleep",
+      "is sleeping",
+      "have been sleeping",
+      "has slept"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "6-NC-012",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Một hình vuông có cạnh tăng gấp đôi thì diện tích tăng gấp mấy lần?",
+    "options": [
+      "2",
+      "4",
+      "8",
+      "16"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-013",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Chất nào chiếm tỉ lệ thể tích lớn nhất trong không khí?",
+    "options": [
+      "Oxy",
+      "Nitơ",
+      "Cacbonic",
+      "Argon"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 6 NC"
+  },
+  {
+    "code": "6-NC-014",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Kết quả phép tính: 1 - 2 + 3 - 4 + ... + 99 - 100 là?",
+    "options": [
+      "50",
+      "-50",
+      "100",
+      "-100"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 6"
+  },
+  {
+    "code": "6-NC-015",
+    "grade": 6,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Which is a synonym of 'Stupid'?",
+    "options": [
+      "Smart",
+      "Bright",
+      "Dense",
+      "Clever"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "7-CB-001",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Giá trị tuyệt đối của số -15 là bao nhiêu?",
+    "options": [
+      "-15",
+      "0",
+      "15",
+      "150"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 7"
+  },
+  {
+    "code": "7-CB-002",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Trong tam giác ABC, tổng số đo ba góc bằng bao nhiêu độ?",
+    "options": [
+      "90°",
+      "180°",
+      "360°",
+      "120°"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 7"
+  },
+  {
+    "code": "7-CB-003",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số nào sau đây là số vô tỉ?",
+    "options": [
+      "1/2",
+      "0.5",
+      "√2",
+      "3"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 7"
+  },
+  {
+    "code": "7-CB-004",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Nếu y tỉ lệ thuận với x theo hệ số k thì công thức biểu diễn là?",
+    "options": [
+      "y = k/x",
+      "y = k.x",
+      "x = y.k",
+      "y = x + k"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 7"
+  },
+  {
+    "code": "7-CB-005",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Hai đường thẳng vuông góc tạo thành góc có số đo là?",
+    "options": [
+      "45°",
+      "60°",
+      "90°",
+      "180°"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 7"
+  },
+  {
+    "code": "7-CB-006",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Bài thơ 'Sông núi nước Nam' được coi là gì của dân tộc?",
+    "options": [
+      "Tuyên ngôn độc lập đầu tiên",
+      "Bản thiên cổ hùng văn",
+      "Bài ca khải hoàn",
+      "Truyện thơ dân gian"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 7"
+  },
+  {
+    "code": "7-CB-007",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Trong các từ sau, từ nào là từ Hán Việt?",
+    "options": [
+      "Xe đạp",
+      "Bút chì",
+      "Thiên nhiên",
+      "Cây cối"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 7"
+  },
+  {
+    "code": "7-CB-008",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Yếu tố nào đóng vai trò quan trọng nhất trong văn bản biểu cảm?",
+    "options": [
+      "Sự kiện",
+      "Cảm xúc, tình cảm",
+      "Lý luận",
+      "Nhân vật"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 7"
+  },
+  {
+    "code": "7-CB-009",
+    "grade": 7,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Tốc độ chuyển động của vật được tính bằng công thức nào?",
+    "options": [
+      "v = s / t",
+      "v = s . t",
+      "v = t / s",
+      "v = s + t"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "KHTN 7"
+  },
+  {
+    "code": "7-CB-010",
+    "grade": 7,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Đơn vị đo tần số của âm thanh là gì?",
+    "options": [
+      "Đềxiben (dB)",
+      "Héc (Hz)",
+      "Mét trên giây (m/s)",
+      "Giây (s)"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 7"
+  },
+  {
+    "code": "7-CB-011",
+    "grade": 7,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Hiện tượng phản xạ ánh sáng xảy ra rõ nhất trên bề mặt nào?",
+    "options": [
+      "Mặt đường nhựa",
+      "Gương phẳng",
+      "Tờ giấy trắng",
+      "Bức tường gạch"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 7"
+  },
+  {
+    "code": "7-CB-012",
+    "grade": 7,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Quá trình quang hợp ở cây xanh tạo ra khí nào sau đây?",
+    "options": [
+      "Cacbonic",
+      "Oxi",
+      "Nitơ",
+      "Mêtan"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 7"
+  },
+  {
+    "code": "7-CB-013",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Cấu trúc 'used to + V' dùng để diễn tả điều gì?",
+    "options": [
+      "Thói quen ở hiện tại",
+      "Thói quen trong quá khứ",
+      "Hành động sắp xảy ra",
+      "Sở thích tương lai"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 7"
+  },
+  {
+    "code": "7-CB-014",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Lựa chọn từ đúng: 'He is ______ than his brother.'",
+    "options": [
+      "tall",
+      "taller",
+      "tallest",
+      "more tall"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 7"
+  },
+  {
+    "code": "7-CB-015",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Thì Hiện tại hoàn thành dùng trợ động từ nào?",
+    "options": [
+      "Do/Does",
+      "Did",
+      "Have/Has",
+      "Will"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 7"
+  },
+  {
+    "code": "7-CB-016",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Ngô Quyền đánh tan quân Nam Hán trên sông Bạch Đằng vào năm nào?",
+    "options": [
+      "938",
+      "1010",
+      "1288",
+      "1428"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 7"
+  },
+  {
+    "code": "7-CB-017",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Châu châu nào có diện tích nhỏ nhất thế giới?",
+    "options": [
+      "Châu Á",
+      "Châu Âu",
+      "Châu Đại Dương",
+      "Châu Phi"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 7"
+  },
+  {
+    "code": "7-CB-018",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "Trong phần mềm bảng tính Excel, giao của một hàng và một cột gọi là gì?",
+    "options": [
+      "Khối",
+      "Ô",
+      "Bảng",
+      "Trang tính"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 7"
+  },
+  {
+    "code": "7-CB-019",
+    "grade": 7,
+    "level": "basic",
+    "subject": "GDCD",
+    "topic": null,
+    "content": "Truyền thống nào thể hiện đạo lý nhớ ơn nguồn gốc, người đi trước?",
+    "options": [
+      "Uống nước nhớ nguồn",
+      "Tôn sư trọng đạo",
+      "Lá lành đùm lá rách",
+      "Yêu thương con người"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "GDCD 7"
+  },
+  {
+    "code": "7-CB-020",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tam giác có hai cạnh bằng nhau là tam giác gì?",
+    "options": [
+      "Tam giác đều",
+      "Tam giác vuông",
+      "Tam giác cân",
+      "Tam giác vuông cân"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 7"
+  },
+  {
+    "code": "7-CB-021",
+    "grade": 7,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Âm thanh truyền nhanh nhất trong môi trường nào?",
+    "options": [
+      "Chân không",
+      "Chất khí",
+      "Chất lỏng",
+      "Chất rắn"
+    ],
+    "answerIndex": 3,
+    "explanation": null,
+    "legacyLabel": "KHTN 7"
+  },
+  {
+    "code": "7-CB-022",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Thành ngữ 'Thất bại là mẹ thành công' khuyên chúng ta điều gì?",
+    "options": [
+      "Nên chấp nhận thất bại",
+      "Kiên trì, không nản lòng",
+      "Tránh làm việc khó",
+      "Luôn tin vào may mắn"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 7"
+  },
+  {
+    "code": "7-CB-023",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Which subject studies numbers and shapes?",
+    "options": [
+      "English",
+      "History",
+      "Maths",
+      "Biology"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 7"
+  },
+  {
+    "code": "7-CB-024",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Triều đại nào đã dời đô về Thăng Long năm 1010?",
+    "options": [
+      "Nhà Ngô",
+      "Nhà Đinh",
+      "Nhà Lý",
+      "Nhà Trần"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 7"
+  },
+  {
+    "code": "7-CB-025",
+    "grade": 7,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "Địa chỉ ô B5 nằm ở vị trí nào?",
+    "options": [
+      "Hàng B, Cột 5",
+      "Cột B, Hàng 5",
+      "Trang B, Ô 5",
+      "Cột 5, Hàng B"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 7"
+  },
+  {
+    "code": "7-NC-001",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tìm chữ số tận cùng của A = 2^1 + 2^2 + ... + 2^2024?",
+    "options": [
+      "0",
+      "2",
+      "4",
+      "6"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 7"
+  },
+  {
+    "code": "7-NC-002",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số dư khi chia 3^2024 cho 7 là?",
+    "options": [
+      "1",
+      "2",
+      "4",
+      "0"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 7"
+  },
+  {
+    "code": "7-NC-003",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Hardly _______ the office when the phone rang.",
+    "options": [
+      "had he left",
+      "he had left",
+      "did he leave",
+      "he left"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "7-NC-004",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Bút pháp nghệ thuật chủ đạo trong 'Sống chết mặc bay' là?",
+    "options": [
+      "Ẩn dụ",
+      "Tương phản và tăng cấp",
+      "Nhân hóa",
+      "Điệp ngữ"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN NC"
+  },
+  {
+    "code": "7-NC-005",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Chiếu tia sáng tới gương phẳng góc tới 30 độ. Góc hợp bởi tia tới và phản xạ?",
+    "options": [
+      "30",
+      "60",
+      "90",
+      "120"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 7 NC"
+  },
+  {
+    "code": "7-NC-006",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Giá trị nhỏ nhất của P = |x-1| + |x-2024| là?",
+    "options": [
+      "2023",
+      "2024",
+      "0",
+      "1"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 7"
+  },
+  {
+    "code": "7-NC-007",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "It is imperative that he _______ the project on time.",
+    "options": [
+      "finish",
+      "finishes",
+      "finished",
+      "must finish"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "7-NC-008",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Cho a/b = c/d. Khẳng định nào SAI?",
+    "options": [
+      "ad=bc",
+      "a/c=b/d",
+      "a+b=c+d",
+      "(a+b)/b=(c+d)/d"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 7"
+  },
+  {
+    "code": "7-NC-009",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Âm thanh KHÔNG truyền được trong môi trường nào?",
+    "options": [
+      "Nước",
+      "Nhôm",
+      "Chân không",
+      "Sắt"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "KHTN 7 NC"
+  },
+  {
+    "code": "7-NC-010",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Thành ngữ 'Gióng trống phất cờ' nói về ai?",
+    "options": [
+      "Hai Bà Trưng",
+      "Bà Triệu",
+      "Lý Bí",
+      "Quang Trung"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN NC"
+  },
+  {
+    "code": "7-NC-011",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Đa thức x^2 + 1 có bao nhiêu nghiệm thực?",
+    "options": [
+      "0",
+      "1",
+      "2",
+      "Vô số"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 7"
+  },
+  {
+    "code": "7-NC-012",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "The woman _______ lives next door is a teacher.",
+    "options": [
+      "who",
+      "whom",
+      "which",
+      "whose"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "7-NC-013",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Chiến thắng Bạch Đằng năm 1288 đánh bại quân xâm lược nào?",
+    "options": [
+      "Tống",
+      "Thanh",
+      "Nguyên",
+      "Minh"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 7"
+  },
+  {
+    "code": "7-NC-014",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": null,
+    "content": "Đơn vị của tần số dao động là?",
+    "options": [
+      "dB",
+      "Hz",
+      "m/s",
+      "s"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "KHTN 7 NC"
+  },
+  {
+    "code": "7-NC-015",
+    "grade": 7,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Giao điểm 3 đường cao của tam giác gọi là?",
+    "options": [
+      "Trọng tâm",
+      "Trực tâm",
+      "Tâm nội tiếp",
+      "Tâm ngoại tiếp"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 7"
+  },
+  {
+    "code": "8-CB-001",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Khai triển của hằng đẳng thức (a + b)^2 là?",
+    "options": [
+      "a^2 + b^2",
+      "a^2 + 2ab + b^2",
+      "a^2 - 2ab + b^2",
+      "a^2 + ab + b^2"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 8"
+  },
+  {
+    "code": "8-CB-002",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tứ giác có 4 cạnh bằng nhau là hình gì?",
+    "options": [
+      "Hình chữ nhật",
+      "Hình thoi",
+      "Hình thang",
+      "Hình bình hành"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 8"
+  },
+  {
+    "code": "8-CB-003",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Phân thức đại số A/B xác định khi nào?",
+    "options": [
+      "A khác 0",
+      "B khác 0",
+      "A và B đều khác 0",
+      "A = B"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 8"
+  },
+  {
+    "code": "8-CB-004",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Đường trung bình của tam giác thì như thế nào với cạnh đáy?",
+    "options": [
+      "Bằng cạnh đáy",
+      "Bằng một nửa cạnh đáy và song song",
+      "Gấp đôi cạnh đáy",
+      "Vuông góc cạnh đáy"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 8"
+  },
+  {
+    "code": "8-CB-005",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tổng số đo các góc trong một tứ giác bằng?",
+    "options": [
+      "180°",
+      "270°",
+      "360°",
+      "540°"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 8"
+  },
+  {
+    "code": "8-CB-006",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Tác giả của bài thơ 'Quê hương' (Cánh buồm giương to như mảnh hồn làng) là ai?",
+    "options": [
+      "Tế Hanh",
+      "Huy Cận",
+      "Xuân Diệu",
+      "Chế Lan Viên"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 8"
+  },
+  {
+    "code": "8-CB-007",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Trợ từ là những từ đi kèm để làm gì?",
+    "options": [
+      "Bổ sung ý nghĩa thời gian",
+      "Bộc lộ cảm xúc",
+      "Nhấn mạnh hoặc gây chú ý",
+      "Nối các câu"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 8"
+  },
+  {
+    "code": "8-CB-008",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Văn bản 'Tôi đi học' của Thanh Tịnh thuộc thể loại nào?",
+    "options": [
+      "Truyện ngắn mang chất thơ",
+      "Kịch",
+      "Thơ tự do",
+      "Báo chí"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 8"
+  },
+  {
+    "code": "8-CB-009",
+    "grade": 8,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Công thức hóa học của nước là gì?",
+    "options": [
+      "HO2",
+      "H2O",
+      "CO2",
+      "H2O2"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC 8"
+  },
+  {
+    "code": "8-CB-010",
+    "grade": 8,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Kí hiệu hóa học của nguyên tố Sắt là gì?",
+    "options": [
+      "Fe",
+      "Cu",
+      "Al",
+      "Zn"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC 8"
+  },
+  {
+    "code": "8-CB-011",
+    "grade": 8,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Công thức tính áp suất là?",
+    "options": [
+      "P = F / S",
+      "P = F . S",
+      "P = S / F",
+      "P = m . g"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ 8"
+  },
+  {
+    "code": "8-CB-012",
+    "grade": 8,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Lực đẩy Ácsimét tác dụng lên vật nhúng trong chất lỏng hướng theo chiều nào?",
+    "options": [
+      "Từ trên xuống",
+      "Từ dưới lên",
+      "Ngang",
+      "Tùy ý"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ 8"
+  },
+  {
+    "code": "8-CB-013",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Câu điều kiện loại 1 dùng để diễn tả điều gì?",
+    "options": [
+      "Sự thật hiển nhiên",
+      "Có thể xảy ra ở hiện tại/tương lai",
+      "Không thể xảy ra ở hiện tại",
+      "Trái với quá khứ"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 8"
+  },
+  {
+    "code": "8-CB-014",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Chuyển câu sau sang bị động: 'They build a house.'",
+    "options": [
+      "A house is built by them.",
+      "A house was built.",
+      "A house is building.",
+      "A house built."
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 8"
+  },
+  {
+    "code": "8-CB-015",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Danh từ của động từ 'pollute' là gì?",
+    "options": [
+      "Polluted",
+      "Pollution",
+      "Polluting",
+      "Pollutant"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 8"
+  },
+  {
+    "code": "8-CB-016",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Cuộc cách mạng công nghiệp đầu tiên trên thế giới khởi đầu từ nước nào?",
+    "options": [
+      "Pháp",
+      "Đức",
+      "Mỹ",
+      "Anh"
+    ],
+    "answerIndex": 3,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 8"
+  },
+  {
+    "code": "8-CB-017",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Địa hình Việt Nam chủ yếu là dạng địa hình nào?",
+    "options": [
+      "Đồng bằng",
+      "Đồi núi",
+      "Hoang mạc",
+      "Cao nguyên"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 8"
+  },
+  {
+    "code": "8-CB-018",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "Trong câu lệnh lặp Pascal/C, từ khóa 'for' dùng để làm gì?",
+    "options": [
+      "Lặp với số lần biết trước",
+      "Lặp vô hạn",
+      "Rẽ nhánh",
+      "Khai báo biến"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 8"
+  },
+  {
+    "code": "8-CB-019",
+    "grade": 8,
+    "level": "basic",
+    "subject": "GDCD",
+    "topic": null,
+    "content": "Thế nào là tôn trọng lẽ phải?",
+    "options": [
+      "Luôn lắng nghe ý kiến người giàu",
+      "Bảo vệ điều đúng đắn, công bằng",
+      "Nói theo số đông",
+      "Im lặng khi thấy sai trái"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "GDCD 8"
+  },
+  {
+    "code": "8-CB-020",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Hình bình hành có hai đường chéo bằng nhau là hình gì?",
+    "options": [
+      "Hình thoi",
+      "Hình vuông",
+      "Hình chữ nhật",
+      "Hình thang cân"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 8"
+  },
+  {
+    "code": "8-CB-021",
+    "grade": 8,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Hiện tượng nào sau đây là hiện tượng hóa học?",
+    "options": [
+      "Nước đá tan thành nước lỏng",
+      "Sắt bị gỉ trong không khí",
+      "Hòa tan đường vào nước",
+      "Cắt nhỏ dây thép"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC 8"
+  },
+  {
+    "code": "8-CB-022",
+    "grade": 8,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Đơn vị của công cơ học là gì?",
+    "options": [
+      "Mã lực",
+      "Oát (W)",
+      "Joul (J)",
+      "Niu-tơn (N)"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ 8"
+  },
+  {
+    "code": "8-CB-023",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Tác phẩm 'Lão Hạc' do ai sáng tác?",
+    "options": [
+      "Ngô Tất Tố",
+      "Nam Cao",
+      "Vũ Trọng Phụng",
+      "Nguyên Hồng"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 8"
+  },
+  {
+    "code": "8-CB-024",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Trái nghĩa với từ 'Environmentally friendly' là?",
+    "options": [
+      "Eco-friendly",
+      "Polluting",
+      "Clean",
+      "Safe"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 8"
+  },
+  {
+    "code": "8-CB-025",
+    "grade": 8,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "Thuật toán là gì?",
+    "options": [
+      "Một phần mềm",
+      "Dãy các chỉ dẫn từng bước để giải quyết công việc",
+      "Một đoạn mã lỗi",
+      "Phần cứng máy tính"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 8"
+  },
+  {
+    "code": "8-NC-001",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Phân tích x^4 + 64 thành nhân tử?",
+    "options": [
+      "(x2+8)2",
+      "(x2-4x+8)(x2+4x+8)",
+      "(x2-8)2",
+      "x2(x2+64)"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "8-NC-002",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Hòa tan 10g đường vào 190g nước. C% dung dịch là?",
+    "options": [
+      "5%",
+      "10%",
+      "5.26%",
+      "20%"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC NC"
+  },
+  {
+    "code": "8-NC-003",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "The more he eats, _______ he gets.",
+    "options": [
+      "fats",
+      "fatter",
+      "the fatter",
+      "the fattest"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "8-NC-004",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "GTNN của A = x^2 - 6x + 2024 là?",
+    "options": [
+      "2015",
+      "2024",
+      "2018",
+      "1995"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "8-NC-005",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Áp suất đáy bể nước cao 2m là? (d=10000)",
+    "options": [
+      "2000Pa",
+      "20000Pa",
+      "5000Pa",
+      "10000Pa"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ NC"
+  },
+  {
+    "code": "8-NC-006",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tứ giác có 2 đường chéo vuông góc tại trung điểm mỗi đường là?",
+    "options": [
+      "HCN",
+      "Hình thoi",
+      "HBH",
+      "Hình vuông"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "8-NC-007",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "I wish I _______ a doctor in the future.",
+    "options": [
+      "am",
+      "was",
+      "were",
+      "will be"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "8-NC-008",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Khí nào nhẹ nhất?",
+    "options": [
+      "O2",
+      "CO2",
+      "H2",
+      "N2"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC NC"
+  },
+  {
+    "code": "8-NC-009",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số cạnh của hình lăng trụ đứng ngũ giác là?",
+    "options": [
+      "10",
+      "12",
+      "15",
+      "20"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "8-NC-010",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Lực đẩy Ácsimét phụ thuộc vào?",
+    "options": [
+      "Trọng lượng vật",
+      "Thể tích phần chìm",
+      "Khối lượng vật",
+      "Độ sâu"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ NC"
+  },
+  {
+    "code": "8-NC-011",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Cho x+y+z=0. Tính x^3+y^3+z^3?",
+    "options": [
+      "0",
+      "xyz",
+      "3xyz",
+      "x2+y2+z2"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "8-NC-012",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "If I _______ you, I would tell the truth.",
+    "options": [
+      "am",
+      "was",
+      "were",
+      "had been"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "8-NC-013",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Nhận biết CO2 dùng dung dịch nào?",
+    "options": [
+      "NaCl",
+      "HCl",
+      "Ca(OH)2",
+      "H2SO4"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC NC"
+  },
+  {
+    "code": "8-NC-014",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Đường trung bình tam giác bằng bao nhiêu cạnh đáy?",
+    "options": [
+      "1/3",
+      "1/2",
+      "2/3",
+      "1/4"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "8-NC-015",
+    "grade": 8,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tổng các góc của ngũ giác là?",
+    "options": [
+      "360",
+      "540",
+      "720",
+      "900"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 8"
+  },
+  {
+    "code": "9-CB-001",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Căn bậc hai số học của số 81 là?",
+    "options": [
+      "9",
+      "-9",
+      "±9",
+      "81"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN 9"
+  },
+  {
+    "code": "9-CB-002",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Hàm số bậc nhất y = ax + b (a ≠ 0) đồng biến khi nào?",
+    "options": [
+      "a > 0",
+      "a < 0",
+      "a = 0",
+      "b > 0"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN 9"
+  },
+  {
+    "code": "9-CB-003",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Trong tam giác vuông, sin của góc nhọn bằng tỉ số nào?",
+    "options": [
+      "Đối / Huyền",
+      "Kề / Huyền",
+      "Đối / Kề",
+      "Kề / Đối"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN 9"
+  },
+  {
+    "code": "9-CB-004",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Phương trình ax^2 + bx + c = 0 (a ≠ 0) có nghiệm kép khi Delta (Δ) bằng bao nhiêu?",
+    "options": [
+      "Δ > 0",
+      "Δ = 0",
+      "Δ < 0",
+      "Δ ≥ 0"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN 9"
+  },
+  {
+    "code": "9-CB-005",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Góc nội tiếp chắn nửa đường tròn là góc có số đo bằng?",
+    "options": [
+      "45°",
+      "60°",
+      "90°",
+      "180°"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN 9"
+  },
+  {
+    "code": "9-CB-006",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Tác phẩm 'Mùa xuân nho nhỏ' do nhà thơ nào sáng tác?",
+    "options": [
+      "Thanh Hải",
+      "Chế Lan Viên",
+      "Hữu Thỉnh",
+      "Tố Hữu"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 9"
+  },
+  {
+    "code": "9-CB-007",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Hình ảnh chiếc xe không kính trong thơ Phạm Tiến Duật tượng trưng cho điều gì?",
+    "options": [
+      "Sự nghèo khó",
+      "Sự tàn khốc của chiến tranh và tinh thần kiên cường",
+      "Lỗi sản xuất",
+      "Tai nạn xe"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 9"
+  },
+  {
+    "code": "9-CB-008",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Thành phần phụ chú trong câu dùng để làm gì?",
+    "options": [
+      "Chỉ thời gian",
+      "Nêu thái độ người nói",
+      "Bổ sung chi tiết cho nội dung chính",
+      "Bộc lộ cảm xúc"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 9"
+  },
+  {
+    "code": "9-CB-009",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Dung dịch Axit làm quỳ tím chuyển sang màu gì?",
+    "options": [
+      "Xanh",
+      "Đỏ",
+      "Hồng",
+      "Không đổi màu"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC 9"
+  },
+  {
+    "code": "9-CB-010",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Kim loại nào lỏng ở nhiệt độ thường?",
+    "options": [
+      "Thủy ngân (Hg)",
+      "Sắt (Fe)",
+      "Nhôm (Al)",
+      "Vàng (Au)"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC 9"
+  },
+  {
+    "code": "9-CB-011",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Định luật Ôm có công thức biểu diễn là?",
+    "options": [
+      "I = U / R",
+      "I = U . R",
+      "U = I / R",
+      "R = I / U"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ 9"
+  },
+  {
+    "code": "9-CB-012",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Thấu kính phân kì có đặc điểm gì?",
+    "options": [
+      "Rìa mỏng hơn giữa",
+      "Rìa dày hơn giữa",
+      "Hai mặt phẳng",
+      "Biến mọi chùm sáng thành tụ tụ"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ 9"
+  },
+  {
+    "code": "9-CB-013",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Từ nối nào dùng để chỉ nguyên nhân?",
+    "options": [
+      "Although",
+      "Because",
+      "However",
+      "Therefore"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 9"
+  },
+  {
+    "code": "9-CB-014",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Mệnh đề quan hệ chỉ người làm chủ ngữ dùng từ nào?",
+    "options": [
+      "Which",
+      "Who",
+      "Whom",
+      "Where"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 9"
+  },
+  {
+    "code": "9-CB-015",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Chuyển sang gián tiếp: He said 'I am fine'. -> He said that he ______ fine.",
+    "options": [
+      "is",
+      "was",
+      "were",
+      "been"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH 9"
+  },
+  {
+    "code": "9-CB-016",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Bác Hồ đọc Bản Tuyên ngôn Độc lập khai sinh ra nước VNDCCH vào ngày tháng năm nào?",
+    "options": [
+      "30/04/1975",
+      "02/09/1945",
+      "19/08/1945",
+      "07/05/1954"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 9"
+  },
+  {
+    "code": "9-CB-017",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Vùng kinh tế trọng điểm phát triển năng lượng thủy điện lớn nhất nước ta là?",
+    "options": [
+      "Đông Nam Bộ",
+      "Tây Nguyên",
+      "Trung du và miền núi Bắc Bộ",
+      "Đồng bằng sông Cửu Long"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 9"
+  },
+  {
+    "code": "9-CB-018",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Sinh học",
+    "content": "Ai là người sáng lập ra Di truyền học?",
+    "options": [
+      "Đác-uyn",
+      "Mơn-đen",
+      "Moóc-gan",
+      "Lơ-wen-húc"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "SINH HỌC 9"
+  },
+  {
+    "code": "9-CB-019",
+    "grade": 9,
+    "level": "basic",
+    "subject": "GDCD",
+    "topic": null,
+    "content": "Chí công vô tư là gì?",
+    "options": [
+      "Chỉ lo cho bản thân",
+      "Giải quyết công việc công bằng, không thiên vị",
+      "Đóng góp ít hưởng nhiều",
+      "Thiên vị người thân"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "GDCD 9"
+  },
+  {
+    "code": "9-CB-020",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Cho phương trình x^2 - 5x + 6 = 0. Hai nghiệm x1, x2 có tổng bằng bao nhiêu (Theo Vi-ét)?",
+    "options": [
+      "5",
+      "-5",
+      "6",
+      "-6"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN 9"
+  },
+  {
+    "code": "9-CB-021",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Chất khí nào tham gia phản xạ cháy và duy trì sự sống?",
+    "options": [
+      "Nitơ",
+      "Oxi",
+      "Cacbonic",
+      "Heli"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC 9"
+  },
+  {
+    "code": "9-CB-022",
+    "grade": 9,
+    "level": "basic",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Hiện tượng khúc xạ ánh sáng là hiện tượng tia sáng bị làm sao khi truyền qua mặt phân cách hai môi trường?",
+    "options": [
+      "Phản xạ lại",
+      "Gãy gập",
+      "Hấp thụ hoàn toàn",
+      "Đi thẳng không đổi hướng"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ 9"
+  },
+  {
+    "code": "9-CB-023",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Ngữ văn",
+    "topic": null,
+    "content": "Tác phẩm 'Kiều' của Nguyễn Du viết bằng chữ gì?",
+    "options": [
+      "Chữ Quốc ngữ",
+      "Chữ Hán",
+      "Chữ Nôm",
+      "Chữ Phạn"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "NGỮ VĂN 9"
+  },
+  {
+    "code": "9-CB-024",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Lịch sử và Địa lý",
+    "topic": null,
+    "content": "Chiến thắng Điện Biên Phủ 'lừng lẫy năm châu, chấn động địa cầu' diễn ra năm nào?",
+    "options": [
+      "1945",
+      "1954",
+      "1968",
+      "1975"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "LS-ĐL 9"
+  },
+  {
+    "code": "9-CB-025",
+    "grade": 9,
+    "level": "basic",
+    "subject": "Tin học",
+    "topic": null,
+    "content": "Mạng diện rộng có tên tiếng Anh viết tắt là gì?",
+    "options": [
+      "LAN",
+      "WAN",
+      "MAN",
+      "WIFI"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIN HỌC 9"
+  },
+  {
+    "code": "9-NC-001",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Cho x, y dương thỏa x+y=2. GTNN của P = 1/x + 1/y là?",
+    "options": [
+      "1",
+      "2",
+      "4",
+      "0.5"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  },
+  {
+    "code": "9-NC-002",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "Not only _______ English but he also plays piano.",
+    "options": [
+      "he sings",
+      "does he sing",
+      "is he singing",
+      "he is singing"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "9-NC-003",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Kim loại dẫn điện tốt nhất là?",
+    "options": [
+      "Vàng",
+      "Bạc",
+      "Đồng",
+      "Nhôm"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC NC"
+  },
+  {
+    "code": "9-NC-004",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "GTLN của P = √(x-1) + √(3-x) là?",
+    "options": [
+      "2",
+      "√2",
+      "4",
+      "2√2"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  },
+  {
+    "code": "9-NC-005",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Điện trở tương đương của R1=6, R2=12 mắc song song là?",
+    "options": [
+      "18",
+      "6",
+      "4",
+      "9"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ NC"
+  },
+  {
+    "code": "9-NC-006",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Sin 30 độ bằng?",
+    "options": [
+      "1/2",
+      "√3/2",
+      "1",
+      "0"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  },
+  {
+    "code": "9-NC-007",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "I suggest _______ to the park.",
+    "options": [
+      "go",
+      "to go",
+      "going",
+      "goes"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "9-NC-008",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Thành phần chính khí thiên nhiên là?",
+    "options": [
+      "Etilen",
+      "Metan",
+      "Benzen",
+      "Axetilen"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC NC"
+  },
+  {
+    "code": "9-NC-009",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Hệ số góc đường thẳng y = -3x + 1 là?",
+    "options": [
+      "1",
+      "3",
+      "-3",
+      "0"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  },
+  {
+    "code": "9-NC-010",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Tứ giác nội tiếp có tổng 2 góc đối bằng?",
+    "options": [
+      "90",
+      "180",
+      "270",
+      "360"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  },
+  {
+    "code": "9-NC-011",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Vật lý",
+    "content": "Công suất điện có đơn vị là?",
+    "options": [
+      "J",
+      "W",
+      "A",
+      "V"
+    ],
+    "answerIndex": 1,
+    "explanation": null,
+    "legacyLabel": "VẬT LÝ NC"
+  },
+  {
+    "code": "9-NC-012",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Tiếng Anh",
+    "topic": null,
+    "content": "By the time we arrived, the plane _______.",
+    "options": [
+      "left",
+      "has left",
+      "had left",
+      "takes off"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TIẾNG ANH NC"
+  },
+  {
+    "code": "9-NC-013",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "KHTN",
+    "topic": "Hóa học",
+    "content": "Dãy kim loại tác dụng nước ở nhiệt độ thường?",
+    "options": [
+      "K, Na, Ca, Ba",
+      "Fe, Cu, Al, Ag",
+      "Mg, Zn, Pb, Ni",
+      "Au, Pt, Sn, Hg"
+    ],
+    "answerIndex": 0,
+    "explanation": null,
+    "legacyLabel": "HÓA HỌC NC"
+  },
+  {
+    "code": "9-NC-014",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Góc nội tiếp chắn nửa đường tròn bằng?",
+    "options": [
+      "45",
+      "60",
+      "90",
+      "180"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  },
+  {
+    "code": "9-NC-015",
+    "grade": 9,
+    "level": "advanced",
+    "subject": "Toán",
+    "topic": null,
+    "content": "Số giao điểm tối đa của đường thẳng và đường tròn là?",
+    "options": [
+      "0",
+      "1",
+      "2",
+      "3"
+    ],
+    "answerIndex": 2,
+    "explanation": null,
+    "legacyLabel": "TOÁN HSG 9"
+  }
+]

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#18283a"><title>Làng Cói mở hội · THCS Nga Sơn</title>
+<link rel="icon" href="../chien-co/coi.svg"><link rel="stylesheet" href="../chien-co/fonts/fonts.css"><link rel="stylesheet" href="hoi.css">
+<script defer src="../lang-coi/vendor/three-r180.min.js"></script><script defer src="sa-ban.js"></script><script defer src="../ket-qua.js"></script><script defer src="hoi.js"></script>
+</head>
+<body>
+<header>
+ <span class="crest" aria-hidden="true">✺</span><strong>Làng Cói mở hội</strong>
+ <ol aria-label="Tiến độ phiên chợ"><li>Toán</li><li>Hóa</li><li>Vật lý</li></ol>
+</header>
+<main>
+ <section id="stage" aria-label="Sa bàn làng nghề 3D">
+   <div class="sky" aria-hidden="true"></div>
+   <canvas id="world" tabindex="0" aria-label="Sa bàn tương tác. Có thể dùng các nút trong bảng điều khiển để thực hiện mọi thao tác."></canvas>
+   <div id="labels" aria-hidden="true"></div>
+   <div class="stage-foot"><span id="location">Sân hội Nga Sơn</span><button id="angle" hidden>Nhìn từ trên</button></div>
+ </section>
+ <section id="panel">
+  <div id="intro">
+   <div class="eyebrow">THCS Nga Sơn · Trò chơi STEM</div><h1>Làng Cói<br><em>mở hội</em></h1>
+   <p class="lead">Sáng mai là phiên chợ. Cùng Cói trải chiếu, làm sạch muối và chuyển hàng lên xe trước giờ mở hội.</p>
+   <div class="guide"><img src="../chien-co/coi.svg" alt="Cói"><span>“Cậu lo sân hội, tớ treo đèn. Mình bắt đầu nhé!”</span></div>
+   <button class="primary" id="start" disabled>Chuẩn bị phiên chợ <b>→</b></button>
+  </div>
+  <div id="task" hidden>
+   <div class="eyebrow" id="chapter"></div><h2 id="title" tabindex="-1"></h2><p id="goal"></p>
+   <section id="math" hidden>
+    <div class="readout"><strong id="covered">0 / 12 ô</strong><span id="stock">4 chiếu trong kho</span></div>
+    <div class="row"><label for="cell">Ô bắt đầu</label><select id="cell"></select></div>
+    <div class="row"><span>Hướng trải</span><button id="rotate" class="choice">Ngang →</button></div>
+    <button class="primary" id="lay">Trải chiếu</button>
+    <button class="quiet" id="undo">Thu tấm vừa trải</button>
+   </section>
+   <section id="chem" hidden>
+    <div class="readout"><strong>Mẻ đang xử lý</strong><span id="sample"></span></div>
+    <div id="tools" class="tools">
+     <button data-tool="water"><span>◒</span> Thêm nước và khuấy</button>
+     <button data-tool="filter"><span>▽</span> Lọc qua giấy</button>
+     <button data-tool="heat"><span>♨</span> Cô cạn</button>
+    </div>
+    <div id="fractions" hidden><p class="field">Chọn phần mang sang bước tiếp</p><button data-keep="paper">Giữ phần trên giấy</button><button data-keep="cup">Giữ phần trong cốc</button></div>
+    <button id="new-sample" class="quiet">Lấy mẻ mới</button>
+   </section>
+   <section id="physics" hidden>
+    <div class="readout"><strong>Kiện cói 30 kg</strong><span>Cách trục 1 m</span></div>
+    <fieldset><legend>Treo đối trọng 10 kg bên phải</legend><div id="hooks"><button data-hook="1">1 m</button><button data-hook="2">2 m</button><button data-hook="3">3 m</button></div></fieldset>
+    <button id="try" class="primary">Thử cân</button>
+   </section>
+   <div class="guide status"><img src="../chien-co/coi.svg" alt="Cói"><p id="message" role="status"></p></div>
+  </div>
+  <div id="done" hidden>
+   <div class="eyebrow" id="stamp"></div><h2 id="done-title" tabindex="-1"></h2><p id="explain" class="lead"></p>
+   <div class="guide"><img src="../chien-co/coi.svg" alt="Cói"><span id="farewell"></span></div>
+   <button id="next" class="primary"></button>
+  </div>
+  <div id="error" role="alert" hidden><h2>Chưa mở được sa bàn</h2><p>Trò chơi dùng WebGL 2. Hãy bật tăng tốc đồ họa của trình duyệt hoặc mở bằng thiết bị hỗ trợ WebGL 2.</p><button class="primary" onclick="location.reload()">Thử lại</button></div>
+ </section>
+</main>
+</body></html>

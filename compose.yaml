@@ -1,0 +1,27 @@
+# Production: docker compose up -d --build
+services:
+  web:
+    build:
+      context: .
+      target: runner
+    image: nga-son-hoc-tap:latest
+    container_name: nga-son-hoc-tap
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      DATABASE_PATH: /app/data/app.db
+      SEED_ON_START: "${SEED_ON_START:-true}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET:?Cần đặt BETTER_AUTH_SECRET trong .env}"
+      BETTER_AUTH_URL: "${BETTER_AUTH_URL:-http://localhost:3000}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
+      GOOGLE_ALLOWED_DOMAIN: "${GOOGLE_ALLOWED_DOMAIN:-}"
+      LIVE_PUBLIC_URL: "${LIVE_PUBLIC_URL:-}"
+      TEACHER_EMAILS: "${TEACHER_EMAILS:-}"
+      PRIVACY_CONTACT_EMAIL: "${PRIVACY_CONTACT_EMAIL:-}"
+    volumes:
+      - sqlite-data:/app/data
+
+volumes:
+  sqlite-data:

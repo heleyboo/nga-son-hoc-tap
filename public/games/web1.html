@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sản Phẩm STEM THCS Nga Sơn - Chiến Cơ Vũ Trụ Pro</title>
+    <style>:root {--brand:#4f46e5; --deep:#0369a1; --soft:#e8ebff; --ink:#4147a8; --cta:#4f46e5;}</style>
+    <link rel="stylesheet" href="chien-co/interface.css">
+    <script src="chien-co/art.js"></script>
+    <script src="ket-qua.js"></script>
+</head>
+<body>
+
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<div id="hud">
+    <div class="hud-group">
+        <div id="stats" class="hud-box"><i data-icon="star" title="Điểm"></i><span class="lbl">Điểm</span><span id="points">0</span><i data-icon="layers" title="Câu"></i><span class="lbl">Câu</span><span id="question-count">1/30</span></div>
+        <div id="combo-badge" class="hud-box"><i data-icon="bolt" title="Combo"></i><span class="lbl">Combo</span><span id="combo">×1</span></div>
+    </div>
+    <div class="hud-group">
+        <div id="timer-badge" class="hud-box"><i data-icon="time"></i><span id="elapsed">00:00</span></div>
+        <button id="sound-btn" onclick="toggleSound()" aria-label="Bật/tắt âm thanh">Âm thanh</button>
+    </div>
+</div>
+
+<div id="start-screen" class="overlay">
+    <header class="mast"><span class="mark" data-icon="orbit"></span><div><b>THCS Nga Sơn</b><small>Sản phẩm dự thi STEM</small></div></header>
+    <div class="launch">
+        <picture class="poster"><source media="(max-width:740px), (max-width:900px) and (orientation:portrait)" srcset="chien-co/banner.svg"><img src="chien-co/poster.svg" alt="" /></picture>
+        <section class="brief"><div class="topics">Lịch sử · Địa lý · Khoa học</div><h1>Chiến Cơ<br><em>Kiến Thức</em></h1>
+            <p class="intro"><img src="chien-co/coi.svg" alt="Cói"><span><b>Cói chào phi công!</b><br>Hãy bắn trúng đĩa bay mang đáp án đúng.</span></p>
+            <fieldset><legend>Chọn chế độ</legend><div class="modes"><button class="mode-btn active" id="mode-full" aria-pressed="true" aria-label="Thử thách đầy đủ, 30 câu hỏi" onclick="selectMode(30, this)">Thử thách đầy đủ<small>30 câu hỏi</small></button><button class="mode-btn" id="mode-quick" aria-pressed="false" aria-label="Trải nghiệm BGK, 10 câu hỏi" onclick="selectMode(10, this)">Trải nghiệm BGK<small>10 câu hỏi</small></button></div></fieldset>
+            <button class="primary" id="launch" aria-label="Khởi hành" onclick="beginJourney(this, startGame)">Khởi hành →</button>
+            <div class="guide"><p><i data-icon="keyboard"></i>Chuột, ◀ ▶ hoặc A/D để lái · Click hoặc Space để bắn.</p><p><i data-icon="touch"></i>Kéo cần lái tròn bên trái để lách sang hai bên. Kéo nhẹ để ngắm, chạm Bắn bên phải để khai hỏa. Đáp án A/B/C đổi vị trí mỗi câu.</p></div>
+        </section>
+    </div>
+</div>
+
+<div id="end-screen" class="overlay" style="display:none"><section class="result">
+    <img src="chien-co/coi.svg" alt="Cói"><p class="school-tag">Tổng kết nhiệm vụ · THCS Nga Sơn</p>
+    <h1>Nhiệm vụ hoàn tất!</h1><div class="stats"><p id="final-score"></p><p id="rank-label"></p><p id="detail-stats"></p></div><p>Trân trọng cảm ơn và hẹn gặp lại!</p>
+    <button class="primary" aria-label="Chơi lại" onclick="startGame()">Chơi lại →</button>
+</section></div>
+
+<canvas id="gameCanvas"></canvas>
+<div id="flight-pad" role="group" aria-label="Điều khiển chiến cơ" hidden>
+    <label class="joystick">
+        <input id="steering" type="range" min="-100" max="100" value="0" aria-label="Cần lái ngang">
+        <span class="joystick-knob" aria-hidden="true"></span>
+    </label>
+    <button type="button" id="fire-button">Bắn</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const flightPad = document.getElementById('flight-pad');
+    const stick = document.getElementById('steering');
+    const knob = document.querySelector('.joystick-knob');
+    const fireButton = document.getElementById('fire-button');
+    let stickPointer = null;
+    let steering = 0;
+    document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = gameIcon(el.dataset.icon); });
+    syncSound(true);
+
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP WEB AUDIO API ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        syncSound(soundEnabled);
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'shoot') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(780, now);
+            osc.frequency.exponentialRampToValueAtTime(190, now + 0.11);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+            osc.start(now);
+            osc.stop(now + 0.11);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.16, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+            osc.start(now);
+            osc.stop(now + 0.34);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(85, now + 0.25);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'win') {
+            const notes = [523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                g.gain.setValueAtTime(0.15, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.35);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.35);
+            });
+        }
+    }
+
+    // --- THUẬT TOÁN XÁO TRỘN FISHER-YATES ---
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    /* Bố cục tính theo kích thước màn hình (bổ sung responsive):
+       cỡ chữ, kích thước đĩa bay, vị trí câu hỏi/đáp án và phi thuyền. */
+    let motherUFO = null;
+    let slotCount = 3;
+    let viewW, viewH;
+    const art = loadArt('chien-co', ['chien-co', 'sky', 'mobile']);
+    const paintSky = sceneryCache();
+    const L = { shipY: 0, shipScale: 1, gunY: 0, range: 36 };
+    function computeLayout() {
+        const W = viewW, H = viewH;
+        L.shipScale = H < 370 ? 0.52 : H < 520 ? 0.68 : W < 480 ? 0.82 : 1;
+        L.shipY = H - Math.max(38, (H < 370 ? 78 : 95) * L.shipScale);
+        if (flightPad.offsetHeight) {
+            L.shipY = Math.min(L.shipY, flightPad.getBoundingClientRect().top - 18 * L.shipScale);
+        }
+        L.gunY = L.shipY - 40 * L.shipScale;
+        L.range = Math.round(Math.min(36, W * 0.03));
+        L.small = W < 640 || H < 520;
+    }
+    function hudBottom() {
+        const hud = document.getElementById('hud');
+        return hud ? hud.getBoundingClientRect().bottom : 60;
+    }
+    /* Đặt lại vị trí/kích thước đĩa bay của câu hiện tại (gọi khi tạo câu mới hoặc khi xoay/đổi cỡ màn hình) */
+    function layoutLevel() {
+        if (!motherUFO) return;
+        const W = viewW;
+        motherUFO.fit(Math.min(405, W / 2 - L.range - 10));
+        motherUFO.startX = motherUFO.x = W / 2;
+        motherUFO.y = hudBottom() + 25 + motherUFO.h;
+        const n = Math.max(1, slotCount);
+        const slot = W / n;
+        const wA = Math.max(40, Math.min(170, slot / 2 - L.range - 6));
+        let maxH = 0;
+        ufos.forEach(u => { u.fit(wA); maxH = Math.max(maxH, u.h); });
+        const top = motherUFO.y + motherUFO.h + 26 + maxH;              // ngay dưới đĩa mẹ, chừa huy hiệu A/B/C
+        const limit = L.gunY - 70 * L.shipScale - maxH;                    // chừa khoảng cho đạn bay
+        const y = Math.max(top, Math.min(limit, motherUFO.y + motherUFO.h + 60 + maxH));
+        ufos.forEach(u => { u.startX = u.x = slot * (u.slot + 0.5); u.y = y; u.baseY = y; });
+    }
+
+    function resizeCanvas() {
+        resetStick();
+        viewW = window.innerWidth;
+        viewH = window.innerHeight;
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = Math.round(viewW * dpr);
+        canvas.height = Math.round(viewH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        computeLayout();
+        layoutLevel();
+        if (!gameActive) {
+            mouseX = viewW / 2;
+        } else {
+            mouseX = Math.min(Math.max(mouseX, 60), viewW - 60);
+        }
+    }
+
+    // --- KHO 30 CÂU HỎI GIẢI TRÍ • LỊCH SỬ • ĐỊA DANH • TỰ NHIÊN ---
+    const questionBank = [
+        { q: "Vịnh Hạ Long được UNESCO công nhận là Di sản thiên nhiên thế giới vào năm nào?", a: ["1994", "2000", "2010"], c: 0 },
+        { q: "Hang động tự nhiên lớn nhất thế giới nằm ở tỉnh nào của Việt Nam?", a: ["Quảng Bình", "Ninh Bình", "Lạng Sơn"], c: 0 },
+        { q: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?", a: ["Fansipan", "Pu Si Lung", "Bà Đen"], c: 0 },
+        { q: "Thành nhà Hồ - di sản văn hóa thế giới độc đáo bằng đá - thuộc tỉnh nào?", a: ["Thanh Hóa", "Nghệ An", "Thừa Thiên Huế"], c: 0 },
+        { q: "Sông nào dài nhất chảy hoàn toàn trong lãnh thổ Việt Nam?", a: ["Sông Đồng Nai", "Sông Đà", "Sông Mã"], c: 0 },
+        { q: "Ai là vị anh hùng dân tộc lãnh đạo khởi nghĩa Lam Sơn chống quân Minh?", a: ["Lê Lợi", "Nguyễn Huệ", "Đinh Bộ Lĩnh"], c: 0 },
+        { q: "Quảng trường Ba Đình - nơi Bác Hồ đọc Tuyên ngôn Độc lập - ở thành phố nào?", a: ["Hà Nội", "Hải Phòng", "Đà Nẵng"], c: 0 },
+        { q: "Hành tinh nào trong Hệ Mặt Trời có vòng đai băng đá nổi bật nhất?", a: ["Sao Thổ", "Sao Hỏa", "Sao Kim"], c: 0 },
+        { q: "Loài vật nào có thể ngủ ở tư thế đứng?", a: ["Ngựa", "Cá heo", "Gấu trúc"], c: 0 },
+        { q: "Đại dương nào có diện tích lớn nhất Trái Đất?", a: ["Thái Bình Dương", "Đại Tây Dương", "Ấn Độ Dương"], c: 0 },
+        { q: "Phố cổ Hội An thuộc tỉnh/thành phố nào của miền Trung?", a: ["Quảng Nam", "Phú Yên", "Khánh Hòa"], c: 0 },
+        { q: "Cây tre Việt Nam thường được ví với phẩm chất nào?", a: ["Thủy chung, kiên cường", "Nhanh nhẹn, khéo léo", "Lặng lẽ, xa cách"], c: 0 },
+        { q: "Bạch tuộc có mấy trái tim?", a: ["3 trái tim", "1 trái tim", "2 trái tim"], c: 0 },
+        { q: "Kinh thành Huế nằm bên dòng sông thơ mộng nào?", a: ["Sông Hương", "Sông Hàn", "Sông Thu Bồn"], c: 0 },
+        { q: "Kim tự tháp Kheops nổi tiếng thuộc quốc gia nào?", a: ["Ai Cập", "Hy Lạp", "Mexico"], c: 0 },
+        { q: "Mùa nào trong năm thường có hiện tượng 'hoa phượng nở rực đỏ' ở Việt Nam?", a: ["Mùa hè", "Mùa đông", "Mùa thu"], c: 0 },
+        { q: "Đảo ngọc Phú Quốc thuộc tỉnh nào của nước ta?", a: ["Kiên Giang", "Bà Rịa - Vũng Tàu", "Bình Thuận"], c: 0 },
+        { q: "Đố vui: Càng kéo càng ngắn là cái gì?", a: ["Điếu thuốc", "Sợi dây", "Chiếc thước"], c: 0 },
+        { q: "Hồ Gươm còn có tên gọi cổ xưa nào gắn với truyền thuyết trả gươm?", a: ["Hồ Hoàn Kiếm", "Hồ Tây", "Hồ Ba Bể"], c: 0 },
+        { q: "Loại gió nào thổi theo mùa ở khu vực Nam và Đông Nam Á, tạo nên mùa mưa và mùa khô?", a: ["Gió mùa", "Gió Phơn", "Gió đất"], c: 0 },
+        { q: "Tháp Eiffel nằm ở thủ đô nào của châu Âu?", a: ["Paris", "London", "Rome"], c: 0 },
+        { q: "Cầu Rồng phun lửa, phun nước là biểu tượng du lịch của thành phố nào?", a: ["Đà Nẵng", "Cần Thơ", "Nha Trang"], c: 0 },
+        { q: "Đố vui: Tháng nào trong năm có 28 ngày?", a: ["Tháng nào cũng có", "Chỉ tháng 2", "Chỉ năm nhuận"], c: 0 },
+        { q: "Vườn quốc gia Phong Nha - Kẻ Bàng nổi tiếng với hệ thống gì?", a: ["Hang động karst", "Rừng ngập mặn", "Đồi cát trắng"], c: 0 },
+        { q: "Vị vua nào dời đô từ Hoa Lư ra thành Thăng Long năm 1010?", a: ["Lý Thái Tổ", "Trần Nhân Tông", "Ngô Quyền"], c: 0 },
+        { q: "Tầng khí quyển nào chứa lớp ô-zôn giúp bảo vệ sinh vật khỏi tia cực tím?", a: ["Tầng bình lưu", "Tầng đối lưu", "Tầng ngoại quyển"], c: 0 },
+        { q: "Cao nguyên nào được mệnh danh là 'thủ phủ cà phê' của Việt Nam?", a: ["Đắk Lắk", "Mộc Châu", "Đồng Văn"], c: 0 },
+        { q: "Đố vui: Con gì không chân, không cánh mà đi khắp thế gian?", a: ["Con sông", "Con kiến", "Con ong"], c: 0 },
+        { q: "Cột cờ Lũng Cú nằm ở điểm cực nào của Tổ quốc?", a: ["Điểm cực Bắc", "Điểm cực Nam", "Điểm cực Đông"], c: 0 },
+        { q: "Hiện tượng cầu vồng thường xuất hiện khi nào?", a: ["Nắng chiếu qua mưa", "Gió thổi mạnh", "Trời sắp tối"], c: 0 }
+    ];
+
+    let activeQuestions = [];
+    let selectedQuestionCount = 30;
+    let currentIdx = 0, score = 0, combo = 1, correctCount = 0, totalShots = 0, totalHits = 0;
+    let gameActive = false, tick = 0, shakeTime = 0, animId = null;
+    let startTime = 0, elapsedSeconds = 0;
+    let bullets = [], ufos = [], particles = [], floatTexts = [], shockwaves = [];
+    let mouseX = window.innerWidth / 2;
+    let prevMouseX = mouseX;
+    let keys = { left: false, right: false };
+
+    function selectMode(count, btnEl) {
+        selectedQuestionCount = count;
+        document.querySelectorAll('.mode-btn').forEach(b => {
+            b.classList.toggle('active', b === btnEl);
+            b.setAttribute('aria-pressed', String(b === btnEl));
+        });
+
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    document.fonts.ready.then(layoutLevel);
+
+    function wrapText(text, maxWidth, font) {
+        ctx.font = font;
+        const words = text.split(' ');
+        const lines = [];
+        let line = '';
+        for (let w of words) {
+            const test = line ? line + ' ' + w : w;
+            if (ctx.measureText(test).width > maxWidth && line) {
+                lines.push(line);
+                line = w;
+            } else {
+                line = test;
+            }
+        }
+        if (line) lines.push(line);
+        return lines;
+    }
+
+    class Bullet {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.vy = 23;
+        }
+        update() {
+            this.y -= this.vy;
+        }
+        draw() {
+            ctx.save();
+            ctx.fillStyle = '#ff2a55';
+            ctx.fillRect(this.x - 4, this.y + 4, 8, 18);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(this.x - 2, this.y, 4, 24);
+            ctx.restore();
+        }
+    }
+
+    class Shockwave {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.radius = 12;
+            this.color = color;
+            this.life = 1;
+        }
+        update() {
+            this.radius += 7;
+            this.life -= 0.045;
+        }
+        draw() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    class Particle {
+        constructor(x, y, color) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5.5 + 1.5;
+            this.x = x;
+            this.y = y;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.life = 1;
+            this.decay = Math.random() * 0.03 + 0.02;
+            this.color = color;
+            this.size = Math.random() * 4 + 2;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx *= 0.96;
+            this.vy *= 0.96;
+            this.life -= this.decay;
+        }
+        draw() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    class FloatText {
+        constructor(x, y, text, color) {
+            this.x = x;
+            this.y = y;
+            this.text = text;
+            this.color = color;
+            this.life = 1;
+        }
+        update() {
+            this.y -= 1.6;
+            this.life -= 0.022;
+        }
+        draw() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.font = 'bold 25px "Be Vietnam Pro", "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = this.color;
+            ctx.fillText(this.text, this.x, this.y);
+            ctx.restore();
+        }
+    }
+
+    class UFO {
+        constructor(x, y, text, isCorrect = false, isMother = false, slotLabel = '') {
+            this.x = x;
+            this.y = y;
+            this.text = text;
+            this.isCorrect = isCorrect;
+            this.isMother = isMother;
+            this.slotLabel = slotLabel;
+            this.speed = isMother ? 0.65 : ((Math.random() > 0.5 ? 1 : -1) * (1.1 + Math.random() * 0.8));
+            this.startX = x;
+            this.bobOffset = Math.random() * Math.PI * 2;
+            this.slot = 0;
+            this.fit(isMother ? Math.min(500, viewW * 0.45) : Math.min(190, viewW * 0.155));
+        }
+
+        /* Tính cỡ chữ, ngắt dòng và chiều cao đĩa theo bán kính ngang w */
+        fit(w) {
+            this.w = w;
+            const W = viewW;
+            if (this.isMother) this.fs = viewH < 370 ? 15 : W < 400 ? 14 : W < 640 ? 16 : W < 1000 ? 19 : 25;
+            else this.fs = w < 60 ? 13 : w < 90 ? 13.5 : w < 130 ? 16 : 20;
+            this.font = `bold ${this.fs}px "Be Vietnam Pro", "Segoe UI", sans-serif`;
+            this.lh = Math.round(this.fs * 1.34);
+            this.lines = wrapText(this.text, this.w * (this.isMother ? 1.62 : 1.5), this.font);
+            const textH = this.lines.length * this.lh;
+            this.h = this.isMother
+                ? Math.max(L.small ? 31 : 40, textH / 2 + 14)
+                : Math.max(L.small ? 24 : 32, textH / 2 + 9);
+            this.badge = L.small ? 11 : 15;
+        }
+
+        update() {
+            this.x += this.speed;
+            const range = this.isMother ? Math.min(L.range, 25) : L.range;
+            if (this.x > this.startX + range || this.x < this.startX - range) {
+                this.speed *= -1;
+            }
+            if (!this.isMother) this.y = this.baseY + 3 * Math.sin(tick * 0.04 + this.bobOffset);
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            const { w, h } = this;
+            ctx.fillStyle = '#9bdce8';
+            ctx.beginPath();
+            ctx.ellipse(0, -h * .77, w * .31, h * .48, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            const shell = new Path2D();
+            shell.moveTo(-w, -h * .15);
+            shell.bezierCurveTo(-w, -h * 1.27, w, -h * 1.27, w, -h * .15);
+            shell.lineTo(w, h * .30);
+            shell.bezierCurveTo(w, h * 1.19, -w, h * 1.19, -w, h * .30);
+            shell.closePath();
+            ctx.translate(0, 5);
+            ctx.fillStyle = '#798eaf';
+            ctx.fill(shell);
+            ctx.translate(0, -5);
+            ctx.fillStyle = this.isMother ? '#263962' : '#273c68';
+            ctx.fill(shell);
+            ctx.strokeStyle = '#a5bdcd';
+            ctx.lineWidth = 2;
+            ctx.stroke(shell);
+            for (let j = -2; j <= 2; j++) {
+                ctx.fillStyle = '#ffda91';
+                ctx.fillRect(j * w * .13 - 2, h * .92, 4, 2);
+            }
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            if (this.slotLabel) {
+                ctx.fillStyle = '#ffdfa3';
+                ctx.beginPath();
+                ctx.arc(0, -h - 6, this.badge, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#33263c';
+                ctx.font = 'bold ' + (this.badge + 2) + 'px "Be Vietnam Pro", sans-serif';
+                ctx.fillText(this.slotLabel, 0, -h - 6);
+            }
+            ctx.fillStyle = '#fff8df';
+            ctx.font = this.font;
+            this.lines.forEach((line, i) => ctx.fillText(line, 0, (i - (this.lines.length - 1) / 2) * this.lh));
+            ctx.restore();
+        }
+    }
+
+
+    function spawnExplosion(x, y, color, count = 26) {
+        if (reducedMotion.matches) count = 3;
+        shockwaves.push(new Shockwave(x, y, color));
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle(x, y, color));
+        }
+    }
+
+    function formatTime(sec) {
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function updateHUD() {
+        const total = activeQuestions.length;
+        const displayIdx = Math.min(currentIdx + 1, total);
+        document.querySelector('#points').textContent = score;
+        document.querySelector('#question-count').textContent = displayIdx + '/' + total;
+        document.querySelector('#combo').textContent = '×' + combo;
+        document.getElementById('progress-bar').style.width = `${(currentIdx / total) * 100}%`;
+    }
+
+    function getRank(pts, totalQ) {
+        const ratio = pts / (totalQ * 10);
+        if (ratio >= 0.9) return "HẠNG: CHỈ HUY TỐI CAO VŨ TRỤ";
+        if (ratio >= 0.65) return "HẠNG: PHI CÔNG TINH NHUỆ";
+        if (ratio >= 0.35) return "HẠNG: CHIẾN BINH TRI THỨC";
+        return "HẠNG: TÂN BINH KHÁM PHÁ";
+    }
+
+    function initLevel() {
+        if (currentIdx >= activeQuestions.length) {
+            gameActive = false;
+            flightPad.hidden = true;
+            releaseControls();
+            playSound('win');
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('end-screen').style.display = 'flex';
+            const totalQ = activeQuestions.length;
+            const accuracy = totalShots > 0 ? Math.round((totalHits / totalShots) * 100) : 100;
+            document.getElementById('final-score').innerText = `TỔNG ĐIỂM: ${score} (Đúng ${correctCount}/${totalQ} câu)`;
+            document.getElementById('rank-label').innerText = getRank(score, totalQ);
+            document.getElementById('detail-stats').innerText = `Thời gian hoàn thành: ${formatTime(elapsedSeconds)}  •  Độ chính xác bắn: ${accuracy}%`;
+            window.nsGame && nsGame.result({ game: 'chien-co', score: score, correct: correctCount, total: totalQ, victory: true });
+            return;
+        }
+
+        bullets = [];
+        ufos = [];
+        const q = activeQuestions[currentIdx];
+        updateHUD();
+
+        motherUFO = new UFO(viewW / 2, 132, `Câu ${currentIdx + 1}: ${q.q}`, false, true);
+
+        // Xáo trộn vị trí 3 đáp án để đáp án đúng xuất hiện ngẫu nhiên ở A (Trái), B (Giữa), hoặc C (Phải)
+        const labeledAnswers = q.a.map((ansText, idx) => ({
+            text: ansText,
+            isCorrect: idx === q.c
+        }));
+        const shuffledAnswers = shuffleArray(labeledAnswers);
+        const slotLetters = ['A', 'B', 'C', 'D'];
+
+        const ansCount = shuffledAnswers.length;
+        const spacing = viewW / (ansCount + 1);
+        shuffledAnswers.forEach((item, i) => {
+            const u = new UFO(spacing * (i + 1), 372, item.text, item.isCorrect, false, slotLetters[i]);
+            u.slot = i;
+            ufos.push(u);
+        });
+        slotCount = ansCount;
+        layoutLevel();
+    }
+
+    function startGame() {
+        initAudio();
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+
+        // Xáo trộn thứ tự câu hỏi mỗi lần chơi mới
+        activeQuestions = shuffleArray(questionBank).slice(0, selectedQuestionCount);
+        window.nsGame && nsGame.start();
+
+        currentIdx = 0;
+        score = 0;
+        combo = 1;
+        correctCount = 0;
+        totalShots = 0;
+        totalHits = 0;
+        particles = [];
+        floatTexts = [];
+        shockwaves = [];
+        mouseX = viewW / 2;
+        prevMouseX = mouseX;
+        startTime = Date.now();
+        elapsedSeconds = 0;
+        document.getElementById('elapsed').textContent = '00:00';
+        gameActive = true;
+        flightPad.hidden = false;
+        computeLayout();
+        initLevel();
+        if (animId) cancelAnimationFrame(animId);
+        animate();
+    }
+
+    function restartGame() {
+        startGame();
+    }
+
+    function shootBullet() {
+        if (!gameActive) return;
+        totalShots++;
+        playSound('shoot');
+        bullets.push(new Bullet(mouseX, L.gunY));
+    }
+
+    window.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse' || stickPointer !== null || flightPad.contains(e.target)) return;
+        mouseX = Math.min(Math.max(e.clientX, 46 * L.shipScale + 8), viewW - 46 * L.shipScale - 8);
+    });
+
+    canvas.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 0) shootBullet();
+    });
+
+    function moveShip(direction) {
+        const margin = 46 * L.shipScale + 8;
+        mouseX = Math.max(margin, Math.min(viewW - margin, mouseX + direction * 9));
+    }
+
+    function resetStick() {
+        if (stickPointer !== null && stick.hasPointerCapture(stickPointer)) {
+            stick.releasePointerCapture(stickPointer);
+        }
+        stickPointer = null;
+        steering = 0;
+        stick.value = '0';
+        knob.style.transform = '';
+    }
+
+    function dragStick(event) {
+        if (event.pointerId !== stickPointer) return;
+        const rect = stick.getBoundingClientRect();
+        const dx = event.clientX - rect.left - rect.width / 2;
+        const dy = event.clientY - rect.top - rect.height / 2;
+        const travel = (rect.width - knob.offsetWidth) / 2;
+        const scale = travel / Math.max(travel, Math.hypot(dx, dy));
+        const x = dx * scale;
+        knob.style.transform = `translate(${x}px, ${dy * scale}px)`;
+        // A small neutral zone keeps the ship steady while aiming.
+        const axis = x / travel;
+        steering = Math.sign(axis) * Math.max(0, (Math.abs(axis) - 0.12) / 0.88);
+        stick.value = String(Math.round(steering * 100));
+    }
+
+    stick.addEventListener('pointerdown', (event) => {
+        if (!gameActive || event.button !== 0 || stickPointer !== null) return;
+        event.preventDefault();
+        stickPointer = event.pointerId;
+        stick.setPointerCapture(stickPointer);
+        dragStick(event);
+    });
+    stick.addEventListener('pointermove', dragStick);
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+        stick.addEventListener(type, (event) => {
+            if (event.pointerId === stickPointer) resetStick();
+        });
+    }
+    // Native range adjustments also work with assistive input.
+    stick.addEventListener('input', () => {
+        if (stickPointer !== null) return;
+        steering = stick.valueAsNumber / 100;
+        const travel = (stick.clientWidth - knob.offsetWidth) / 2;
+        knob.style.transform = `translateX(${travel * steering}px)`;
+    });
+    stick.addEventListener('keyup', resetStick);
+    stick.addEventListener('blur', resetStick);
+
+    fireButton.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        shootBullet();
+    });
+    fireButton.addEventListener('click', (event) => {
+        if (event.detail === 0) shootBullet();
+    });
+
+    function releaseControls() {
+        resetStick();
+        keys.left = keys.right = false;
+    }
+    window.addEventListener('blur', releaseControls);
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) releaseControls();
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+        if (e.code === 'Space' && gameActive && e.target !== fireButton) {
+            e.preventDefault();
+            shootBullet();
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+    });
+
+    function drawBackground() {
+        const sky = art.sprites[viewH > viewW ? 'mobile' : 'sky'];
+        paintSky(ctx, viewW, viewH, sky, brush => {
+            brush.fillStyle = '#233763';
+            brush.fillRect(0, 0, viewW, viewH);
+            if (sky) brush.drawImage(sky, 0, 0, viewW, viewH);
+        });
+    }
+
+    function drawPlayer() {
+        const tilt = Math.max(-.22, Math.min(.22, (mouseX - prevMouseX) * .015));
+        prevMouseX = mouseX;
+        ctx.save();
+        ctx.translate(mouseX, L.shipY);
+        ctx.rotate(-Math.PI / 2 + tilt);
+        drawSprite(ctx, art.sprites['chien-co'], 0, 0, 132 * L.shipScale, 88 * L.shipScale, '➤');
+        ctx.restore();
+    }
+
+    function animate() {
+        if (!gameActive) return;
+        tick++;
+
+        const seconds = Math.floor((Date.now() - startTime) / 1000);
+        if (elapsedSeconds !== seconds) {
+            elapsedSeconds = seconds;
+            document.getElementById('elapsed').textContent = formatTime(seconds);
+        }
+
+        const direction = Number(keys.right) - Number(keys.left) || steering;
+        if (direction) moveShip(direction);
+
+        ctx.save();
+        if (!reducedMotion.matches && shakeTime > 0) {
+            const mag = shakeTime * 0.7;
+            ctx.translate((Math.random() - 0.5) * mag, (Math.random() - 0.5) * mag);
+            shakeTime--;
+        }
+
+        drawBackground();
+        drawPlayer();
+
+        for (let bi = bullets.length - 1; bi >= 0; bi--) {
+            const b = bullets[bi];
+            if (!b) break;
+            b.update();
+            b.draw();
+
+            let hit = false;
+            for (let ui = ufos.length - 1; ui >= 0; ui--) {
+                const u = ufos[ui];
+                if (Math.abs(b.x - u.x) < u.w * 0.85 && Math.abs(b.y - u.y) < u.h + 10) {
+                    hit = true;
+                    bullets.splice(bi, 1);
+
+                    if (u.isCorrect) {
+                        totalHits++;
+                        const gained = 10 * combo;
+                        score += gained;
+                        correctCount++;
+                        combo = Math.min(combo + 1, 5);
+                        playSound('correct');
+                        spawnExplosion(u.x, u.y, '#a9ffcc', 30);
+                        floatTexts.push(new FloatText(u.x, u.y - 15, `+${gained}`, '#a9ffcc'));
+                        currentIdx++;
+                        updateHUD();
+                        initLevel();
+                    } else {
+                        combo = 1;
+                        score = Math.max(0, score - 5);
+                        shakeTime = 10;
+                        playSound('wrong');
+                        spawnExplosion(u.x, u.y, '#ff3355', 18);
+                        floatTexts.push(new FloatText(u.x, u.y - 15, `-5`, '#ffd0c9'));
+                        ufos.splice(ui, 1);
+                        updateHUD();
+                    }
+                    break;
+                }
+            }
+
+            if (!hit && b.y < -30) {
+                bullets.splice(bi, 1);
+            }
+        }
+
+        if (motherUFO) {
+            motherUFO.update();
+            motherUFO.draw();
+        }
+        ufos.forEach(u => {
+            u.update();
+            u.draw();
+        });
+
+        for (let si = shockwaves.length - 1; si >= 0; si--) {
+            shockwaves[si].update();
+            shockwaves[si].draw();
+            if (shockwaves[si].life <= 0) shockwaves.splice(si, 1);
+        }
+
+        for (let pi = particles.length - 1; pi >= 0; pi--) {
+            particles[pi].update();
+            particles[pi].draw();
+            if (particles[pi].life <= 0) particles.splice(pi, 1);
+        }
+
+        for (let fi = floatTexts.length - 1; fi >= 0; fi--) {
+            floatTexts[fi].update();
+            floatTexts[fi].draw();
+            if (floatTexts[fi].life <= 0) floatTexts.splice(fi, 1);
+        }
+
+        ctx.restore();
+        animId = requestAnimationFrame(animate);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sản Phẩm STEM THCS Nga Sơn - Tàu Ngầm Xanh Đại Dương Pro</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: none;
+            background: #02182b;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: #f8fafc;
+            user-select: none;
+        }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #fireworksCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 45;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, rgba(4, 57, 94, 0.94), rgba(1, 18, 36, 0.98));
+            z-index: 20;
+            text-align: center;
+            padding: 18px;
+            overflow-y: auto;
+            touch-action: auto;
+        }
+
+        #hud {
+            position: absolute;
+            top: 10px; left: 10px; right: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .hud-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .hud-box {
+            background: rgba(2, 34, 62, 0.88);
+            border: 1px solid rgba(56, 229, 255, 0.45);
+            border-radius: 14px;
+            padding: 7px 13px;
+            font-size: clamp(12px, 3vw, 15.5px);
+            font-weight: 700;
+            color: #7ef9ff;
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+        }
+
+        .bar-wrap {
+            width: clamp(75px, 16vw, 130px);
+            height: 9px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 99px;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        #clean-bar {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(90deg, #f59e0b, #10b981, #00f2ff);
+            transition: width 0.35s ease;
+        }
+
+        #sonar-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #38bdf8, #fde047);
+            transition: width 0.25s ease;
+        }
+
+        #sound-btn {
+            pointer-events: auto;
+            cursor: pointer;
+            background: rgba(2, 34, 62, 0.92);
+            border: 1px solid rgba(56, 249, 215, 0.55);
+            border-radius: 14px;
+            padding: 7px 12px;
+            font-size: clamp(12px, 2.9vw, 15px);
+            font-weight: 700;
+            color: #38f9d7;
+            transition: transform 0.15s, background 0.2s;
+        }
+        #sound-btn:hover { transform: scale(1.04); background: rgba(56, 249, 215, 0.15); }
+
+        .school-tag {
+            background: linear-gradient(90deg, rgba(56, 249, 215, 0.16), rgba(56, 189, 248, 0.16));
+            border: 1px solid rgba(56, 249, 215, 0.55);
+            color: #7ef9ff;
+            padding: 6px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.9px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(24px, 5vw, 45px);
+            color: #38f9d7;
+            text-shadow: 0 0 26px rgba(56, 249, 215, 0.55);
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: clamp(14px, 3.4vw, 18.5px);
+            color: #e0f7fa;
+            margin: 0 0 14px 0;
+            max-width: 680px;
+            line-height: 1.55;
+        }
+
+        .mode-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .mode-btn {
+            padding: 9px 18px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(56, 249, 215, 0.45);
+            background: rgba(2, 34, 62, 0.82);
+            color: #cbd5e1;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .mode-btn.active {
+            border-color: #38f9d7;
+            background: rgba(56, 249, 215, 0.2);
+            color: #38f9d7;
+            box-shadow: 0 0 16px rgba(56, 249, 215, 0.3);
+        }
+
+        .guide-box {
+            background: linear-gradient(160deg, rgba(4, 48, 86, 0.88), rgba(2, 26, 48, 0.92));
+            border: 1.5px solid rgba(56, 249, 215, 0.42);
+            border-radius: 18px;
+            padding: 14px 18px;
+            max-width: 680px;
+            width: 100%;
+            margin-bottom: 14px;
+            text-align: left;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .guide-heading {
+            font-size: clamp(14px, 3.4vw, 16.5px);
+            font-weight: 800;
+            color: #38f9d7;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .guide-list {
+            display: grid;
+            gap: 7px;
+            font-size: clamp(13px, 3.1vw, 14.8px);
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(62px, 130px));
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .legend-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(126, 249, 255, 0.3);
+            border-radius: 14px;
+            padding: 9px 6px;
+            font-size: clamp(11.5px, 2.7vw, 13px);
+            line-height: 1.35;
+        }
+
+        .legend-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        .btn-primary {
+            padding: 15px 40px;
+            font-size: clamp(16px, 4vw, 20.5px);
+            font-weight: 800;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            color: #022c22;
+            background: linear-gradient(45deg, #38f9d7, #43e97b);
+            box-shadow: 0 0 26px rgba(56, 249, 215, 0.55);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary:hover { transform: scale(1.04); box-shadow: 0 0 34px rgba(67, 233, 123, 0.75); }
+
+        /* --- NÂNG CẤP KHUNG CÂU HỎI, NÚT ĐÁP ÁN & DÒNG CHỮ --- */
+        #quiz-modal {
+            display: none;
+            background: rgba(1, 14, 28, 0.88);
+            backdrop-filter: blur(7px);
+            z-index: 30;
+            padding: 16px;
+        }
+
+        .quiz-card {
+            position: relative;
+            background: linear-gradient(165deg, #073d6b 0%, #042544 55%, #02172c 100%);
+            border: 2px solid rgba(56, 249, 215, 0.75);
+            border-radius: 26px;
+            padding: clamp(20px, 4vw, 28px);
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow:
+                0 24px 60px rgba(0, 0, 0, 0.75),
+                0 0 32px rgba(56, 249, 215, 0.16),
+                inset 0 1px 0 rgba(255, 255, 255, 0.18);
+            text-align: left;
+            z-index: 32;
+            animation: cardPop 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes cardPop {
+            from { opacity: 0; transform: translateY(14px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .quiz-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .quiz-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 249, 215, 0.16);
+            border: 1px solid rgba(56, 249, 215, 0.45);
+            color: #7ef9ff;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: clamp(12px, 3vw, 13.5px);
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+
+        .quiz-q-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #38f9d7;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+        }
+
+        .quiz-q {
+            font-size: clamp(17.5px, 4.2vw, 21.5px);
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        .quiz-opts {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .quiz-opt {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg, rgba(14, 78, 128, 0.55), rgba(6, 41, 74, 0.72));
+            border: 1.8px solid rgba(125, 211, 252, 0.38);
+            color: #f1f5f9;
+            padding: 13px 16px;
+            border-radius: 16px;
+            font-size: clamp(15px, 3.7vw, 17px);
+            font-weight: 600;
+            line-height: 1.42;
+            cursor: pointer;
+            text-align: left;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            transition: transform 0.16s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .quiz-opt:hover:not(:disabled) {
+            transform: translateX(5px);
+            background: linear-gradient(135deg, rgba(16, 112, 168, 0.75), rgba(13, 148, 136, 0.45));
+            border-color: #38f9d7;
+            box-shadow: 0 8px 22px rgba(56, 249, 215, 0.2);
+        }
+
+        .quiz-opt:active:not(:disabled) {
+            transform: translateX(2px) scale(0.99);
+        }
+
+        .quiz-opt:disabled {
+            cursor: default;
+        }
+
+        .opt-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(56, 249, 215, 0.18);
+            border: 1px solid rgba(56, 249, 215, 0.45);
+            color: #38f9d7;
+            font-weight: 800;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .opt-text {
+            flex: 1;
+            line-height: 1.42;
+        }
+
+        .opt-mark {
+            font-size: 18px;
+            font-weight: 800;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .quiz-opt.correct {
+            background: linear-gradient(135deg, #059669, #10b981) !important;
+            border-color: #6ee7b7 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.45);
+        }
+        .quiz-opt.correct .opt-letter {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.55);
+            color: #ffffff;
+        }
+        .quiz-opt.correct .opt-mark { opacity: 1; }
+
+        .quiz-opt.wrong {
+            background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+            border-color: #fca5a5 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 18px rgba(239, 68, 68, 0.35);
+        }
+        .quiz-opt.wrong .opt-letter {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.45);
+            color: #ffffff;
+        }
+        .quiz-opt.wrong .opt-mark { opacity: 1; }
+
+        .next-banner {
+            display: none;
+            margin-top: 16px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(6, 95, 70, 0.45), rgba(8, 47, 73, 0.65));
+            border: 1.8px solid rgba(52, 211, 153, 0.75);
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+            text-align: center;
+            animation: cardPop 0.25s ease;
+        }
+
+        .next-banner.warn-banner {
+            background: linear-gradient(145deg, rgba(120, 53, 15, 0.42), rgba(8, 47, 73, 0.65));
+            border-color: rgba(251, 191, 36, 0.75);
+        }
+
+        .next-banner-title {
+            font-size: clamp(15.5px, 3.9vw, 18.5px);
+            font-weight: 800;
+            color: #fde047;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+
+        .next-banner-fact {
+            font-size: clamp(14px, 3.4vw, 15.5px);
+            color: #ecfdf5;
+            background: rgba(0, 0, 0, 0.22);
+            border-radius: 12px;
+            padding: 10px 13px;
+            margin: 0 0 14px 0;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .btn-continue {
+            padding: 12px 26px;
+            border: none;
+            border-radius: 999px;
+            font-size: clamp(14.5px, 3.6vw, 16px);
+            font-weight: 800;
+            cursor: pointer;
+            color: #022c22;
+            background: linear-gradient(45deg, #fde047, #38f9d7);
+            box-shadow: 0 6px 20px rgba(56, 249, 215, 0.35);
+            transition: transform 0.18s ease, box-shadow 0.2s ease;
+        }
+        .btn-continue:hover { transform: scale(1.04); box-shadow: 0 8px 26px rgba(253, 224, 71, 0.45); }
+
+        #action-bar {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            right: 14px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 12;
+            pointer-events: none;
+        }
+
+        .pad-btn {
+            pointer-events: auto;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 2px solid rgba(56, 249, 215, 0.65);
+            background: rgba(2, 34, 62, 0.84);
+            color: #38f9d7;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        #sonar-btn {
+            pointer-events: auto;
+            padding: 12px 20px;
+            border-radius: 999px;
+            border: 2px solid rgba(148, 163, 184, 0.45);
+            background: rgba(2, 34, 62, 0.88);
+            color: #94a3b8;
+            font-size: clamp(13px, 3.2vw, 15px);
+            font-weight: 800;
+            cursor: not-allowed;
+            transition: 0.25s;
+        }
+
+        #sonar-btn.ready {
+            border-color: #fde047;
+            background: linear-gradient(45deg, #f59e0b, #eab308);
+            color: #022c22;
+            cursor: pointer;
+            box-shadow: 0 0 22px rgba(253, 224, 71, 0.75);
+            animation: pulseBtn 1.2s infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        /* ===== RESPONSIVE (bổ sung) ===== */
+        html, body { height: 100%; }
+        body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+        .overlay {
+            justify-content: flex-start;
+            padding: max(18px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+        }
+        .overlay > :first-child { margin-top: auto; }
+        .overlay > :last-child { margin-bottom: auto; }
+        .overlay > * { flex-shrink: 0; }
+        #quiz-modal .quiz-card { max-height: none; overflow: visible; }
+        #action-bar { bottom: max(14px, env(safe-area-inset-bottom)); }
+        @media (max-width: 640px), (max-height: 520px) {
+            #hud { top: 8px; left: 8px; right: 8px; gap: 6px; }
+            .hud-group { gap: 6px; }
+            .hud-box, #sound-btn { padding: 5px 9px; font-size: 12.5px; border-radius: 10px; }
+            .hud-box .lbl, #sound-btn .lbl, #zone-label { display: none; }
+            .bar-wrap { width: 56px; height: 8px; }
+            #sonar-bar-wrap { width: 44px !important; }
+            .pad-btn { width: 52px; height: 52px; }
+        }
+        @media (max-width: 520px) {
+            .legend-grid { grid-template-columns: repeat(3, 1fr); width: 100%; }
+        }
+        @media (max-height: 520px) and (orientation: landscape) {
+            .legend-grid { grid-template-columns: repeat(5, 1fr); }
+            #action-bar { bottom: 8px; }
+            .pad-btn { width: 46px; height: 46px; font-size: 18px; }
+        }
+        @media (hover: none) { #sound-btn:hover { transform: none; } }
+    </style>
+</head>
+<body>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<div id="hud">
+    <div class="hud-group">
+        <div class="hud-box" id="score-box">ĐIỂM: 0 | ❤️❤️❤️</div>
+        <div class="hud-box" id="combo-box" style="color:#fde047;">COMBO: x1</div>
+    </div>
+    <div class="hud-group">
+        <div class="hud-box">
+            🌊<span class="lbl"> BIỂN XANH:</span> <span id="clean-pct">20%</span>
+            <div class="bar-wrap"><div id="clean-bar"></div></div>
+            <span id="zone-label" style="color:#fde047;">• Vùng Ven Bờ</span>
+        </div>
+        <div class="hud-box">
+            📡<span class="lbl"> SONAR:</span>
+            <div class="bar-wrap" id="sonar-bar-wrap" style="width:70px;"><div id="sonar-bar"></div></div>
+        </div>
+        <div class="hud-box" id="pearl-box">🦪<span class="lbl"> CÂU HỎI:</span> 0/10</div>
+        <button id="sound-btn" onclick="toggleSound()" aria-label="Bật/tắt âm thanh">🔊<span class="lbl"> Âm: BẬT</span></button>
+    </div>
+</div>
+
+<div id="action-bar">
+    <button class="pad-btn" id="m-left">◀</button>
+    <button id="sonar-btn" onclick="triggerSonar()">📡 SÓNG SONAR (Chưa đầy)</button>
+    <button class="pad-btn" id="m-right">▶</button>
+</div>
+
+<!-- MÀN HÌNH BẮT ĐẦU & GIỚI THIỆU CÁCH CHƠI -->
+<div id="start-screen" class="overlay">
+    <div class="school-tag">Sản phẩm Dự thi STEM • Trường THCS Nga Sơn</div>
+    <h1>🌊 TÀU NGẦM XANH ĐẠI DƯƠNG</h1>
+    <p class="subtitle">Hành trình lặn sâu qua 3 tầng sinh thái biển, làm sạch rác thải nhựa & chinh phục tri thức đại dương</p>
+
+    <div class="mode-panel">
+        <button id="mode-10" class="mode-btn active" onclick="selectGameMode(10, this)">🌊 Hành trình đầy đủ (10 câu hỏi)</button>
+        <button id="mode-5" class="mode-btn" onclick="selectGameMode(5, this)">⚡ Trải nghiệm nhanh BGK (5 câu hỏi)</button>
+    </div>
+
+    <div class="guide-box">
+        <div class="guide-heading">📖 Cách chơi & Cơ chế mới</div>
+        <div class="guide-list">
+            <div>• <b>Điều khiển tàu ngầm:</b> Kéo ngang màn hình cảm ứng, di chuột hoặc nhấn phím <b>A/D</b> (<b>◀/▶</b>). Nhấn phím <b>Space</b> hoặc nút <b>Sóng Sonar</b> khi đầy năng lượng để quét sạch rác trên màn hình!</div>
+            <div>• <b>3 Tầng Độ Sâu:</b> Làm sạch đại dương để tiến từ <b>Vùng Ven Bờ</b> (20%) → <b>Rạn San Hô</b> (45%) → <b>Vực Thẳm Xanh</b> (75% – 100%).</div>
+            <div>• <b>Chuỗi Combo & Ngọc Trai:</b> Nhặt rác liên tục không để lọt đáy biển sẽ tăng <b>Combo</b> nhân điểm. Chạm <b>Ngọc Trai 🦪</b> để trả lời câu hỏi <b>A/B/C</b> (đáp án xáo trộn ngẫu nhiên).</div>
+        </div>
+    </div>
+
+    <div class="legend-grid">
+        <div class="legend-card"><span class="legend-icon">🧴🛍️</span>Thu rác (+Combo & Sonar)</div>
+        <div class="legend-card"><span class="legend-icon">🦪✨</span>Câu hỏi biển (+30đ)</div>
+        <div class="legend-card"><span class="legend-icon">🧲</span>Nam châm hút rác</div>
+        <div class="legend-card"><span class="legend-icon">🛡️💖</span>Khiên & Hồi tim</div>
+        <div class="legend-card"><span class="legend-icon">💣🕸️</span>Tránh thủy lôi, lưới</div>
+    </div>
+
+    <button class="btn-primary" onclick="startGame()">LẶN XUỐNG ĐẠI DƯƠNG</button>
+</div>
+
+<!-- HỘP CÂU HỎI NGỌC TRAI TRI THỨC -->
+<div id="quiz-modal" class="overlay">
+    <div class="quiz-card">
+        <div class="quiz-header-row">
+            <span class="quiz-tag" id="quiz-progress-tag">🦪 CÂU HỎI BẢO VỆ ĐẠI DƯƠNG</span>
+        </div>
+        <div class="quiz-q-box">
+            <p class="quiz-q" id="quiz-question"></p>
+        </div>
+        <div class="quiz-opts" id="quiz-options"></div>
+        <div class="next-banner" id="next-banner">
+            <p class="next-banner-title" id="next-banner-title">🎆 Tuyệt vời! Mời bạn chuyển câu tiếp theo!</p>
+            <p class="next-banner-fact" id="next-banner-fact"></p>
+            <button class="btn-continue" id="btn-continue-dive" onclick="continueAfterQuiz()">Tiếp tục lặn & chuyển câu tiếp theo ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- MÀN HÌNH KẾT THÚC -->
+<div id="end-screen" class="overlay" style="display:none;">
+    <div class="school-tag">Tổng kết sứ mệnh • THCS Nga Sơn</div>
+    <h1 id="end-title">HOÀN THÀNH SỨ MỆNH!</h1>
+    <p class="subtitle" id="end-summary"></p>
+    <p style="color:#38f9d7; font-size: clamp(16px, 4vw, 22px); font-weight:700; margin-bottom:24px;">
+        "Chung tay giảm rác thải nhựa — Giữ mãi màu xanh đại dương!"
+    </p>
+    <button class="btn-primary" onclick="startGame()">CHƠI LẠI</button>
+</div>
+
+<canvas id="oceanCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('oceanCanvas');
+    const ctx = canvas.getContext('2d');
+    const fwCanvas = document.getElementById('fireworksCanvas');
+    const fwCtx = fwCanvas.getContext('2d');
+
+    let viewW = window.innerWidth;
+    let viewH = window.innerHeight;
+    let isPortrait = viewH > viewW;
+
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP WEB AUDIO API ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        const btn = document.getElementById('sound-btn');
+        btn.innerHTML = soundEnabled ? '🔊<span class="lbl"> Âm: BẬT</span>' : '🔇<span class="lbl"> Âm: TẮT</span>';
+        btn.style.color = soundEnabled ? '#38f9d7' : '#94a3b8';
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'pickup') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(840, now + 0.09);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.start(now);
+            osc.stop(now + 0.09);
+        } else if (type === 'powerup') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.setValueAtTime(660, now + 0.07);
+            osc.frequency.setValueAtTime(880, now + 0.14);
+            gain.gain.setValueAtTime(0.11, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+            osc.start(now);
+            osc.stop(now + 0.24);
+        } else if (type === 'sonar') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(280, now);
+            osc.frequency.exponentialRampToValueAtTime(980, now + 0.35);
+            gain.gain.setValueAtTime(0.16, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'hit') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.linearRampToValueAtTime(65, now + 0.25);
+            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'win') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                g.gain.setValueAtTime(0.14, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.36);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.36);
+            });
+        }
+    }
+
+    // --- THUẬT TOÁN XÁO TRỘN FISHER-YATES ---
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    // --- KHO 12 CÂU HỎI KIẾN THỨC ĐẠI DƯƠNG & MÔI TRƯỜNG BIỂN ---
+    const questionBank = [
+        {
+            q: "Trung bình một chiếc túi nilon hoặc chai nhựa cần bao lâu để phân hủy ngoài tự nhiên?",
+            a: ["Hàng trăm năm (400 - 1.000 năm)", "Khoảng 1 tháng", "Chỉ mất 1 năm"],
+            c: 0,
+            fact: "Rác thải nhựa tồn tại hàng trăm năm và vỡ thành vi nhựa đi vào chuỗi thức ăn của sinh vật biển."
+        },
+        {
+            q: "Loài sinh vật biển nào thường ăn nhầm túi nilon vì tưởng đó là sứa?",
+            a: ["Rùa biển", "Cá mập trắng", "Sao biển"],
+            c: 0,
+            fact: "Túi nilon trôi nổi trong nước trông rất giống sứa — món ăn yêu thích của rùa biển."
+        },
+        {
+            q: "Rạn san hô được ví như gì của đại dương?",
+            a: ["Rừng nhiệt đới dưới đáy biển", "Sa mạc cát trắng", "Băng trôi vĩnh cửu"],
+            c: 0,
+            fact: "Rạn san hô chỉ chiếm chưa tới 1% đáy biển nhưng là ngôi nhà của khoảng 25% sinh vật biển."
+        },
+        {
+            q: "Hành động nào sau đây giúp bảo vệ môi trường biển thiết thực nhất?",
+            a: ["Dùng bình nước cá nhân, hạn chế nhựa dùng một lần", "Vứt rác xuống cống thoát nước", "Bẻ san hô mang về làm kỷ niệm"],
+            c: 0,
+            fact: "Giảm rác thải nhựa từ đất liền giúp ngăn chặn hơn 80% nguồn rác đổ ra đại dương."
+        },
+        {
+            q: "Vịnh biển nổi tiếng nào của Việt Nam có gần 2.000 hòn đảo đá vôi kỳ vĩ?",
+            a: ["Vịnh Hạ Long", "Vịnh Cam Ranh", "Vịnh Vân Phong"],
+            c: 0,
+            fact: "Vịnh Hạ Long (Quảng Ninh) là Di sản Thiên nhiên Thế giới được UNESCO công nhận nhiều lần."
+        },
+        {
+            q: "Phần lớn lượng khí Oxychúng ta hít thở hằng ngày được tạo ra từ đâu?",
+            a: ["Thực vật phù du và tảo biển trong đại dương", "Chỉ từ các nhà máy", "Từ mây trên trời"],
+            c: 0,
+            fact: "Đại dương tạo ra hơn 50% lượng oxy trên Trái Đất và hấp thụ lượng lớn khí CO2."
+        },
+        {
+            q: "Hiện tượng 'lưới ma' (ghost nets) dưới đại dương gây ra tác hại gì?",
+            a: ["Mắc kẹt và làm chết cá, rùa, cá heo suốt nhiều năm", "Giúp cá bơi nhanh hơn", "Làm nước biển ngọt hơn"],
+            c: 0,
+            fact: "Ngư cụ bị bỏ quên trôi nổi trên biển tiếp tục bẫy và gây hại cho sinh vật biển trong thời gian dài."
+        },
+        {
+            q: "Rừng ngập mặn ven biển có vai trò quan trọng nào đối với con người và thiên nhiên?",
+            a: ["Chắn sóng bão, chống xói lở và nuôi dưỡng thủy sản", "Làm nước biển nóng lên", "Ngăn cản mưa rơi"],
+            c: 0,
+            fact: "Rừng ngập mặn là 'lá chắn xanh' bảo vệ đê biển và là vườn ươm của tôm, cua, cá."
+        },
+        {
+            q: "Vùng biển Việt Nam thuộc biển nào?",
+            a: ["Biển Đông", "Biển Đỏ", "Biển Đen"],
+            c: 0,
+            fact: "Việt Nam có đường bờ biển dài hơn 3.260 km trải dài từ Bắc vào Nam."
+        },
+        {
+            q: "Ngày Đại dương Thế giới (World Oceans Day) được tổ chức vào ngày nào hằng năm?",
+            a: ["Ngày 8 tháng 6", "Ngày 2 tháng 9", "Ngày 20 tháng 11"],
+            c: 0,
+            fact: "Ngày 8/6 hằng năm là dịp toàn thế giới cùng hành động vì một đại dương xanh, sạch, bền vững."
+        },
+        {
+            q: "Hai quần đảo lớn của Việt Nam nằm giữa Biển Đông là gì?",
+            a: ["Hoàng Sa và Trường Sa", "Cát Bà và Cô Tô", "Phú Quốc và Côn Đảo"],
+            c: 0,
+            fact: "Quần đảo Hoàng Sa và Trường Sa là phần lãnh thổ thiêng liêng không thể tách rời của Tổ quốc Việt Nam."
+        },
+        {
+            q: "Vì sao không nên đổ dầu ăn thừa hoặc hóa chất tẩy rửa xuống cống thoát nước?",
+            a: ["Dòng chảy sẽ cuốn ra sông, biển làm đầu độc nguồn nước", "Làm cống thơm hơn", "Giúp cá lớn nhanh hơn"],
+            c: 0,
+            fact: "Một lít dầu thải có thể làm ô nhiễm hàng nghìn lít nước và tạo màng ngăn oxy hòa tan trong nước."
+        }
+    ];
+
+    let activeQuestions = [];
+    let selectedQuestionCount = 10;
+    let gameActive = false, paused = false, animId = null, tick = 0, shakeTime = 0;
+    let score = 0, lives = 3, cleanliness = 20, pearlsSolved = 0, correctAnswers = 0, qIndex = 0;
+    let combo = 1, sonarCharge = 0, magnetTimer = 0, hasShield = false;
+    let subX = viewW / 2, subY = viewH - 130;
+    let items = [], bubbles = [], fishes = [], particles = [], floatTexts = [], fireworks = [], sonarWaves = [];
+    let keys = { left: false, right: false };
+    let touchDrag = { active: false, lastX: 0 };
+
+    function selectGameMode(count, btnEl) {
+        selectedQuestionCount = count;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+    }
+
+    function resize() {
+        viewW = window.innerWidth || 800;
+        viewH = window.innerHeight || 600;
+        isPortrait = viewH > viewW;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(viewW * dpr);
+        canvas.height = Math.floor(viewH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        fwCanvas.width = Math.floor(viewW * dpr);
+        fwCanvas.height = Math.floor(viewH * dpr);
+        fwCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        subY = isPortrait ? viewH - 135 : viewH - 110;
+        subX = Math.min(Math.max(subX, 45), viewW - 45);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function launchFireworks(bursts = 4) {
+        const colors = ['#fde047', '#38f9d7', '#43e97b', '#38bdf8', '#f472b6', '#ffffff'];
+        for (let b = 0; b < bursts; b++) {
+            setTimeout(() => {
+                const bx = viewW * (0.2 + Math.random() * 0.6);
+                const by = viewH * (0.18 + Math.random() * 0.42);
+                for (let i = 0; i < 36; i++) {
+                    const ang = (Math.PI * 2 * i) / 36;
+                    const spd = 2 + Math.random() * 4;
+                    fireworks.push({
+                        x: bx, y: by,
+                        vx: Math.cos(ang) * spd,
+                        vy: Math.sin(ang) * spd,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1,
+                        size: 2.5 + Math.random() * 2
+                    });
+                }
+            }, b * 220);
+        }
+    }
+
+    function drawFireworks() {
+        fwCtx.clearRect(0, 0, viewW, viewH);
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.05;
+            p.vx *= 0.97;
+            p.vy *= 0.97;
+            p.life -= 0.02;
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+                continue;
+            }
+            fwCtx.save();
+            fwCtx.globalAlpha = Math.max(0, p.life);
+            fwCtx.fillStyle = p.color;
+            fwCtx.shadowBlur = 10;
+            fwCtx.shadowColor = p.color;
+            fwCtx.beginPath();
+            fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fwCtx.fill();
+            fwCtx.restore();
+        }
+    }
+
+    function initDecor() {
+        bubbles = [];
+        fishes = [];
+        for (let i = 0; i < 42; i++) {
+            bubbles.push({
+                x: Math.random() * viewW,
+                y: Math.random() * viewH,
+                r: Math.random() * 4 + 1.5,
+                sp: Math.random() * 1.2 + 0.4
+            });
+        }
+        const fishColors = ['#ffbe0b', '#fb5607', '#ff006e', '#38f9d7', '#80ed99'];
+        for (let i = 0; i < 14; i++) {
+            fishes.push({
+                x: Math.random() * viewW,
+                y: 90 + Math.random() * (viewH - 220),
+                dir: Math.random() > 0.5 ? 1 : -1,
+                sp: Math.random() * 1.2 + 0.5,
+                size: Math.random() * 8 + 9,
+                color: fishColors[i % fishColors.length]
+            });
+        }
+    }
+
+    function getZoneName() {
+        if (cleanliness >= 75) return "Vực Thẳm Xanh";
+        if (cleanliness >= 45) return "Rạn San Hô";
+        return "Vùng Ven Bờ";
+    }
+
+    function updateHUD() {
+        const shieldTxt = hasShield ? " 🛡️" : "";
+        const magTxt = magnetTimer > 0 ? " 🧲" : "";
+        const hearts = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
+        document.getElementById('score-box').innerText = `ĐIỂM: ${score} | ${hearts}${shieldTxt}${magTxt}`;
+        document.getElementById('combo-box').innerText = `COMBO: x${combo}`;
+        document.getElementById('clean-pct').innerText = `${cleanliness}%`;
+        document.getElementById('clean-bar').style.width = `${cleanliness}%`;
+        document.getElementById('zone-label').innerText = `• ${getZoneName()}`;
+        document.getElementById('pearl-box').innerHTML = `🦪<span class="lbl"> CÂU HỎI:</span> ${pearlsSolved}/${activeQuestions.length}`;
+
+        const sonarPct = Math.min(100, sonarCharge);
+        document.getElementById('sonar-bar').style.width = `${sonarPct}%`;
+        const sBtn = document.getElementById('sonar-btn');
+        if (sonarPct >= 100) {
+            sBtn.classList.add('ready');
+            sBtn.innerText = '📡 PHÁT SÓNG SONAR! (Space)';
+        } else {
+            sBtn.classList.remove('ready');
+            sBtn.innerText = `📡 SONAR ${sonarPct}%`;
+        }
+    }
+
+    function triggerSonar() {
+        if (!gameActive || paused || sonarCharge < 100) return;
+        sonarCharge = 0;
+        playSound('sonar');
+        sonarWaves.push({ x: subX, y: subY, r: 20, life: 1 });
+
+        let clearedCount = 0;
+        for (let i = items.length - 1; i >= 0; i--) {
+            const it = items[i];
+            if (it.type === 'trash') {
+                clearedCount++;
+                score += 10 * combo;
+                cleanliness = Math.min(100, cleanliness + 2);
+                addBurst(it.x, it.y, '#38f9d7', 10);
+                items.splice(i, 1);
+            } else if (it.type === 'hazard') {
+                addBurst(it.x, it.y, '#fde047', 12);
+                items.splice(i, 1);
+            }
+        }
+        addFloatText(subX, subY - 40, `SÓNG SONAR QUÉT SẠCH! (+${clearedCount * 10 * combo})`, '#fde047');
+        updateHUD();
+        if (cleanliness >= 100) endGame(true);
+    }
+
+    function spawnItem() {
+        const margin = 42;
+        const x = margin + Math.random() * (viewW - margin * 2);
+        const r = Math.random();
+        let type = 'trash';
+        let icon = ['🧴', '🛍️', '🥤', '🥫'][Math.floor(Math.random() * 4)];
+
+        if (r < 0.21 && pearlsSolved < activeQuestions.length && !items.some(it => it.type === 'pearl')) {
+            type = 'pearl';
+            icon = '🦪';
+        } else if (r < 0.27 && !hasShield && !items.some(it => it.type === 'shield')) {
+            type = 'shield';
+            icon = '🛡️';
+        } else if (r < 0.33 && magnetTimer <= 0 && !items.some(it => it.type === 'magnet')) {
+            type = 'magnet';
+            icon = '🧲';
+        } else if (r < 0.38 && lives < 3 && !items.some(it => it.type === 'heart')) {
+            type = 'heart';
+            icon = '💖';
+        } else if (r < 0.62) {
+            type = 'hazard';
+            icon = Math.random() > 0.5 ? '💣' : '🕸️';
+        }
+
+        const zoneBonus = cleanliness >= 75 ? 0.9 : (cleanliness >= 45 ? 0.45 : 0);
+        const baseSpeed = isPortrait ? 2.5 : 2.9;
+        items.push({
+            x,
+            y: -35,
+            type,
+            icon,
+            vy: baseSpeed + Math.random() * 1.3 + zoneBonus,
+            sway: Math.random() * Math.PI * 2
+        });
+    }
+
+    function addFloatText(x, y, text, color) {
+        floatTexts.push({ x, y, text, color, life: 1 });
+    }
+
+    function addBurst(x, y, color, count = 14) {
+        for (let i = 0; i < count; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const spd = Math.random() * 4 + 1;
+            particles.push({
+                x, y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd,
+                color,
+                life: 1
+            });
+        }
+    }
+
+    function openQuizModal() {
+        if (qIndex >= activeQuestions.length) return;
+        paused = true;
+        const qObj = activeQuestions[qIndex];
+        document.getElementById('quiz-progress-tag').innerText = `🦪 CÂU HỎI ${qIndex + 1}/${activeQuestions.length} • ${getZoneName().toUpperCase()}`;
+        document.getElementById('quiz-question').innerText = qObj.q;
+
+        const bannerEl = document.getElementById('next-banner');
+        bannerEl.style.display = 'none';
+        bannerEl.classList.remove('warn-banner');
+
+        const optsBox = document.getElementById('quiz-options');
+        optsBox.innerHTML = '';
+
+        // Xáo trộn vị trí 3 đáp án A / B / C
+        const mapped = qObj.a.map((text, idx) => ({
+            text,
+            isCorrect: idx === qObj.c
+        }));
+        const shuffledOpts = shuffleArray(mapped);
+        const letters = ['A', 'B', 'C'];
+
+        shuffledOpts.forEach((optItem, sIdx) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            btn.innerHTML = `
+                <span class="opt-letter">${letters[sIdx]}</span>
+                <span class="opt-text">${optItem.text}</span>
+                <span class="opt-mark"></span>
+            `;
+            btn.onclick = () => handleQuizAnswer(optItem.isCorrect, btn, shuffledOpts, qObj);
+            optsBox.appendChild(btn);
+        });
+
+        document.getElementById('quiz-modal').style.display = 'flex';
+    }
+
+    function handleQuizAnswer(isCorrect, btn, shuffledOpts, qObj) {
+        const allBtns = document.querySelectorAll('.quiz-opt');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.querySelector('.opt-mark').innerText = '✓';
+            correctAnswers++;
+            score += 30;
+            cleanliness = Math.min(100, cleanliness + 10);
+            sonarCharge = Math.min(100, sonarCharge + 40);
+            playSound('correct');
+            launchFireworks(5);
+            document.getElementById('next-banner-title').innerText = "🎆 Chính xác! (+30 điểm • +10% Biển Xanh • +40% Sonar)";
+        } else {
+            btn.classList.add('wrong');
+            btn.querySelector('.opt-mark').innerText = '✕';
+            shuffledOpts.forEach((item, idx) => {
+                if (item.isCorrect) {
+                    allBtns[idx].classList.add('correct');
+                    allBtns[idx].querySelector('.opt-mark').innerText = '✓';
+                }
+            });
+            document.getElementById('next-banner').classList.add('warn-banner');
+            playSound('hit');
+            launchFireworks(2);
+            document.getElementById('next-banner-title').innerText = "💡 Đáp án đúng đã được làm nổi bật màu xanh!";
+        }
+
+        document.getElementById('next-banner-fact').innerText = `🌊 Kiến thức môi trường: ${qObj.fact}`;
+        document.getElementById('btn-continue-dive').innerText =
+            (pearlsSolved + 1 >= activeQuestions.length || cleanliness >= 100)
+                ? "Xem tổng kết hành trình 🏆"
+                : "Tiếp tục lặn & chuyển câu tiếp theo ▶";
+        document.getElementById('next-banner').style.display = 'block';
+
+        pearlsSolved++;
+        qIndex++;
+        updateHUD();
+    }
+
+    function continueAfterQuiz() {
+        document.getElementById('quiz-modal').style.display = 'none';
+        paused = false;
+        if (pearlsSolved >= activeQuestions.length || cleanliness >= 100) {
+            endGame(true);
+        }
+    }
+
+    function startGame() {
+        initAudio();
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('quiz-modal').style.display = 'none';
+        document.getElementById('action-bar').style.display = 'flex';
+
+        activeQuestions = shuffleArray(questionBank).slice(0, selectedQuestionCount);
+
+        score = 0;
+        lives = 3;
+        cleanliness = 20;
+        pearlsSolved = 0;
+        correctAnswers = 0;
+        qIndex = 0;
+        combo = 1;
+        sonarCharge = 0;
+        magnetTimer = 0;
+        hasShield = false;
+        items = [];
+        particles = [];
+        floatTexts = [];
+        fireworks = [];
+        sonarWaves = [];
+        subX = viewW / 2;
+        gameActive = true;
+        paused = false;
+
+        initDecor();
+        updateHUD();
+        if (animId) cancelAnimationFrame(animId);
+        loop();
+    }
+
+    function endGame(victory) {
+        gameActive = false;
+        if (victory) {
+            playSound('win');
+            launchFireworks(7);
+        }
+        document.getElementById('action-bar').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'flex';
+        document.getElementById('end-title').innerText = victory
+            ? '🏆 ĐẠI DƯƠNG ĐÃ XANH TRỞ LẠI!'
+            : '🌊 TÀU NGẦM CẦN BẢO TRÌ!';
+        document.getElementById('end-summary').innerText =
+            `Tổng điểm: ${score} • Độ sạch đại dương: ${cleanliness}% (${getZoneName()}) • Trả lời đúng: ${correctAnswers}/${pearlsSolved} câu hỏi`;
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        if (!gameActive || paused || touchDrag.active) return;
+        subX = Math.min(Math.max(e.clientX, 45), viewW - 45);
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+        if (!gameActive || paused || e.touches.length === 0) return;
+        touchDrag.active = true;
+        touchDrag.lastX = e.touches[0].clientX;
+        subX = Math.min(Math.max(e.touches[0].clientX, 45), viewW - 45);
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (!gameActive || paused || !touchDrag.active || e.touches.length === 0) return;
+        const dx = e.touches[0].clientX - touchDrag.lastX;
+        touchDrag.lastX = e.touches[0].clientX;
+        subX = Math.min(Math.max(subX + dx * 1.15, 45), viewW - 45);
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', () => { touchDrag.active = false; }, { passive: true });
+
+    function bindPad(id, prop) {
+        const el = document.getElementById(id);
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[prop] = true; }, { passive: false });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); keys[prop] = false; }, { passive: false });
+        el.addEventListener('touchcancel', () => { keys[prop] = false; });
+        el.addEventListener('mousedown', () => keys[prop] = true);
+        el.addEventListener('mouseup', () => keys[prop] = false);
+        el.addEventListener('mouseleave', () => keys[prop] = false);
+    }
+    bindPad('m-left', 'left');
+    bindPad('m-right', 'right');
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+        if (e.code === 'Space' && gameActive && !paused) {
+            e.preventDefault();
+            triggerSonar();
+        }
+    });
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+    });
+
+    function drawBackground() {
+        const ratio = cleanliness / 100;
+        const topR = Math.round(6 + ratio * 12);
+        const topG = Math.round(55 + ratio * 115);
+        const topB = Math.round(85 + ratio * 135);
+
+        const grad = ctx.createLinearGradient(0, 0, 0, viewH);
+        grad.addColorStop(0, `rgb(${topR}, ${topG}, ${topB})`);
+        grad.addColorStop(0.65, '#032b49');
+        grad.addColorStop(1, '#011324');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, viewW, viewH);
+
+        ctx.save();
+        ctx.globalAlpha = 0.06 + ratio * 0.08;
+        ctx.fillStyle = '#a5f3fc';
+        for (let i = 0; i < 4; i++) {
+            const rx = (viewW * 0.2) * (i + 0.8) + Math.sin(tick * 0.01 + i) * 30;
+            ctx.beginPath();
+            ctx.moveTo(rx - 30, 0);
+            ctx.lineTo(rx + 45, 0);
+            ctx.lineTo(rx + 140, viewH * 0.75);
+            ctx.lineTo(rx - 90, viewH * 0.75);
+            ctx.closePath();
+            ctx.fill();
+        }
+        ctx.restore();
+
+        ctx.fillStyle = '#021a2e';
+        ctx.fillRect(0, viewH - 28, viewW, 28);
+        const coralCount = Math.max(3, Math.floor((cleanliness / 100) * 12));
+        for (let i = 0; i < coralCount; i++) {
+            const cx = (viewW / (coralCount + 1)) * (i + 1);
+            ctx.font = '24px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(i % 2 === 0 ? '🪸' : '🌿', cx, viewH - 12);
+        }
+
+        const visibleFish = Math.max(3, Math.floor((cleanliness / 100) * fishes.length));
+        for (let i = 0; i < visibleFish; i++) {
+            const f = fishes[i];
+            f.x += f.sp * f.dir;
+            if (f.x > viewW + 30) f.x = -30;
+            if (f.x < -30) f.x = viewW + 30;
+
+            ctx.save();
+            ctx.translate(f.x, f.y + Math.sin(tick * 0.04 + i) * 4);
+            ctx.scale(f.dir, 1);
+            ctx.fillStyle = f.color;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, f.size, f.size * 0.55, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-f.size + 2, 0);
+            ctx.lineTo(-f.size - 7, -6);
+            ctx.lineTo(-f.size - 7, 6);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.45)';
+        bubbles.forEach(b => {
+            b.y -= b.sp;
+            if (b.y < -10) {
+                b.y = viewH + 10;
+                b.x = Math.random() * viewW;
+            }
+            ctx.beginPath();
+            ctx.arc(b.x + Math.sin(tick * 0.03 + b.y * 0.02) * 3, b.y, b.r, 0, Math.PI * 2);
+            ctx.stroke();
+        });
+    }
+
+    function drawSubmarine() {
+        const scale = isPortrait ? 0.85 : 1;
+        ctx.save();
+        ctx.translate(subX, subY);
+        ctx.scale(scale, scale);
+
+        if (magnetTimer > 0) {
+            ctx.beginPath();
+            ctx.arc(0, -10, 95 + Math.sin(tick * 0.15) * 6, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+            ctx.setLineDash([6, 6]);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        const beam = ctx.createLinearGradient(0, -10, 0, -170);
+        beam.addColorStop(0, 'rgba(56, 249, 215, 0.25)');
+        beam.addColorStop(1, 'transparent');
+        ctx.fillStyle = beam;
+        ctx.beginPath();
+        ctx.moveTo(-18, -15);
+        ctx.lineTo(18, -15);
+        ctx.lineTo(65, -170);
+        ctx.lineTo(-65, -170);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = '#38f9d7';
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 44, 22, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(-14, -30, 28, 14);
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(0, 0, 11, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#38f9d7';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(0, -30);
+        ctx.lineTo(0, -44);
+        ctx.lineTo(10, -44);
+        ctx.stroke();
+
+        if (hasShield) {
+            ctx.beginPath();
+            ctx.ellipse(0, -4, 56, 36 + Math.sin(tick * 0.12) * 2, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(56, 249, 215, 0.85)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+
+    function loop() {
+        if (!gameActive) return;
+
+        ctx.save();
+        if (shakeTime > 0) {
+            const mag = shakeTime * 0.7;
+            ctx.translate((Math.random() - 0.5) * mag, (Math.random() - 0.5) * mag);
+            shakeTime--;
+        }
+
+        if (!paused) {
+            tick++;
+            if (magnetTimer > 0) {
+                magnetTimer--;
+                if (magnetTimer === 0) updateHUD();
+            }
+            const step = isPortrait ? 7 : 8.5;
+            if (keys.left) subX = Math.max(45, subX - step);
+            if (keys.right) subX = Math.min(viewW - 45, subX + step);
+
+            if (tick % (isPortrait ? 38 : 32) === 0) {
+                spawnItem();
+            }
+        }
+
+        drawBackground();
+        drawSubmarine();
+
+        for (let si = sonarWaves.length - 1; si >= 0; si--) {
+            const sw = sonarWaves[si];
+            sw.r += 16;
+            sw.life -= 0.025;
+            if (sw.life <= 0) {
+                sonarWaves.splice(si, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = sw.life;
+            ctx.strokeStyle = '#fde047';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        for (let i = items.length - 1; i >= 0; i--) {
+            const it = items[i];
+            if (!paused) {
+                it.y += it.vy;
+                it.x += Math.sin(tick * 0.04 + it.sway) * 0.7;
+
+                if (magnetTimer > 0 && it.type === 'trash') {
+                    const dx = subX - it.x;
+                    const dy = subY - it.y;
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < 240 && dist > 1) {
+                        it.x += (dx / dist) * 5.2;
+                        it.y += (dy / dist) * 5.2;
+                    }
+                }
+            }
+
+            if (['pearl', 'shield', 'magnet', 'heart'].includes(it.type)) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(it.x, it.y, 24 + Math.sin(tick * 0.12) * 4, 0, Math.PI * 2);
+                ctx.fillStyle = it.type === 'pearl' ? 'rgba(56, 249, 215, 0.25)' : 'rgba(250, 204, 21, 0.22)';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            ctx.font = isPortrait ? '30px serif' : '34px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(it.icon, it.x, it.y);
+
+            if (!paused && Math.abs(it.x - subX) < 46 && Math.abs(it.y - subY) < 34) {
+                items.splice(i, 1);
+                if (it.type === 'trash') {
+                    const gained = 10 * combo;
+                    score += gained;
+                    cleanliness = Math.min(100, cleanliness + 3);
+                    sonarCharge = Math.min(100, sonarCharge + 15);
+                    combo = Math.min(combo + 1, 4);
+                    playSound('pickup');
+                    addBurst(it.x, it.y, '#38f9d7', 12);
+                    addFloatText(it.x, it.y - 12, `+${gained} (x${combo})`, '#38f9d7');
+                    updateHUD();
+                    if (cleanliness >= 100) endGame(true);
+                } else if (it.type === 'pearl') {
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#fde047', 18);
+                    openQuizModal();
+                } else if (it.type === 'shield') {
+                    hasShield = true;
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#60a5fa', 16);
+                    addFloatText(it.x, it.y - 12, 'KHIÊN BẢO VỆ 🛡️', '#93c5fd');
+                    updateHUD();
+                } else if (it.type === 'magnet') {
+                    magnetTimer = 420;
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#fde047', 16);
+                    addFloatText(it.x, it.y - 12, 'NAM CHÂM HÚT RÁC 🧲', '#fde047');
+                    updateHUD();
+                } else if (it.type === 'heart') {
+                    lives = Math.min(3, lives + 1);
+                    playSound('powerup');
+                    addBurst(it.x, it.y, '#f472b6', 16);
+                    addFloatText(it.x, it.y - 12, 'HỒI PHỤC +1 ❤️', '#f9a8d4');
+                    updateHUD();
+                } else if (it.type === 'hazard') {
+                    if (hasShield) {
+                        hasShield = false;
+                        playSound('pickup');
+                        addBurst(it.x, it.y, '#38f9d7', 18);
+                        addFloatText(it.x, it.y - 12, 'KHIÊN ĐÃ CHẶN!', '#38f9d7');
+                    } else {
+                        lives--;
+                        combo = 1;
+                        shakeTime = 12;
+                        cleanliness = Math.max(0, cleanliness - 5);
+                        playSound('hit');
+                        addBurst(it.x, it.y, '#ef4444', 18);
+                        addFloatText(it.x, it.y - 12, 'VA CHẠM! -1 ❤️', '#f87171');
+                    }
+                    updateHUD();
+                    if (lives <= 0) endGame(false);
+                }
+                continue;
+            }
+
+            if (it.y > viewH + 35) {
+                if (!paused && it.type === 'trash' && combo > 1) {
+                    combo = 1;
+                    updateHUD();
+                }
+                items.splice(i, 1);
+            }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.03;
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        for (let i = floatTexts.length - 1; i >= 0; i--) {
+            const ft = floatTexts[i];
+            ft.y -= 1.3;
+            ft.life -= 0.025;
+            if (ft.life <= 0) {
+                floatTexts.splice(i, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = ft.life;
+            ctx.font = 'bold 18px "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = ft.color;
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.restore();
+        }
+
+        ctx.restore();
+        drawFireworks();
+        animId = requestAnimationFrame(loop);
+    }
+</script>
+</body>
+</html>

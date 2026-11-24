@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sản Phẩm STEM THCS Nga Sơn - Quỹ Đạo Xanh Trái Đất</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #020617;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: #f8fafc;
+            user-select: none;
+        }
+        canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+        canvas:active { cursor: grabbing; }
+
+        /* Thanh trạng thái trên cùng */
+        #hud {
+            position: absolute;
+            top: 14px; left: 14px; right: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .hud-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-pill {
+            background: rgba(15, 23, 42, 0.86);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            border-radius: 999px;
+            padding: 8px 15px;
+            font-size: clamp(13px, 3.1vw, 15.5px);
+            font-weight: 700;
+            color: #7dd3fc;
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #sound-btn {
+            pointer-events: auto;
+            cursor: pointer;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(74, 222, 128, 0.55);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: clamp(12.5px, 3vw, 15px);
+            font-weight: 700;
+            color: #4ade80;
+            backdrop-filter: blur(6px);
+            transition: transform 0.15s, background 0.2s;
+        }
+        #sound-btn:hover { transform: scale(1.05); background: rgba(74, 222, 128, 0.18); }
+
+        .bar-track {
+            width: clamp(80px, 18vw, 140px);
+            height: 10px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 25%;
+            background: linear-gradient(90deg, #f59e0b, #22c55e, #38bdf8);
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Màn hình phủ */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, rgba(14, 116, 144, 0.38), rgba(2, 6, 23, 0.96));
+            z-index: 30;
+            text-align: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .school-tag {
+            background: rgba(56, 189, 248, 0.14);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            color: #7dd3fc;
+            padding: 5px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(24px, 5vw, 44px);
+            margin: 0 0 10px 0;
+            background: linear-gradient(90deg, #38bdf8, #4ade80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: clamp(14px, 3.4vw, 18.5px);
+            color: #cbd5e1;
+            max-width: 680px;
+            line-height: 1.5;
+            margin: 0 0 16px 0;
+        }
+
+        /* Chọn chế độ hành trình */
+        .mode-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .mode-btn {
+            padding: 9px 18px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(56, 189, 248, 0.45);
+            background: rgba(15, 23, 42, 0.8);
+            color: #cbd5e1;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .mode-btn.active {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.18);
+            color: #4ade80;
+            box-shadow: 0 0 16px rgba(74, 222, 128, 0.3);
+        }
+
+        /* Khung giới thiệu cách chơi ở màn hình đầu */
+        .howto-box {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1.5px solid rgba(56, 189, 248, 0.45);
+            border-radius: 20px;
+            padding: 15px 18px;
+            max-width: 660px;
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: left;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+
+        .howto-title {
+            font-size: clamp(15px, 3.5vw, 17.5px);
+            font-weight: 800;
+            color: #38bdf8;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .howto-steps {
+            display: grid;
+            gap: 8px;
+            font-size: clamp(13px, 3.2vw, 15px);
+            color: #e2e8f0;
+            line-height: 1.45;
+        }
+
+        .howto-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .btn-main {
+            padding: 15px 38px;
+            font-size: clamp(16px, 3.8vw, 20px);
+            font-weight: 800;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            color: #022c22;
+            background: linear-gradient(135deg, #38bdf8, #4ade80);
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.55);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 34px rgba(74, 222, 128, 0.85); }
+
+        /* Thanh điều khiển dưới đáy */
+        #bottom-bar {
+            position: absolute;
+            bottom: 16px; left: 16px; right: 16px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            z-index: 12;
+            pointer-events: none;
+        }
+
+        .nav-btn {
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1.5px solid rgba(56, 189, 248, 0.55);
+            color: #e0f2fe;
+            padding: 11px 18px;
+            border-radius: 999px;
+            font-size: clamp(13px, 3.3vw, 15px);
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: transform 0.18s, background 0.2s;
+        }
+        .nav-btn:hover { background: rgba(56, 189, 248, 0.25); transform: translateY(-2px); }
+        .nav-btn.highlight {
+            background: linear-gradient(135deg, #0284c7, #16a34a);
+            border-color: #86efac;
+            color: #fff;
+        }
+
+        /* Thẻ khám phá kỳ quan & câu hỏi */
+        #station-modal {
+            display: none;
+            background: rgba(2, 6, 23, 0.78);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popUp {
+            from { opacity: 0; transform: scale(0.92) translateY(14px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .card {
+            background: linear-gradient(180deg, #0f172a, #091e36);
+            border: 2px solid #38bdf8;
+            border-radius: 24px;
+            padding: 22px;
+            width: 100%;
+            max-width: 650px;
+            text-align: left;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: popUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            z-index: 32;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            background: rgba(56, 189, 248, 0.18);
+            color: #38bdf8;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .close-x {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #cbd5e1;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .wonder-title {
+            font-size: clamp(20px, 4.5vw, 27px);
+            margin: 4px 0 8px 0;
+            color: #f8fafc;
+        }
+
+        .wonder-desc {
+            font-size: clamp(14px, 3.4vw, 15.5px);
+            color: #cbd5e1;
+            line-height: 1.5;
+            margin: 0 0 12px 0;
+        }
+
+        .eco-banner {
+            background: rgba(22, 163, 74, 0.18);
+            border-left: 4px solid #4ade80;
+            padding: 11px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+        }
+
+        .eco-banner strong { color: #4ade80; display: block; margin-bottom: 4px; font-size: 13.5px; }
+        .eco-banner span { color: #dcfce7; font-size: clamp(13px, 3.2vw, 14.5px); line-height: 1.4; }
+
+        .quiz-title {
+            font-size: clamp(15px, 3.7vw, 17px);
+            font-weight: 700;
+            color: #7dd3fc;
+            margin: 0 0 10px 0;
+        }
+
+        .opt-list { display: grid; gap: 9px; }
+
+        .opt-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.07);
+            border: 1.5px solid rgba(125, 211, 252, 0.35);
+            color: #f1f5f9;
+            padding: 11px 14px;
+            border-radius: 12px;
+            font-size: clamp(14px, 3.4vw, 15.5px);
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .opt-btn:hover:not(:disabled) { background: rgba(56, 189, 248, 0.22); border-color: #38bdf8; transform: translateX(4px); }
+        .opt-btn.correct { background: #16a34a !important; border-color: #4ade80 !important; color: #fff; }
+        .opt-btn.wrong { background: #dc2626 !important; border-color: #f87171 !important; }
+
+        .opt-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.22);
+            color: #38bdf8;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .opt-btn.correct .opt-letter { background: rgba(255,255,255,0.25); color: #fff; }
+        .opt-btn.wrong .opt-letter { background: rgba(255,255,255,0.2); color: #fff; }
+
+        /* Hộp thông báo sau khi trả lời + mời chuyển câu tiếp */
+        .next-prompt-box {
+            display: none;
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.25), rgba(14, 165, 233, 0.25));
+            border: 1.5px solid #4ade80;
+            text-align: center;
+            animation: popUp 0.3s ease;
+        }
+
+        .next-prompt-box.wrong-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(14, 165, 233, 0.22));
+            border-color: #fbbf24;
+        }
+
+        .next-prompt-text {
+            font-size: clamp(15px, 3.7vw, 17.5px);
+            font-weight: 800;
+            color: #fde047;
+            margin: 0 0 8px 0;
+            text-shadow: 0 0 12px rgba(253, 224, 71, 0.4);
+        }
+
+        .next-prompt-sub {
+            font-size: 14px;
+            color: #e2e8f0;
+            line-height: 1.45;
+            margin: 0 0 12px 0;
+        }
+
+        .btn-next-q {
+            padding: 11px 24px;
+            border-radius: 999px;
+            border: none;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            color: #022c22;
+            background: linear-gradient(135deg, #fde047, #4ade80);
+            box-shadow: 0 0 18px rgba(74, 222, 128, 0.6);
+            transition: transform 0.2s;
+        }
+        .btn-next-q:hover { transform: scale(1.05); }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1.5px solid rgba(56, 189, 248, 0.45);
+            border-radius: 20px;
+            padding: 18px 26px;
+            margin-bottom: 18px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Canvas pháo hoa phủ trên cùng */
+        /* ===== RESPONSIVE (bổ sung) ===== */
+        html, body { height: 100%; }
+        body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+        .overlay {
+            justify-content: flex-start;
+            padding: max(20px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+        }
+        .overlay > :first-child { margin-top: auto; }
+        .overlay > :last-child { margin-bottom: auto; }
+        .overlay > * { flex-shrink: 0; }
+        #station-modal .card { max-height: none; overflow: visible; }
+        #bottom-bar { bottom: max(14px, env(safe-area-inset-bottom)); }
+        @media (max-width: 640px), (max-height: 520px) {
+            #hud { top: 8px; left: 8px; right: 8px; gap: 6px; }
+            .hud-group { gap: 6px; }
+            .hud-pill, #sound-btn { padding: 5px 10px; font-size: 12.5px; gap: 6px; }
+            .hud-pill .lbl, #sound-btn .lbl, .nav-btn .lbl { display: none; }
+            .bar-track { width: 64px; height: 8px; }
+            #bottom-bar { gap: 8px; flex-wrap: nowrap; left: 8px; right: 8px; }
+            .nav-btn { padding: 11px 16px; min-height: 44px; }
+            .card { padding: 16px; border-radius: 18px; }
+        }
+        @media (max-height: 520px) and (orientation: landscape) {
+            #bottom-bar { bottom: 8px; }
+            .nav-btn { padding: 8px 14px; min-height: 40px; }
+        }
+        @media (hover: none) { .nav-btn:hover, #sound-btn:hover { transform: none; } }
+
+        #fireworksCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 45;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<div id="hud">
+    <div class="hud-group">
+        <div class="hud-pill" title="Quỹ đạo kỳ quan">🛰️<span class="lbl"> QUỸ ĐẠO KỲ QUAN:</span> <span id="visited-count">0/8</span></div>
+        <div class="hud-pill">
+            🌍<span class="lbl"> SỨC KHỎE TRÁI ĐẤT:</span> <span id="earth-health">25%</span>
+            <div class="bar-track"><div class="bar-fill" id="health-bar"></div></div>
+        </div>
+    </div>
+    <div class="hud-group">
+        <div class="hud-pill" title="Điểm xanh">⭐<span class="lbl"> ĐIỂM XANH:</span> <span id="eco-score">0</span></div>
+        <button id="sound-btn" onclick="toggleSound()" aria-label="Bật/tắt âm thanh">🔊<span class="lbl"> Âm thanh: BẬT</span></button>
+    </div>
+</div>
+
+<div id="bottom-bar">
+    <button class="nav-btn" onclick="stepStation(-1)" aria-label="Trạm trước">◀<span class="lbl"> Trạm trước</span></button>
+    <button class="nav-btn highlight" onclick="openCurrentStation()">🔍 Khám phá trạm này</button>
+    <button class="nav-btn" onclick="stepStation(1)" aria-label="Trạm tiếp"><span class="lbl">Trạm tiếp </span>▶</button>
+</div>
+
+<!-- MÀN HÌNH GIỚI THIỆU CÁCH CHƠI -->
+<div id="start-screen" class="overlay">
+    <div class="school-tag">Sản phẩm Dự thi STEM • Trường THCS Nga Sơn</div>
+    <h1>🌍 QUỸ ĐẠO XANH TRÁI ĐẤT</h1>
+    <p class="subtitle">
+        Quan sát Trái Đất từ quỹ đạo không gian, khám phá các kỳ quan thế giới và chung tay phục hồi bầu khí quyển xanh.
+    </p>
+
+    <div class="mode-panel">
+        <button id="mode-8" class="mode-btn active" onclick="selectOrbitMode(8, this)">🌐 Quỹ đạo đầy đủ (8 kỳ quan)</button>
+        <button id="mode-4" class="mode-btn" onclick="selectOrbitMode(4, this)">⚡ Trải nghiệm nhanh BGK (4 kỳ quan)</button>
+    </div>
+
+    <div class="howto-box">
+        <div class="howto-title">📖 Hướng dẫn cách chơi</div>
+        <div class="howto-steps">
+            <div class="howto-step">
+                <span>🛰️</span>
+                <div><b>Bước 1 – Điều khiển quỹ đạo:</b> Chạm/click vào kỳ quan trên quỹ đạo, vuốt ngang màn hình (hoặc dùng nút <b>Trạm trước / Trạm tiếp</b>) để vệ tinh quét tới địa điểm muốn khám phá.</div>
+            </div>
+            <div class="howto-step">
+                <span>🌱</span>
+                <div><b>Bước 2 – Thử thách tri thức xanh:</b> Đọc thông điệp bảo vệ môi trường và chọn đáp án đúng <b>A / B / C</b> (vị trí đáp án được xáo trộn ngẫu nhiên linh hoạt ở mỗi lượt).</div>
+            </div>
+            <div class="howto-step">
+                <span>🎆</span>
+                <div><b>Bước 3 – Phục hồi hành tinh xanh:</b> Trả lời đúng giúp dọn sạch rác vũ trụ, nâng <b>Sức khỏe Trái Đất</b> lên 100% và bắn pháo hoa chúc mừng!</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-main" onclick="startJourney()">🚀 BẮT ĐẦU HÀNH TRÌNH</button>
+</div>
+
+<!-- MODAL KỲ QUAN & CÂU HỎI -->
+<div id="station-modal" class="overlay">
+    <div class="card">
+        <div class="card-header">
+            <span class="badge" id="m-region">CHÂU Á • VIỆT NAM</span>
+            <button class="close-x" onclick="closeModal()">✕</button>
+        </div>
+        <h2 class="wonder-title" id="m-title">Vịnh Hạ Long</h2>
+        <p class="wonder-desc" id="m-desc"></p>
+        <div class="eco-banner">
+            <strong>🌱 THÔNG ĐIỆP BẢO VỆ MÔI TRƯỜNG:</strong>
+            <span id="m-eco"></span>
+        </div>
+        <p class="quiz-title" id="m-question"></p>
+        <div class="opt-list" id="m-options"></div>
+
+        <!-- Hộp thông báo sau khi trả lời + mời chuyển câu tiếp -->
+        <div class="next-prompt-box" id="next-prompt-box">
+            <p class="next-prompt-text" id="next-prompt-title">🎆 Tuyệt vời! Mời bạn chuyển câu tiếp theo!</p>
+            <p class="next-prompt-sub" id="next-prompt-sub"></p>
+            <button class="btn-next-q" id="btn-go-next" onclick="goToNextStation()">Chuyển sang địa điểm tiếp theo ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- MÀN HÌNH HOÀN THÀNH -->
+<div id="end-screen" class="overlay" style="display:none;">
+    <div class="school-tag">Hoàn thành nhiệm vụ • THCS Nga Sơn</div>
+    <h1>🌟 TRÁI ĐẤT XANH RẠNG RỠ!</h1>
+    <div class="summary-card">
+        <p class="subtitle" id="end-stats" style="margin:0; color:#e2e8f0; font-weight:600;"></p>
+    </div>
+    <p style="color:#4ade80; font-size: clamp(16px, 4vw, 22px); font-weight:700; margin-bottom:24px;">
+        "Bảo vệ kỳ quan thiên nhiên cũng chính là bảo vệ ngôi nhà chung Trái Đất!"
+    </p>
+    <button class="btn-main" onclick="startJourney()">BAY VÒNG QUỸ ĐẠO MỚI</button>
+</div>
+
+<canvas id="spaceCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('spaceCanvas');
+    const ctx = canvas.getContext('2d');
+    const fwCanvas = document.getElementById('fireworksCanvas');
+    const fwCtx = fwCanvas.getContext('2d');
+
+    let viewW = window.innerWidth;
+    let viewH = window.innerHeight;
+    let isPortrait = viewH > viewW;
+
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP WEB AUDIO API ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        const btn = document.getElementById('sound-btn');
+        btn.innerHTML = soundEnabled ? '🔊<span class="lbl"> Âm thanh: BẬT</span>' : '🔇<span class="lbl"> Âm thanh: TẮT</span>';
+        btn.style.color = soundEnabled ? '#4ade80' : '#94a3b8';
+        btn.style.borderColor = soundEnabled ? 'rgba(74, 222, 128, 0.55)' : 'rgba(148, 163, 184, 0.4)';
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'step') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(420, now);
+            osc.frequency.exponentialRampToValueAtTime(560, now + 0.07);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+            osc.start(now);
+            osc.stop(now + 0.07);
+        } else if (type === 'open') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(360, now);
+            osc.frequency.exponentialRampToValueAtTime(620, now + 0.14);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+            osc.start(now);
+            osc.stop(now + 0.14);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(210, now);
+            osc.frequency.linearRampToValueAtTime(115, now + 0.24);
+            gain.gain.setValueAtTime(0.11, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+            osc.start(now);
+            osc.stop(now + 0.24);
+        } else if (type === 'win') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                g.gain.setValueAtTime(0.14, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.36);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.36);
+            });
+        }
+    }
+
+    // --- THUẬT TOÁN XÁO TRỘN FISHER-YATES ---
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    // KHO 8 ĐỊA ĐIỂM KỲ QUAN THẾ GIỚI
+    const stationBank = [
+        {
+            name: "Vịnh Hạ Long",
+            region: "🇻🇳 VIỆT NAM • DI SẢN THIÊN NHIÊN",
+            icon: "🏝️",
+            color: "#38bdf8",
+            desc: "Quần thể gần 2.000 hòn đảo đá vôi kỳ vĩ nhô lên giữa làn nước xanh ngọc bích tại tỉnh Quảng Ninh, được UNESCO nhiều lần vinh danh.",
+            eco: "Hạn chế mang chai nhựa, túi nilon dùng một lần khi đi du lịch biển để bảo vệ rạn san hô và hệ sinh thái vịnh.",
+            q: "Hành động nào giúp giữ gìn vẻ đẹp bền vững của Vịnh Hạ Long?",
+            a: ["Dùng bình nước cá nhân và không xả rác xuống biển", "Thả túi nilon xuống nước cho cá ăn", "Bẻ san hô mang về làm quà"],
+            c: 0,
+            explain: "Rác thải nhựa rất khó phân hủy, gây ô nhiễm nước biển và đe dọa sinh vật tại vịnh."
+        },
+        {
+            name: "Thành Nhà Hồ",
+            region: "🇻🇳 THANH HÓA • DI SẢN VĂN HÓA",
+            icon: "🏰",
+            color: "#fbbf24",
+            desc: "Công trình kiến trúc bằng đá khối lớn độc đáo bậc nhất Đông Nam Á tại Thanh Hóa, minh chứng cho kỹ thuật xây dựng tài hoa của cha ông.",
+            eco: "Giữ gìn cảnh quan xanh sạch quanh di tích lịch sử, trồng nhiều cây xanh để chống xói mòn và điều hòa khí hậu.",
+            q: "Khi tham quan các di tích lịch sử như Thành Nhà Hồ, chúng ta nên làm gì?",
+            a: ["Bỏ rác đúng nơi quy định, bảo vệ cảnh quan xanh", "Vẽ bậy lên tường đá cổ", "Giẫm đạp lên thảm cỏ bảo tồn"],
+            c: 0,
+            explain: "Giữ gìn vệ sinh và cảnh quan xanh giúp bảo tồn nguyên vẹn giá trị di sản cho thế hệ sau."
+        },
+        {
+            name: "Rừng Nhiệt Đới Amazon",
+            region: "🌎 NAM MỸ • LÁ PHỔI XANH TRÁI ĐẤT",
+            icon: "🌳",
+            color: "#4ade80",
+            desc: "Khu rừng mưa nhiệt đới lớn nhất hành tinh, nơi sinh sống của hàng triệu loài động thực vật quý hiếm và hấp thụ lượng lớn khí CO2.",
+            eco: "Tiết kiệm giấy, trồng thêm cây xanh và ngăn chặn nạn chặt phá rừng bừa bãi để giảm hiệu ứng nhà kính toàn cầu.",
+            q: "Vì sao rừng Amazon được gọi là 'lá phổi xanh' của Trái Đất?",
+            a: ["Hấp thụ khí CO2 và tạo ra lượng lớn khí Oxy", "Nằm ở trên Mặt Trăng", "Chỉ toàn băng tuyết"],
+            c: 0,
+            explain: "Quang hợp của thảm thực vật khổng lồ tại Amazon giúp điều hòa khí hậu và cung cấp Oxy cho Trái Đất."
+        },
+        {
+            name: "Kim Tự Tháp Giza",
+            region: "🇪🇬 AI CẬP • KỲ QUAN CỔ ĐẠI",
+            icon: "🔺",
+            color: "#f59e0b",
+            desc: "Kỳ quan duy nhất còn tồn tại của thế giới cổ đại bên bờ sông Nile, biểu tượng vĩ đại của nền văn minh Ai Cập hàng nghìn năm tuổi.",
+            eco: "Chống sa mạc hóa bằng cách sử dụng tiết kiệm nguồn nước ngọt và ưu tiên năng lượng mặt trời sạch.",
+            q: "Giải pháp nào giúp hạn chế tình trạng sa mạc hóa và biến đổi khí hậu?",
+            a: ["Sử dụng năng lượng tái tạo và tiết kiệm nước", "Đốt thật nhiều nhiên liệu hóa thạch", "Chặt bỏ cây xanh ven sông"],
+            c: 0,
+            explain: "Năng lượng mặt trời, năng lượng gió và tiết kiệm nước giúp giảm khí thải và ngăn sa mạc mở rộng."
+        },
+        {
+            name: "Đấu Trường La Mã Colosseum",
+            region: "🇮🇹 Ý • DI SẢN CHÂU ÂU",
+            icon: "🏛️",
+            color: "#fb7185",
+            desc: "Công trình kiến trúc hình tròn khổng lồ tại thủ đô Rome, biểu tượng lịch sử và nghệ thuật xây dựng nổi tiếng của châu Âu.",
+            eco: "Khói bụi giao thông và mưa axit làm bào mòn các công trình đá cổ — đi xe đạp, xe buýt điện giúp bảo vệ bầu không khí đô thị.",
+            q: "Tác nhân môi trường nào dễ làm hư hại bề mặt các công trình đá cổ ngoài trời?",
+            a: ["Ô nhiễm không khí và mưa axit", "Ánh trăng ban đêm", "Gió nhẹ mùa thu"],
+            c: 0,
+            explain: "Khí thải công nghiệp và xe cộ tạo ra mưa axit ăn mòn đá vôi và đá cẩm thạch theo thời gian."
+        },
+        {
+            name: "Vạn Lý Trường Thành",
+            region: "🇨🇳 TRUNG QUỐC • KỲ QUAN CHÂU Á",
+            icon: "🧱",
+            color: "#f97316",
+            desc: "Bức tường thành phòng thủ vĩ đại trải dài hàng nghìn kilômét qua các dãy núi trùng điệp từ Đông sang Tây.",
+            eco: "Bảo vệ hệ sinh thái vùng núi cao, không xả rác trên các cung đường leo núi để giữ gìn đa dạng sinh học.",
+            q: "Khi đi du lịch vùng núi cao và kỳ quan thiên nhiên, rác thải nên được xử lý thế nào?",
+            a: ["Thu gom mang xuống núi bỏ vào thùng phân loại", "Vứt xuống khe núi cho khuất mắt", "Đốt rác ngay trong rừng"],
+            c: 0,
+            explain: "Thu gom rác mang xuống núi giúp tránh cháy rừng và bảo vệ nguồn nước đầu nguồn."
+        },
+        {
+            name: "Rạn San Hô Great Barrier",
+            region: "🇦🇺 ÚC • KỲ QUAN ĐẠI DƯƠNG",
+            icon: "🪸",
+            color: "#2dd4bf",
+            desc: "Hệ thống rạn san hô lớn nhất thế giới có thể nhìn thấy từ ngoài không gian, ngôi nhà của hàng nghìn loài sinh vật biển rực rỡ.",
+            eco: "Nước biển ấm lên do biến đổi khí hậu khiến san hô bị tẩy trắng — giảm khí thải carbon là cách cứu đại dương.",
+            q: "Nguyên nhân chính gây ra hiện tượng 'tẩy trắng san hô' hiện nay là gì?",
+            a: ["Nhiệt độ nước biển tăng cao do biến đổi khí hậu", "Cá bơi quá nhanh quanh san hô", "Nước biển có màu xanh"],
+            c: 0,
+            explain: "Khi nước biển nóng lên bất thường, san hô đẩy tảo cộng sinh ra ngoài và mất màu sắc tự nhiên."
+        },
+        {
+            name: "Đền Taj Mahal",
+            region: "🇮🇳 ẤN ĐỘ • KIỆT TÁC ĐÁ CẨM THẠCH",
+            icon: "🕌",
+            color: "#c084fc",
+            desc: "Lăng mộ bằng đá cẩm thạch trắng tinh khôi bên bờ sông Yamuna, đổi sắc lung linh theo ánh sáng mặt trời mỗi thời điểm trong ngày.",
+            eco: "Giữ sạch nguồn nước các dòng sông và kiểm soát khí thải công nghiệp giúp đá cẩm thạch không bị ố vàng vì ô nhiễm.",
+            q: "Để bảo vệ các dòng sông gắn liền với di sản văn hóa, chúng ta cần làm gì?",
+            a: ["Xử lý nước thải sạch trước khi xả ra môi trường", "Đổ thẳng rác thải sinh hoạt xuống sông", "Dùng hóa chất độc hại đánh bắt cá"],
+            c: 0,
+            explain: "Xử lý nước thải đạt chuẩn giúp dòng sông luôn trong sạch và bảo vệ sức khỏe cộng đồng."
+        }
+    ];
+
+    let stations = [...stationBank];
+    let selectedStationCount = 8;
+    let started = false, modalOpen = false, tick = 0;
+    let activeIdx = 0, visualRotation = 0, lastTouchTime = 0;
+    let pointerDownX = null, pointerMoved = false;
+    let solved = [];
+    let answeredCorrectly = [];
+    let score = 0, earthHealth = 25;
+    let stars = [], shootingStars = [], spaceDebris = [], clouds = [], fireworks = [];
+
+    function selectOrbitMode(count, btnEl) {
+        selectedStationCount = count;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+    }
+
+    function resize() {
+        viewW = window.innerWidth || 800;
+        viewH = window.innerHeight || 600;
+        isPortrait = viewH > viewW;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(viewW * dpr);
+        canvas.height = Math.floor(viewH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        fwCanvas.width = Math.floor(viewW * dpr);
+        fwCanvas.height = Math.floor(viewH * dpr);
+        fwCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        measureChrome();
+    }
+
+    function initSpace() {
+        stars = [];
+        for (let i = 0; i < 210; i++) {
+            stars.push({
+                x: Math.random() * viewW,
+                y: Math.random() * viewH,
+                r: Math.random() * 1.8 + 0.4,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+        shootingStars = [];
+        spaceDebris = [];
+        for (let i = 0; i < 24; i++) {
+            spaceDebris.push({
+                angle: Math.random() * Math.PI * 2,
+                dist: 1.18 + Math.random() * 0.38,
+                speed: (Math.random() * 0.004 + 0.002) * (Math.random() > 0.5 ? 1 : -1),
+                size: Math.random() * 3 + 2
+            });
+        }
+        clouds = [];
+        for (let i = 0; i < 14; i++) {
+            clouds.push({
+                lon: Math.random() * Math.PI * 2,
+                lat: (Math.random() - 0.5) * 1.4,
+                w: Math.random() * 0.35 + 0.18,
+                h: Math.random() * 0.1+ 0.05
+            });
+        }
+    }
+
+    // --- HỆ THỐNG PHÁO HOA RỰC RỠ ---
+    function launchFireworksBurst(burstCount = 5) {
+        const colors = ['#fde047', '#38bdf8', '#4ade80', '#f472b6', '#fb923c', '#a78bfa', '#ffffff'];
+        for (let b = 0; b < burstCount; b++) {
+            setTimeout(() => {
+                const bx = viewW * (0.18 + Math.random() * 0.64);
+                const by = viewH * (0.16 + Math.random() * 0.48);
+                const count = 42;
+                for (let i = 0; i < count; i++) {
+                    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.15;
+                    const speed = 2.2 + Math.random() * 4.5;
+                    fireworks.push({
+                        x: bx,
+                        y: by,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1,
+                        decay: 0.015 + Math.random() * 0.012,
+                        size: 2.5 + Math.random() * 2.2
+                    });
+                }
+            }, b * 240);
+        }
+    }
+
+    function updateAndDrawFireworks() {
+        fwCtx.clearRect(0, 0, viewW, viewH);
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.055;
+            p.vx *= 0.97;
+            p.vy *= 0.97;
+            p.life -= p.decay;
+
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+                continue;
+            }
+
+            fwCtx.save();
+            fwCtx.globalAlpha = Math.max(0, p.life);
+            fwCtx.fillStyle = p.color;
+            fwCtx.shadowBlur = 12;
+            fwCtx.shadowColor = p.color;
+            fwCtx.beginPath();
+            fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fwCtx.fill();
+            fwCtx.restore();
+        }
+    }
+
+    function updateHUD() {
+        const doneCount = solved.filter(Boolean).length;
+        const correctCount = answeredCorrectly.filter(Boolean).length;
+        document.getElementById('visited-count').innerText = `${doneCount}/${stations.length}`;
+        earthHealth = Math.min(100, Math.round(25 + (correctCount / stations.length) * 75));
+        document.getElementById('earth-health').innerText = `${earthHealth}%`;
+        document.getElementById('health-bar').style.width = `${earthHealth}%`;
+        document.getElementById('eco-score').innerText = score;
+    }
+
+    /* Vùng trống giữa HUD và thanh điều khiển — đo lại khi đổi cỡ (bổ sung responsive) */
+    const chrome = { top: 70, bottom: 0 };
+    function measureChrome() {
+        const hud = document.getElementById('hud');
+        const bar = document.getElementById('bottom-bar');
+        chrome.top = hud ? hud.getBoundingClientRect().bottom : 70;
+        const br = bar ? bar.getBoundingClientRect() : null;
+        chrome.bottom = br && br.height ? viewH - br.top : 16;
+    }
+    function getOrbitGeometry() {
+        const small = viewW < 640 || viewH < 520;
+        const top = chrome.top + (small ? 10 : 20);
+        const bottom = viewH - chrome.bottom - (small ? 8 : 16);
+        const cx = viewW / 2;
+        const cy = (top + bottom) / 2;
+        const nodeMax = isPortrait ? 24 : 28;
+        // trên: chừa nút trạm; dưới: chừa nút trạm + nhãn tên
+        const orbitRy = Math.max(40, Math.min((bottom - top) / 2 - nodeMax - 18, isPortrait ? viewH * 0.3 : 270));
+        const orbitRx = Math.max(60, Math.min(viewW / 2 - nodeMax - 8, isPortrait ? viewW * 0.42 : 430, orbitRy * 2.4));
+        const earthR = Math.max(26, Math.min(orbitRx * 0.62, orbitRy * 0.72, Math.min(viewW, viewH) * 0.24));
+        return { cx, cy, earthR, orbitRx, orbitRy };
+    }
+
+    function getStationPos(i) {
+        const { cx, cy, orbitRx, orbitRy } = getOrbitGeometry();
+        const step = (Math.PI * 2) / stations.length;
+        const ang = Math.PI / 2 + i * step - visualRotation;
+        return {
+            x: cx + Math.cos(ang) * orbitRx,
+            y: cy + Math.sin(ang) * orbitRy,
+            ang
+        };
+    }
+
+    function stepStation(dir) {
+        if (!started || modalOpen) return;
+        playSound('step');
+        activeIdx = (activeIdx + dir + stations.length) % stations.length;
+    }
+
+    function openCurrentStation() {
+        if (!started || modalOpen) return;
+        openStationModal(activeIdx);
+    }
+
+    function goToNextStation() {
+        closeModal();
+        if (solved.every(Boolean)) {
+            showCompletion();
+            return;
+        }
+        for (let step = 1; step <= stations.length; step++) {
+            const candidate = (activeIdx + step) % stations.length;
+            if (!solved[candidate]) {
+                activeIdx = candidate;
+                playSound('step');
+                setTimeout(() => openStationModal(candidate), 420);
+                return;
+            }
+        }
+    }
+
+    function openStationModal(idx) {
+        activeIdx = idx;
+        modalOpen = true;
+        playSound('open');
+        const st = stations[idx];
+
+        document.getElementById('m-region').innerText = st.region;
+        document.getElementById('m-title').innerText = `${st.icon} ${st.name}`;
+        document.getElementById('m-desc').innerText = st.desc;
+        document.getElementById('m-eco').innerText = st.eco;
+        document.getElementById('m-question').innerText = `❓ Câu hỏi tại ${st.name}: ${st.q}`;
+
+        const optBox = document.getElementById('m-options');
+        const nextBox = document.getElementById('next-prompt-box');
+        const nextTitle = document.getElementById('next-prompt-title');
+        const nextSub = document.getElementById('next-prompt-sub');
+        const nextBtn = document.getElementById('btn-go-next');
+
+        optBox.innerHTML = '';
+        nextBox.style.display = 'none';
+        nextBox.classList.remove('wrong-box');
+
+        // Xáo trộn vị trí đáp án A / B / C mỗi lần mở câu hỏi
+        if (!st.shuffledOptions) {
+            const mapped = st.a.map((text, origIdx) => ({
+                text,
+                isCorrect: origIdx === st.c
+            }));
+            st.shuffledOptions = shuffleArray(mapped);
+        }
+
+        const letters = ['A', 'B', 'C', 'D'];
+
+        if (solved[idx]) {
+            nextBox.style.display = 'block';
+            if (answeredCorrectly[idx]) {
+                nextTitle.innerText = "🎆 Bạn đã hoàn thành xuất sắc trạm này!";
+                nextSub.innerText = st.explain;
+            } else {
+                nextBox.classList.add('wrong-box');
+                nextTitle.innerText = "📌 Trạm này đã được ghi nhận câu trả lời!";
+                nextSub.innerText = st.explain;
+            }
+            nextBtn.innerText = solved.every(Boolean) ? "Xem tổng kết hành trình 🌟" : "Chuyển sang địa điểm tiếp theo ▶";
+        }
+
+        st.shuffledOptions.forEach((optItem, sIdx) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerHTML = `<span class="opt-letter">${letters[sIdx]}</span><span>${optItem.text}</span>`;
+
+            if (solved[idx]) {
+                btn.disabled = true;
+                if (optItem.isCorrect) btn.classList.add('correct');
+                else if (st.chosenIndex === sIdx) btn.classList.add('wrong');
+            } else {
+                btn.onclick = () => {
+                    const all = optBox.querySelectorAll('.opt-btn');
+                    all.forEach(b => b.disabled = true);
+                    st.chosenIndex = sIdx;
+                    solved[idx] = true;
+
+                    if (optItem.isCorrect) {
+                        btn.classList.add('correct');
+                        answeredCorrectly[idx] = true;
+                        score += 25;
+                        playSound('correct');
+                        launchFireworksBurst(6);
+                        updateHUD();
+                        nextBox.classList.remove('wrong-box');
+                        nextTitle.innerText = "🎆 Chính xác! (+25 Điểm Xanh) Mời bạn chuyển câu tiếp theo!";
+                        nextSub.innerText = st.explain;
+                    } else {
+                        btn.classList.add('wrong');
+                        st.shuffledOptions.forEach((item, k) => {
+                            if (item.isCorrect) all[k].classList.add('correct');
+                        });
+                        answeredCorrectly[idx] = false;
+                        score += 5;
+                        playSound('wrong');
+                        launchFireworksBurst(2);
+                        updateHUD();
+                        nextBox.classList.add('wrong-box');
+                        const correctOpt = st.shuffledOptions.find(item => item.isCorrect);
+                        nextTitle.innerText = "💡 Chưa chính xác! (+5 Điểm khám phá)";
+                        nextSub.innerText = `Đáp án đúng là "${correctOpt.text}". ${st.explain}`;
+                    }
+
+                    nextBtn.innerText = solved.every(Boolean)
+                        ? "Hoàn thành hành trình 🌟"
+                        : "Mời chuyển sang địa điểm tiếp theo ▶";
+                    nextBox.style.display = 'block';
+                };
+            }
+            optBox.appendChild(btn);
+        });
+
+        document.getElementById('station-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('station-modal').style.display = 'none';
+        modalOpen = false;
+    }
+
+    function showCompletion() {
+        playSound('win');
+        launchFireworksBurst(8);
+        const correctCount = answeredCorrectly.filter(Boolean).length;
+        document.getElementById('bottom-bar').style.display = 'none';
+        measureChrome();
+        document.getElementById('end-stats').innerText =
+            `Hoàn thành ${stations.length}/${stations.length} kỳ quan (Trả lời đúng ${correctCount}/${stations.length} câu) • Sức khỏe Trái Đất đạt ${earthHealth}% • Tổng điểm xanh: ${score}`;
+        document.getElementById('end-screen').style.display = 'flex';
+    }
+
+    function startJourney() {
+        initAudio();
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('station-modal').style.display = 'none';
+        document.getElementById('bottom-bar').style.display = 'flex';
+        measureChrome();
+
+        // Xáo trộn thứ tự các kỳ quan mỗi lượt chơi mới và reset trạng thái xáo đáp án
+        stations = shuffleArray(stationBank).slice(0, selectedStationCount).map(item => ({
+            ...item,
+            shuffledOptions: null,
+            chosenIndex: null
+        }));
+
+        solved = new Array(stations.length).fill(false);
+        answeredCorrectly = new Array(stations.length).fill(false);
+        score = 0;
+        earthHealth = 25;
+        activeIdx = 0;
+        visualRotation = 0;
+        fireworks = [];
+        started = true;
+        modalOpen = false;
+        initSpace();
+        updateHUD();
+    }
+
+    function handleCanvasTap(clientX, clientY) {
+        if (!started || modalOpen) return;
+        for (let i = 0; i < stations.length; i++) {
+            const p = getStationPos(i);
+            const hitR = isPortrait ? 34 : 38;
+            if (Math.hypot(clientX - p.x, clientY - p.y) <= hitR) {
+                openStationModal(i);
+                return;
+            }
+        }
+    }
+
+    // Hỗ trợ kéo chuột & vuốt ngang màn hình (Swipe) để xoay quỹ đạo
+    canvas.addEventListener('mousedown', (e) => {
+        pointerDownX = e.clientX;
+        pointerMoved = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (pointerDownX !== null && Math.abs(e.clientX - pointerDownX) > 12) {
+            pointerMoved = true;
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (pointerDownX !== null && started && !modalOpen) {
+            const dx = e.clientX - pointerDownX;
+            if (Math.abs(dx) > 45) {
+                stepStation(dx < 0 ? 1 : -1);
+            }
+        }
+        pointerDownX = null;
+    });
+
+    canvas.addEventListener('click', (e) => {
+        if (Date.now() - lastTouchTime < 400 || pointerMoved) return;
+        handleCanvasTap(e.clientX, e.clientY);
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+        lastTouchTime = Date.now();
+        if (e.touches.length > 0) {
+            pointerDownX = e.touches[0].clientX;
+            pointerMoved = false;
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (pointerDownX !== null && e.touches.length > 0) {
+            if (Math.abs(e.touches[0].clientX - pointerDownX) > 12) {
+                pointerMoved = true;
+            }
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', (e) => {
+        if (!started || modalOpen || e.changedTouches.length === 0) return;
+        const touch = e.changedTouches[0];
+        const dx = pointerDownX !== null ? touch.clientX - pointerDownX : 0;
+        if (Math.abs(dx) > 40) {
+            stepStation(dx < 0 ? 1 : -1);
+        } else if (!pointerMoved) {
+            handleCanvasTap(touch.clientX, touch.clientY);
+        }
+        pointerDownX = null;
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (!started || modalOpen) return;
+        if (e.key === 'ArrowLeft') stepStation(-1);
+        if (e.key === 'ArrowRight') stepStation(1);
+        if (e.key === 'Enter' || e.code === 'Space') openCurrentStation();
+    });
+
+    function drawEarth(cx, cy, r) {
+        const healthRatio = (earthHealth - 25) / 75;
+
+        const atmoGrad = ctx.createRadialGradient(cx, cy, r * 0.85, cx, cy, r * 1.4);
+        atmoGrad.addColorStop(0, healthRatio > 0.5 ? 'rgba(56, 189, 248, 0.48)' : 'rgba(148, 163, 184, 0.25)');
+        atmoGrad.addColorStop(0.6, healthRatio > 0.5 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(100, 116, 139, 0.1)');
+        atmoGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = atmoGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 1.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.clip();
+
+        const oceanGrad = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.1, cx, cy, r);
+        oceanGrad.addColorStop(0, healthRatio > 0.4 ? '#38bdf8' : '#475569');
+        oceanGrad.addColorStop(0.65, healthRatio > 0.4 ? '#0284c7' : '#1e3a5f');
+        oceanGrad.addColorStop(1, '#082f49');
+        ctx.fillStyle = oceanGrad;
+        ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+        const spin = tick * 0.008;
+        const landColor = healthRatio > 0.5 ? '#22c55e' : (healthRatio > 0.25 ? '#65a30d' : '#a16207');
+        ctx.fillStyle = landColor;
+
+        const continents = [
+            { offset: 0.2, y: -0.25, rx: 0.36, ry: 0.24 },
+            { offset: 1.5, y: 0.2, rx: 0.28, ry: 0.32 },
+            { offset: 2.9, y: -0.1, rx: 0.42, ry: 0.26 },
+            { offset: 4.4, y: 0.28, rx: 0.3, ry: 0.2 },
+            { offset: 5.5, y: -0.35, rx: 0.25, ry: 0.18 }
+        ];
+
+        continents.forEach(c => {
+            const lon = (c.offset + spin) % (Math.PI * 2);
+            const xProj = Math.sin(lon);
+            const zProj = Math.cos(lon);
+            if (zProj > -0.2) {
+                ctx.beginPath();
+                ctx.ellipse(
+                    cx + xProj * r * 0.72,
+                    cy + c.y * r,
+                    r * c.rx * Math.max(0.25, zProj),
+                    r * c.ry,
+                    0.2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+        });
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+        clouds.forEach(cl => {
+            const lon = (cl.lon + spin * 1.35) % (Math.PI * 2);
+            const xProj = Math.sin(lon);
+            const zProj = Math.cos(lon);
+            if (zProj > 0) {
+                ctx.beginPath();
+                ctx.ellipse(
+                    cx + xProj * r * 0.78,
+                    cy + cl.lat * r * 0.7,
+                    r * cl.w * zProj,
+                    r * cl.h,
+                    0,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+        });
+
+        const shadowGrad = ctx.createRadialGradient(cx - r * 0.4, cy - r * 0.4, r * 0.2, cx + r * 0.2, cy + r * 0.2, r * 1.15);
+        shadowGrad.addColorStop(0, 'transparent');
+        shadowGrad.addColorStop(0.7, 'rgba(2, 6, 23, 0.22)');
+        shadowGrad.addColorStop(1, 'rgba(2, 6, 23, 0.72)');
+        ctx.fillStyle = shadowGrad;
+        ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+        ctx.restore();
+    }
+
+    function animate() {
+        tick++;
+
+        // Xoay quỹ đạo êm ái (lerp) về trạm đang chọn
+        const step = (Math.PI * 2) / stations.length;
+        const targetRot = activeIdx * step;
+        let diff = targetRot - visualRotation;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        visualRotation += diff * 0.1;
+
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, viewW, viewH);
+
+        // Ngôi sao lấp lánh
+        stars.forEach(s => {
+            ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(tick * 0.02 + s.phase));
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+
+        // Sao băng nhẹ nhàng tạo chiều sâu không gian
+        if (Math.random() < 0.012 && shootingStars.length < 2) {
+            shootingStars.push({
+                x: Math.random() * viewW * 0.8,
+                y: Math.random() * viewH * 0.35,
+                vx: 6 + Math.random() * 4,
+                vy: 3 + Math.random() * 2,
+                life: 1
+            });
+        }
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+            const ss = shootingStars[i];
+            ss.x += ss.vx;
+            ss.y += ss.vy;
+            ss.life -= 0.025;
+            if (ss.life <= 0) {
+                shootingStars.splice(i, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = ss.life;
+            ctx.strokeStyle = '#7dd3fc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ss.x, ss.y);
+            ctx.lineTo(ss.x - ss.vx * 5, ss.y - ss.vy * 5);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        const { cx, cy, earthR, orbitRx, orbitRy } = getOrbitGeometry();
+
+        // Đường quỹ đạo vệ tinh
+        ctx.save();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.setLineDash([6, 8]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, orbitRx, orbitRy, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Rác vũ trụ quanh quỹ đạo giảm dần khi Trái Đất xanh lên
+        const healthRatio = (earthHealth - 25) / 75;
+        const activeDebris = Math.max(2, Math.round((1 - healthRatio) * spaceDebris.length));
+        for (let i = 0; i < activeDebris; i++) {
+            const d = spaceDebris[i];
+            d.angle += d.speed;
+            const dx = cx + Math.cos(d.angle) * orbitRx * d.dist * 0.85;
+            const dy = cy + Math.sin(d.angle) * orbitRy * d.dist * 0.85;
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+            ctx.fillRect(dx, dy, d.size, d.size);
+        }
+
+        drawEarth(cx, cy, earthR);
+
+        // Vẽ các trạm kỳ quan quanh quỹ đạo
+        stations.forEach((st, i) => {
+            const pos = getStationPos(i);
+            const isSelected = i === activeIdx;
+            const isDone = solved[i];
+            const isRight = answeredCorrectly[i];
+            const nodeR = isSelected ? (isPortrait ? 24 : 28) : (isPortrait ? 18 : 21);
+
+            if (isSelected) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, nodeR + 8 + Math.sin(tick * 0.1) * 3, 0, Math.PI * 2);
+                ctx.strokeStyle = isDone ? (isRight ? '#4ade80' : '#fbbf24') : '#38bdf8';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, nodeR, 0, Math.PI * 2);
+            ctx.fillStyle = isDone ? (isRight ? '#14532d' : '#78350f') : '#0f172a';
+            ctx.fill();
+            ctx.lineWidth = isSelected ? 3 : 2;
+            ctx.strokeStyle = isDone ? (isRight ? '#4ade80' : '#fbbf24') : st.color;
+            ctx.stroke();
+
+            ctx.font = `${isSelected ? 22 : 17}px serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(isDone ? (isRight ? '✅' : '💡') : st.icon, pos.x, pos.y + 1);
+
+            ctx.font = `${isSelected ? 'bold 13px' : '11px'} "Segoe UI", sans-serif`;
+            ctx.fillStyle = isSelected ? '#ffffff' : '#94a3b8';
+            const maxW = viewW < 640 ? 96 : 170;
+            const words = st.name.split(' ');
+            const lines = [];
+            let cur = '';
+            for (const w of words) {
+                const t = cur ? cur + ' ' + w : w;
+                if (cur && ctx.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t;
+            }
+            if (cur) lines.push(cur);
+            const lw = Math.max(...lines.map(l => ctx.measureText(l).width));
+            const lx = Math.min(Math.max(pos.x, lw / 2 + 4), viewW - lw / 2 - 4);
+            const lh = isSelected ? 15 : 13;
+            lines.forEach((l, k) => ctx.fillText(l, lx, pos.y + nodeR + 14 + k * lh));
+            ctx.restore();
+        });
+
+        // Vệ tinh quan sát + tia quét radar chiếu xuống trạm đang chọn
+        const targetPos = getStationPos(activeIdx);
+        const satX = targetPos.x;
+        const satY = targetPos.y - (isPortrait ? 38 : 44) + Math.sin(tick * 0.08) * 3;
+
+        ctx.save();
+        const beamGrad = ctx.createLinearGradient(satX, satY + 8, targetPos.x, targetPos.y);
+        beamGrad.addColorStop(0, 'rgba(56, 189, 248, 0.42)');
+        beamGrad.addColorStop(1, 'rgba(74, 222, 128, 0.05)');
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(satX, satY + 6);
+        ctx.lineTo(targetPos.x - 16, targetPos.y);
+        ctx.lineTo(targetPos.x + 16, targetPos.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        ctx.font = isPortrait ? '22px serif' : '26px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🛰️', satX, satY);
+
+        updateAndDrawFireworks();
+        requestAnimationFrame(animate);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    initSpace();
+    animate();
+</script>
+</body>
+</html>

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sản Phẩm STEM THCS Nga Sơn - Quỹ Đạo Xanh Trái Đất</title>
+    <style>:root {--brand:#059669; --deep:#0f766e; --soft:#d8f4e7; --ink:#146653; --cta:#12755b;}</style>
+    <link rel="stylesheet" href="chien-co/interface.css">
+    <script src="chien-co/art.js"></script>
+    <script src="ket-qua.js"></script>
+</head>
+<body>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<div id="hud">
+    <div class="hud-group">
+        <div class="hud-pill" title="Quỹ đạo kỳ quan"><i data-icon="orbit"></i><span class="lbl"> QUỸ ĐẠO KỲ QUAN:</span> <span id="visited-count">0/8</span></div>
+        <div class="hud-pill">
+            <i data-icon="wave"></i><span class="lbl"> SỨC KHỎE TRÁI ĐẤT:</span> <span id="earth-health">25%</span>
+            <div class="bar-track"><div class="bar-fill" id="health-bar"></div></div>
+        </div>
+    </div>
+    <div class="hud-group">
+        <div class="hud-pill" title="Điểm xanh"><i data-icon="star"></i><span class="lbl"> ĐIỂM XANH:</span> <span id="eco-score">0</span></div>
+        <button id="sound-btn" onclick="toggleSound()" aria-label="Bật/tắt âm thanh">Âm thanh</button>
+    </div>
+</div>
+
+<div id="bottom-bar">
+    <button class="nav-btn" onclick="stepStation(-1)" aria-label="Trạm trước">◀<span class="lbl"> Trạm trước</span></button>
+    <button class="nav-btn highlight" onclick="openCurrentStation()" aria-label="Khám phá trạm này"><i data-icon="orbit"></i><span class="lbl"> Khám phá trạm này</span></button>
+    <button class="nav-btn" onclick="stepStation(1)" aria-label="Trạm tiếp"><span class="lbl">Trạm tiếp </span>▶</button>
+</div>
+
+<!-- MÀN HÌNH GIỚI THIỆU CÁCH CHƠI -->
+<div id="start-screen" class="overlay">
+    <header class="mast"><span class="mark" data-icon="orbit"></span><div><b>THCS Nga Sơn</b><small>Sản phẩm dự thi STEM</small></div></header>
+    <div class="launch">
+        <picture class="poster"><source media="(max-width:740px), (max-width:900px) and (orientation:portrait)" srcset="quy-dao/banner.svg"><img src="quy-dao/poster.svg" alt="" /></picture>
+        <section class="brief"><div class="topics">Môi trường · Địa lý thế giới</div><h1>Quỹ Đạo Xanh<br><em>Trái Đất</em></h1>
+            <p class="intro"><img src="chien-co/coi.svg" alt="Cói"><span><b>Cói chào nhà thám hiểm!</b><br>Ghé các kỳ quan để giúp Trái Đất xanh trở lại.</span></p>
+            <fieldset><legend>Chọn chế độ</legend><div class="modes"><button class="mode-btn active" id="mode-8" aria-pressed="true" aria-label="Quỹ đạo đầy đủ, 8 kỳ quan" onclick="selectOrbitMode(8, this)">Quỹ đạo đầy đủ<small>8 kỳ quan</small></button><button class="mode-btn" id="mode-4" aria-pressed="false" aria-label="Trải nghiệm BGK, 4 kỳ quan" onclick="selectOrbitMode(4, this)">Trải nghiệm BGK<small>4 kỳ quan</small></button></div></fieldset>
+            <button class="primary" id="launch" aria-label="Bắt đầu hành trình" onclick="beginJourney(this, startJourney)">Bắt đầu hành trình →</button>
+            <div class="guide"><p><i data-icon="orbit"></i>Chạm kỳ quan, vuốt ngang hoặc dùng ◀ ▶ để chọn trạm. Nhấn Enter để khám phá.</p><p><i data-icon="layers"></i>Đọc thông điệp, chọn A/B/C. Đáp án đổi vị trí mỗi lượt.</p><p><i data-icon="star"></i>Mỗi câu đúng giúp dọn rác vũ trụ, phục hồi Trái Đất tới 100% và mở pháo hoa.</p></div>
+        </section>
+    </div>
+</div>
+
+<div id="station-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div class="card">
+        <div class="card-header">
+            <span class="badge" id="m-region">CHÂU Á • VIỆT NAM</span>
+            <button class="close-x" onclick="closeModal()" aria-label="Đóng thẻ kỳ quan">✕</button>
+        </div>
+        <h2 class="wonder-title" id="m-title">Vịnh Hạ Long</h2>
+        <p class="wonder-desc" id="m-desc"></p>
+        <div class="eco-banner">
+            <strong>THÔNG ĐIỆP BẢO VỆ MÔI TRƯỜNG:</strong>
+            <span id="m-eco"></span>
+        </div>
+        <p class="quiz-title" id="m-question"></p>
+        <div class="opt-list" id="m-options"></div>
+
+        <!-- Hộp thông báo sau khi trả lời + mời chuyển câu tiếp -->
+        <div class="next-prompt-box" id="next-prompt-box">
+            <div class="health-row"><img src="chien-co/coi.svg" width="40" height="40" alt="Cói"><canvas id="station-globe" class="health-globe" width="112" height="112" aria-hidden="true"></canvas><strong id="station-health"></strong></div><p class="next-prompt-text" id="next-prompt-title">Tuyệt vời! Mời bạn chuyển câu tiếp theo!</p>
+            <p class="next-prompt-sub" id="next-prompt-sub"></p>
+            <button class="btn-next-q" aria-label="Tiếp tục hành trình" id="btn-go-next" onclick="goToNextStation()">Chuyển sang địa điểm tiếp theo ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- MÀN HÌNH HOÀN THÀNH -->
+<div id="end-screen" class="overlay" style="display:none"><section class="result">
+    <img src="chien-co/coi.svg" alt="Cói"><p class="school-tag">Tổng kết nhiệm vụ · THCS Nga Sơn</p>
+    <h1>Trái Đất xanh rạng rỡ!</h1><canvas id="result-globe" class="health-globe" width="220" height="220" aria-hidden="true"></canvas><p class="stats" id="end-stats"></p><p>Bảo vệ kỳ quan thiên nhiên cũng chính là bảo vệ ngôi nhà chung Trái Đất!</p>
+    <button class="primary" aria-label="Bay vòng quỹ đạo mới" onclick="startJourney()">Bay vòng quỹ đạo mới →</button>
+</section></div>
+
+<canvas id="spaceCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('spaceCanvas');
+    const ctx = canvas.getContext('2d');
+    document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = gameIcon(el.dataset.icon); });
+    syncSound(true);
+    const fwCanvas = document.getElementById('fireworksCanvas');
+    const fwCtx = fwCanvas.getContext('2d');
+
+    let viewW = window.innerWidth;
+    let viewH = window.innerHeight;
+    let isPortrait = viewH > viewW;
+
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP WEB AUDIO API ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        syncSound(soundEnabled);
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'step') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(420, now);
+            osc.frequency.exponentialRampToValueAtTime(560, now + 0.07);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+            osc.start(now);
+            osc.stop(now + 0.07);
+        } else if (type === 'open') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(360, now);
+            osc.frequency.exponentialRampToValueAtTime(620, now + 0.14);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+            osc.start(now);
+            osc.stop(now + 0.14);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(210, now);
+            osc.frequency.linearRampToValueAtTime(115, now + 0.24);
+            gain.gain.setValueAtTime(0.11, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+            osc.start(now);
+            osc.stop(now + 0.24);
+        } else if (type === 'win') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                g.gain.setValueAtTime(0.14, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.36);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.36);
+            });
+        }
+    }
+
+    // --- THUẬT TOÁN XÁO TRỘN FISHER-YATES ---
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    // KHO 8 ĐỊA ĐIỂM KỲ QUAN THẾ GIỚI
+    const stationBank = [
+        {
+            name: "Vịnh Hạ Long",
+            region: "VIỆT NAM • DI SẢN THIÊN NHIÊN",
+            icon: "ha-long",
+            color: "#38bdf8",
+            desc: "Quần thể gần 2.000 hòn đảo đá vôi kỳ vĩ nhô lên giữa làn nước xanh ngọc bích tại tỉnh Quảng Ninh, được UNESCO nhiều lần vinh danh.",
+            eco: "Hạn chế mang chai nhựa, túi nilon dùng một lần khi đi du lịch biển để bảo vệ rạn san hô và hệ sinh thái vịnh.",
+            q: "Hành động nào giúp giữ gìn vẻ đẹp bền vững của Vịnh Hạ Long?",
+            a: ["Dùng bình nước cá nhân và không xả rác xuống biển", "Thả túi nilon xuống nước cho cá ăn", "Bẻ san hô mang về làm quà"],
+            c: 0,
+            explain: "Rác thải nhựa rất khó phân hủy, gây ô nhiễm nước biển và đe dọa sinh vật tại vịnh."
+        },
+        {
+            name: "Thành Nhà Hồ",
+            region: "THANH HÓA • DI SẢN VĂN HÓA",
+            icon: "thanh-ho",
+            color: "#fbbf24",
+            desc: "Công trình kiến trúc bằng đá khối lớn độc đáo bậc nhất Đông Nam Á tại Thanh Hóa, minh chứng cho kỹ thuật xây dựng tài hoa của cha ông.",
+            eco: "Giữ gìn cảnh quan xanh sạch quanh di tích lịch sử, trồng nhiều cây xanh để chống xói mòn và điều hòa khí hậu.",
+            q: "Khi tham quan các di tích lịch sử như Thành Nhà Hồ, chúng ta nên làm gì?",
+            a: ["Bỏ rác đúng nơi quy định, bảo vệ cảnh quan xanh", "Vẽ bậy lên tường đá cổ", "Giẫm đạp lên thảm cỏ bảo tồn"],
+            c: 0,
+            explain: "Giữ gìn vệ sinh và cảnh quan xanh giúp bảo tồn nguyên vẹn giá trị di sản cho thế hệ sau."
+        },
+        {
+            name: "Rừng Nhiệt Đới Amazon",
+            region: "NAM MỸ • LÁ PHỔI XANH TRÁI ĐẤT",
+            icon: "amazon",
+            color: "#4ade80",
+            desc: "Khu rừng mưa nhiệt đới lớn nhất hành tinh, nơi sinh sống của hàng triệu loài động thực vật quý hiếm và hấp thụ lượng lớn khí CO2.",
+            eco: "Tiết kiệm giấy, trồng thêm cây xanh và ngăn chặn nạn chặt phá rừng bừa bãi để giảm hiệu ứng nhà kính toàn cầu.",
+            q: "Vì sao rừng Amazon được gọi là 'lá phổi xanh' của Trái Đất?",
+            a: ["Hấp thụ khí CO2 và tạo ra lượng lớn khí Oxy", "Nằm ở trên Mặt Trăng", "Chỉ toàn băng tuyết"],
+            c: 0,
+            explain: "Quang hợp của thảm thực vật khổng lồ tại Amazon giúp điều hòa khí hậu và cung cấp Oxy cho Trái Đất."
+        },
+        {
+            name: "Kim Tự Tháp Giza",
+            region: "AI CẬP • KỲ QUAN CỔ ĐẠI",
+            icon: "giza",
+            color: "#f59e0b",
+            desc: "Kỳ quan duy nhất còn tồn tại của thế giới cổ đại bên bờ sông Nile, biểu tượng vĩ đại của nền văn minh Ai Cập hàng nghìn năm tuổi.",
+            eco: "Chống sa mạc hóa bằng cách sử dụng tiết kiệm nguồn nước ngọt và ưu tiên năng lượng mặt trời sạch.",
+            q: "Giải pháp nào giúp hạn chế tình trạng sa mạc hóa và biến đổi khí hậu?",
+            a: ["Sử dụng năng lượng tái tạo và tiết kiệm nước", "Đốt thật nhiều nhiên liệu hóa thạch", "Chặt bỏ cây xanh ven sông"],
+            c: 0,
+            explain: "Năng lượng mặt trời, năng lượng gió và tiết kiệm nước giúp giảm khí thải và ngăn sa mạc mở rộng."
+        },
+        {
+            name: "Đấu Trường La Mã Colosseum",
+            region: "Ý • DI SẢN CHÂU ÂU",
+            icon: "rome",
+            color: "#fb7185",
+            desc: "Công trình kiến trúc hình tròn khổng lồ tại thủ đô Rome, biểu tượng lịch sử và nghệ thuật xây dựng nổi tiếng của châu Âu.",
+            eco: "Khói bụi giao thông và mưa axit làm bào mòn các công trình đá cổ — đi xe đạp, xe buýt điện giúp bảo vệ bầu không khí đô thị.",
+            q: "Tác nhân môi trường nào dễ làm hư hại bề mặt các công trình đá cổ ngoài trời?",
+            a: ["Ô nhiễm không khí và mưa axit", "Ánh trăng ban đêm", "Gió nhẹ mùa thu"],
+            c: 0,
+            explain: "Khí thải công nghiệp và xe cộ tạo ra mưa axit ăn mòn đá vôi và đá cẩm thạch theo thời gian."
+        },
+        {
+            name: "Vạn Lý Trường Thành",
+            region: "TRUNG QUỐC • KỲ QUAN CHÂU Á",
+            icon: "great-wall",
+            color: "#f97316",
+            desc: "Bức tường thành phòng thủ vĩ đại trải dài hàng nghìn kilômét qua các dãy núi trùng điệp từ Đông sang Tây.",
+            eco: "Bảo vệ hệ sinh thái vùng núi cao, không xả rác trên các cung đường leo núi để giữ gìn đa dạng sinh học.",
+            q: "Khi đi du lịch vùng núi cao và kỳ quan thiên nhiên, rác thải nên được xử lý thế nào?",
+            a: ["Thu gom mang xuống núi bỏ vào thùng phân loại", "Vứt xuống khe núi cho khuất mắt", "Đốt rác ngay trong rừng"],
+            c: 0,
+            explain: "Thu gom rác mang xuống núi giúp tránh cháy rừng và bảo vệ nguồn nước đầu nguồn."
+        },
+        {
+            name: "Rạn San Hô Great Barrier",
+            region: "ÚC • KỲ QUAN ĐẠI DƯƠNG",
+            icon: "reef",
+            color: "#2dd4bf",
+            desc: "Hệ thống rạn san hô lớn nhất thế giới có thể nhìn thấy từ ngoài không gian, ngôi nhà của hàng nghìn loài sinh vật biển rực rỡ.",
+            eco: "Nước biển ấm lên do biến đổi khí hậu khiến san hô bị tẩy trắng — giảm khí thải carbon là cách cứu đại dương.",
+            q: "Nguyên nhân chính gây ra hiện tượng 'tẩy trắng san hô' hiện nay là gì?",
+            a: ["Nhiệt độ nước biển tăng cao do biến đổi khí hậu", "Cá bơi quá nhanh quanh san hô", "Nước biển có màu xanh"],
+            c: 0,
+            explain: "Khi nước biển nóng lên bất thường, san hô đẩy tảo cộng sinh ra ngoài và mất màu sắc tự nhiên."
+        },
+        {
+            name: "Đền Taj Mahal",
+            region: "ẤN ĐỘ • KIỆT TÁC ĐÁ CẨM THẠCH",
+            icon: "taj",
+            color: "#c084fc",
+            desc: "Lăng mộ bằng đá cẩm thạch trắng tinh khôi bên bờ sông Yamuna, đổi sắc lung linh theo ánh sáng mặt trời mỗi thời điểm trong ngày.",
+            eco: "Giữ sạch nguồn nước các dòng sông và kiểm soát khí thải công nghiệp giúp đá cẩm thạch không bị ố vàng vì ô nhiễm.",
+            q: "Để bảo vệ các dòng sông gắn liền với di sản văn hóa, chúng ta cần làm gì?",
+            a: ["Xử lý nước thải sạch trước khi xả ra môi trường", "Đổ thẳng rác thải sinh hoạt xuống sông", "Dùng hóa chất độc hại đánh bắt cá"],
+            c: 0,
+            explain: "Xử lý nước thải đạt chuẩn giúp dòng sông luôn trong sạch và bảo vệ sức khỏe cộng đồng."
+        }
+    ];
+
+    const art = loadArt('quy-dao', [...stationBank.map(st => st.icon), 'earth-low', 'earth-mid', 'earth-full', 'satellite']);
+    const paintOrbitSky = sceneryCache();
+    let visibleHealth = 25;
+    let journeyNumber = 0;
+    let stations = [...stationBank];
+    let selectedStationCount = 8;
+    let started = false, modalOpen = false, tick = 0;
+    let activeIdx = 0, visualRotation = 0, lastTouchTime = 0;
+    let pointerDownX = null, pointerMoved = false;
+    let solved = [];
+    let answeredCorrectly = [];
+    let score = 0, earthHealth = 25;
+    let stars = [], shootingStars = [], spaceDebris = [], fireworks = [];
+
+    function selectOrbitMode(count, btnEl) {
+        selectedStationCount = count;
+        document.querySelectorAll('.mode-btn').forEach(b => {
+            b.classList.toggle('active', b === btnEl);
+            b.setAttribute('aria-pressed', String(b === btnEl));
+        });
+
+    }
+
+    function resize() {
+        viewW = window.innerWidth || 800;
+        viewH = window.innerHeight || 600;
+        isPortrait = viewH > viewW;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(viewW * dpr);
+        canvas.height = Math.floor(viewH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        fwCanvas.width = Math.floor(viewW * dpr);
+        fwCanvas.height = Math.floor(viewH * dpr);
+        fwCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        measureChrome();
+    }
+
+    function initSpace() {
+        stars = [];
+        for (let i = 0; i < 210; i++) {
+            stars.push({
+                x: Math.random() * viewW,
+                y: Math.random() * viewH,
+                r: Math.random() * 1.8 + 0.4,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+        shootingStars = [];
+        spaceDebris = [];
+        for (let i = 0; i < 24; i++) {
+            spaceDebris.push({
+                angle: Math.random() * Math.PI * 2,
+                dist: 1.18 + Math.random() * 0.38,
+                speed: (Math.random() * 0.004 + 0.002) * (Math.random() > 0.5 ? 1 : -1),
+                size: Math.random() * 3 + 2
+            });
+        }
+    }
+
+    // --- HỆ THỐNG PHÁO HOA RỰC RỠ ---
+    function launchFireworksBurst(burstCount = 5) {
+        if (reducedMotion.matches) return;
+        const journey = journeyNumber;
+        const colors = ['#fde047', '#38bdf8', '#4ade80', '#f472b6', '#fb923c', '#a78bfa', '#ffffff'];
+        for (let b = 0; b < burstCount; b++) {
+            setTimeout(() => {
+                if (journey !== journeyNumber) return;
+                const bx = viewW * (0.18 + Math.random() * 0.64);
+                const by = viewH * (0.16 + Math.random() * 0.48);
+                const count = 18;
+                for (let i = 0; i < count; i++) {
+                    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.15;
+                    const speed = 2.2 + Math.random() * 4.5;
+                    fireworks.push({
+                        x: bx,
+                        y: by,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1,
+                        decay: 0.015 + Math.random() * 0.012,
+                        size: 2.5 + Math.random() * 2.2
+                    });
+                }
+            }, b * 240);
+        }
+    }
+
+    function updateAndDrawFireworks() {
+        fwCtx.clearRect(0, 0, viewW, viewH);
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.055;
+            p.vx *= 0.97;
+            p.vy *= 0.97;
+            p.life -= p.decay;
+
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+                continue;
+            }
+
+            fwCtx.save();
+            fwCtx.globalAlpha = Math.max(0, p.life);
+            fwCtx.fillStyle = p.color;
+            fwCtx.beginPath();
+            fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fwCtx.fill();
+            fwCtx.restore();
+        }
+    }
+
+    function updateHUD() {
+        const doneCount = solved.filter(Boolean).length;
+        const correctCount = answeredCorrectly.filter(Boolean).length;
+        document.getElementById('visited-count').innerText = `${doneCount}/${stations.length}`;
+        earthHealth = Math.min(100, Math.round(25 + (correctCount / stations.length) * 75));
+        document.getElementById('earth-health').innerText = `${earthHealth}%`;
+        document.getElementById('health-bar').style.width = `${earthHealth}%`;
+        document.getElementById('eco-score').innerText = score;
+        paintHealthBadge('station-globe');
+        document.getElementById('station-health').textContent = 'Trái Đất ' + earthHealth + '%';
+    }
+
+    /* Vùng trống giữa HUD và thanh điều khiển — đo lại khi đổi cỡ (bổ sung responsive) */
+    const chrome = { top: 70, bottom: 0 };
+    function measureChrome() {
+        const hud = document.getElementById('hud');
+        const bar = document.getElementById('bottom-bar');
+        chrome.top = hud ? hud.getBoundingClientRect().bottom : 70;
+        const br = bar ? bar.getBoundingClientRect() : null;
+        chrome.bottom = br && br.height ? viewH - br.top : 16;
+    }
+    function getOrbitGeometry() {
+        const small = viewW < 640 || viewH < 520;
+        const top = chrome.top + (small ? 10 : 20);
+        const bottom = viewH - chrome.bottom - (small ? 8 : 16);
+        const cx = viewW / 2;
+        const cy = (top + bottom) / 2;
+        const nodeMax = isPortrait ? 24 : 28;
+        // trên: chừa nút trạm; dưới: chừa nút trạm + nhãn tên
+        const orbitRy = Math.max(40, Math.min((bottom - top) / 2 - nodeMax - (viewW < 640 ? 47 : 38), isPortrait ? viewH * 0.3 : 270));
+        const wideAndLow = viewH < 520 && viewW > viewH;
+        const maxRx = wideAndLow ? viewW * .37 : orbitRy * 2.4;
+        const orbitRx = Math.max(60, Math.min(viewW / 2 - nodeMax - 8, isPortrait ? viewW * .42 : 430, maxRx));
+        const earthR = Math.max(26, Math.min(orbitRx * 0.62, orbitRy * 0.72, Math.min(viewW, viewH) * 0.24));
+        return { cx, cy, earthR, orbitRx, orbitRy };
+    }
+
+    function getStationPos(i) {
+        const { cx, cy, orbitRx, orbitRy } = getOrbitGeometry();
+        const step = (Math.PI * 2) / stations.length;
+        const ang = Math.PI / 2 + i * step - visualRotation;
+        return {
+            x: cx + Math.cos(ang) * orbitRx,
+            y: cy + Math.sin(ang) * orbitRy,
+            ang
+        };
+    }
+
+    function stepStation(dir) {
+        if (!started || modalOpen) return;
+        playSound('step');
+        activeIdx = (activeIdx + dir + stations.length) % stations.length;
+    }
+
+    function openCurrentStation() {
+        if (!started || modalOpen) return;
+        openStationModal(activeIdx);
+    }
+
+    function goToNextStation() {
+        closeModal();
+        if (solved.every(Boolean)) {
+            showCompletion();
+            return;
+        }
+        for (let step = 1; step <= stations.length; step++) {
+            const candidate = (activeIdx + step) % stations.length;
+            if (!solved[candidate]) {
+                activeIdx = candidate;
+                playSound('step');
+                setTimeout(() => openStationModal(candidate), 420);
+                return;
+            }
+        }
+    }
+
+    function openStationModal(idx) {
+        activeIdx = idx;
+        modalOpen = true;
+        playSound('open');
+        const st = stations[idx];
+
+        document.getElementById('m-region').innerText = st.region;
+        const title = document.getElementById('m-title');
+        title.textContent = st.name;
+        if (art.sprites[st.icon]) title.prepend(art.sprites[st.icon].cloneNode());
+        document.getElementById('m-desc').innerText = st.desc;
+        document.getElementById('m-eco').innerText = st.eco;
+        document.getElementById('m-question').innerText = `Câu hỏi tại ${st.name}: ${st.q}`;
+
+        const optBox = document.getElementById('m-options');
+        const nextBox = document.getElementById('next-prompt-box');
+        const nextTitle = document.getElementById('next-prompt-title');
+        const nextSub = document.getElementById('next-prompt-sub');
+        const nextBtn = document.getElementById('btn-go-next');
+
+        optBox.innerHTML = '';
+        nextBox.style.display = 'none';
+        nextBox.classList.remove('wrong-box');
+
+        // Xáo trộn vị trí đáp án A / B / C mỗi lần mở câu hỏi
+        if (!st.shuffledOptions) {
+            const mapped = st.a.map((text, origIdx) => ({
+                text,
+                isCorrect: origIdx === st.c
+            }));
+            st.shuffledOptions = shuffleArray(mapped);
+        }
+
+        const letters = ['A', 'B', 'C', 'D'];
+
+        if (solved[idx]) {
+            nextBox.style.display = 'block';
+            if (answeredCorrectly[idx]) {
+                nextTitle.innerText = "Bạn đã hoàn thành xuất sắc trạm này!";
+                nextSub.innerText = st.explain;
+            } else {
+                nextBox.classList.add('wrong-box');
+                nextTitle.innerText = "Trạm này đã được ghi nhận câu trả lời!";
+                nextSub.innerText = st.explain;
+            }
+            nextBtn.innerText = solved.every(Boolean) ? "Xem tổng kết hành trình " : "Chuyển sang địa điểm tiếp theo ▶";
+        }
+
+        st.shuffledOptions.forEach((optItem, sIdx) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.setAttribute('aria-label', letters[sIdx] + '. ' + optItem.text);
+            btn.innerHTML = `<span class="opt-letter">${letters[sIdx]}</span><span>${optItem.text}</span>`;
+
+            if (solved[idx]) {
+                btn.disabled = true;
+                if (optItem.isCorrect) btn.classList.add('correct');
+                else if (st.chosenIndex === sIdx) btn.classList.add('wrong');
+            } else {
+                btn.onclick = () => {
+                    const all = optBox.querySelectorAll('.opt-btn');
+                    all.forEach(b => b.disabled = true);
+                    st.chosenIndex = sIdx;
+                    solved[idx] = true;
+
+                    if (optItem.isCorrect) {
+                        btn.classList.add('correct');
+                        answeredCorrectly[idx] = true;
+                        score += 25;
+                        playSound('correct');
+                        launchFireworksBurst(6);
+                        updateHUD();
+                        nextBox.classList.remove('wrong-box');
+                        nextTitle.innerText = "Chính xác! (+25 Điểm Xanh) Mời bạn chuyển câu tiếp theo!";
+                        nextSub.innerText = st.explain;
+                    } else {
+                        btn.classList.add('wrong');
+                        st.shuffledOptions.forEach((item, k) => {
+                            if (item.isCorrect) all[k].classList.add('correct');
+                        });
+                        answeredCorrectly[idx] = false;
+                        score += 5;
+                        playSound('wrong');
+                        launchFireworksBurst(2);
+                        updateHUD();
+                        nextBox.classList.add('wrong-box');
+                        const correctOpt = st.shuffledOptions.find(item => item.isCorrect);
+                        nextTitle.innerText = "Chưa chính xác! (+5 Điểm khám phá)";
+                        nextSub.innerText = `Đáp án đúng là "${correctOpt.text}". ${st.explain}`;
+                    }
+
+                    nextBtn.innerText = solved.every(Boolean)
+                        ? "Hoàn thành hành trình "
+                        : "Mời chuyển sang địa điểm tiếp theo ▶";
+                    nextBox.style.display = 'block';
+                };
+            }
+            optBox.appendChild(btn);
+        });
+
+        document.getElementById('station-modal').style.display = 'flex';
+        document.getElementById('station-modal').scrollTop = 0;
+        document.querySelector('.close-x').focus({preventScroll:true});
+    }
+
+    function closeModal() {
+        document.getElementById('station-modal').style.display = 'none';
+        modalOpen = false;
+    }
+
+    function showCompletion() {
+        started = false;
+        paintHealthBadge('result-globe');
+        playSound('win');
+        launchFireworksBurst(8);
+        const correctCount = answeredCorrectly.filter(Boolean).length;
+        document.getElementById('bottom-bar').style.display = 'none';
+        measureChrome();
+        document.getElementById('end-stats').innerText =
+            `Hoàn thành ${stations.length}/${stations.length} kỳ quan (Trả lời đúng ${correctCount}/${stations.length} câu) • Sức khỏe Trái Đất đạt ${earthHealth}% • Tổng điểm xanh: ${score}`;
+        document.getElementById('end-screen').style.display = 'flex';
+        window.nsGame && nsGame.result({ game: 'quy-dao', score: score, correct: correctCount, total: stations.length, victory: true });
+    }
+
+    function startJourney() {
+        journeyNumber++;
+        window.nsGame && nsGame.start();
+        initAudio();
+        document.getElementById('start-screen').style.display = 'none';
+        canvas.tabIndex = -1;
+        canvas.focus({preventScroll:true});
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('station-modal').style.display = 'none';
+        document.getElementById('bottom-bar').style.display = 'flex';
+        measureChrome();
+
+        // Xáo trộn thứ tự các kỳ quan mỗi lượt chơi mới và reset trạng thái xáo đáp án
+        stations = shuffleArray(stationBank).slice(0, selectedStationCount).map(item => ({
+            ...item,
+            shuffledOptions: null,
+            chosenIndex: null
+        }));
+
+        solved = new Array(stations.length).fill(false);
+        answeredCorrectly = new Array(stations.length).fill(false);
+        score = 0;
+        earthHealth = visibleHealth = 25;
+        activeIdx = 0;
+        visualRotation = 0;
+        fireworks = [];
+        started = true;
+        modalOpen = false;
+        initSpace();
+        updateHUD();
+    }
+
+    function handleCanvasTap(clientX, clientY) {
+        if (!started || modalOpen) return;
+        for (let i = 0; i < stations.length; i++) {
+            const p = getStationPos(i);
+            const hitR = isPortrait ? 34 : 38;
+            if (Math.hypot(clientX - p.x, clientY - p.y) <= hitR) {
+                openStationModal(i);
+                return;
+            }
+        }
+    }
+
+    // Hỗ trợ kéo chuột & vuốt ngang màn hình (Swipe) để xoay quỹ đạo
+    canvas.addEventListener('mousedown', (e) => {
+        pointerDownX = e.clientX;
+        pointerMoved = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (pointerDownX !== null && Math.abs(e.clientX - pointerDownX) > 12) {
+            pointerMoved = true;
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (pointerDownX !== null && started && !modalOpen) {
+            const dx = e.clientX - pointerDownX;
+            if (Math.abs(dx) > 45) {
+                stepStation(dx < 0 ? 1 : -1);
+            }
+        }
+        pointerDownX = null;
+    });
+
+    canvas.addEventListener('click', (e) => {
+        if (Date.now() - lastTouchTime < 400 || pointerMoved) return;
+        handleCanvasTap(e.clientX, e.clientY);
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+        lastTouchTime = Date.now();
+        if (e.touches.length > 0) {
+            pointerDownX = e.touches[0].clientX;
+            pointerMoved = false;
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (pointerDownX !== null && e.touches.length > 0) {
+            if (Math.abs(e.touches[0].clientX - pointerDownX) > 12) {
+                pointerMoved = true;
+            }
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', (e) => {
+        if (!started || modalOpen || e.changedTouches.length === 0) return;
+        if (e.cancelable) e.preventDefault();
+        const touch = e.changedTouches[0];
+        const dx = pointerDownX !== null ? touch.clientX - pointerDownX : 0;
+        if (Math.abs(dx) > 40) {
+            stepStation(dx < 0 ? 1 : -1);
+        } else if (!pointerMoved) {
+            handleCanvasTap(touch.clientX, touch.clientY);
+        }
+        pointerDownX = null;
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+        if (!started || modalOpen || document.getElementById('end-screen').style.display === 'flex') return;
+        if (e.target.closest('button') && (e.key === 'Enter' || e.code === 'Space')) return;
+        if (e.key === 'ArrowLeft') stepStation(-1);
+        if (e.key === 'ArrowRight') stepStation(1);
+        if (e.key === 'Enter' || e.code === 'Space') {
+            e.preventDefault();
+            openCurrentStation();
+        }
+    });
+
+    // Ba lớp cùng đường bờ để đất, mây và nước chuyển màu liên tục.
+    function drawEarth(brush, cx, cy, radius, health) {
+        const stage = Math.min(2, Math.max(0, (health - 25) / 37.5));
+        const globes = ['earth-low', 'earth-mid', 'earth-full'];
+        const base = Math.floor(stage);
+        const diameter = radius * 2;
+        brush.save();
+        brush.beginPath();
+        brush.arc(cx, cy, radius * 1.02, 0, Math.PI * 2);
+        brush.strokeStyle = 'rgba(124,229,202,' + (.15 + stage * .19) + ')';
+        brush.lineWidth = radius * .05;
+        brush.stroke();
+        drawSprite(brush, art.sprites[globes[base]], cx, cy, diameter, diameter, '◎');
+        if (base < 2) {
+            brush.globalAlpha = stage - base;
+            drawSprite(brush, art.sprites[globes[base + 1]], cx, cy, diameter, diameter, '◎');
+        }
+        brush.restore();
+    }
+
+    function paintHealthBadge(id) {
+        const badge = document.getElementById(id);
+        const brush = badge.getContext('2d');
+        brush.clearRect(0, 0, badge.width, badge.height);
+        drawEarth(brush, badge.width / 2, badge.height / 2, badge.width * .46, earthHealth);
+    }
+
+    function drawOrbitSky() {
+        paintOrbitSky(ctx, viewW, viewH, stars, brush => {
+            const sky = brush.createLinearGradient(0, 0, viewW, viewH);
+            sky.addColorStop(0, '#132339');
+            sky.addColorStop(.65, '#1b3a4e');
+            sky.addColorStop(1, '#24545c');
+            brush.fillStyle = sky;
+            brush.fillRect(0, 0, viewW, viewH);
+            brush.fillStyle = '#9bb9c9';
+            for (const star of stars) {
+                brush.beginPath();
+                brush.arc(star.x, star.y, star.r * .6, 0, Math.PI * 2);
+                brush.fill();
+            }
+        });
+    }
+
+    function animate() {
+        if (!started) {
+            if (fireworks.length) updateAndDrawFireworks();
+            requestAnimationFrame(animate);
+            return;
+        }
+        tick++;
+
+        // Xoay quỹ đạo êm ái (lerp) về trạm đang chọn
+        const step = (Math.PI * 2) / stations.length;
+        const targetRot = activeIdx * step;
+        let diff = targetRot - visualRotation;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        visualRotation += diff * (reducedMotion.matches ? 1 : .1);
+
+        drawOrbitSky();
+
+        // Sao băng nhẹ nhàng tạo chiều sâu không gian
+        if (!reducedMotion.matches && Math.random() < 0.012 && shootingStars.length < 2) {
+            shootingStars.push({
+                x: Math.random() * viewW * 0.8,
+                y: Math.random() * viewH * 0.35,
+                vx: 6 + Math.random() * 4,
+                vy: 3 + Math.random() * 2,
+                life: 1
+            });
+        }
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+            const ss = shootingStars[i];
+            ss.x += ss.vx;
+            ss.y += ss.vy;
+            ss.life -= 0.025;
+            if (ss.life <= 0) {
+                shootingStars.splice(i, 1);
+                continue;
+            }
+            ctx.save();
+            ctx.globalAlpha = ss.life;
+            ctx.strokeStyle = '#7dd3fc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ss.x, ss.y);
+            ctx.lineTo(ss.x - ss.vx * 5, ss.y - ss.vy * 5);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        const { cx, cy, earthR, orbitRx, orbitRy } = getOrbitGeometry();
+
+        // Đường quỹ đạo vệ tinh
+        ctx.save();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.setLineDash([6, 8]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, orbitRx, orbitRy, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Rác vũ trụ quanh quỹ đạo giảm dần khi Trái Đất xanh lên
+        const healthRatio = (earthHealth - 25) / 75;
+        const activeDebris = Math.max(0, Math.round((1 - healthRatio) * spaceDebris.length));
+        for (let i = 0; i < activeDebris; i++) {
+            const d = spaceDebris[i];
+            d.angle += d.speed;
+            const dx = cx + Math.cos(d.angle) * orbitRx * d.dist * 0.85;
+            const dy = cy + Math.sin(d.angle) * orbitRy * d.dist * 0.85;
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+            ctx.fillRect(dx, dy, d.size, d.size);
+        }
+
+        visibleHealth += (earthHealth - visibleHealth) * (reducedMotion.matches ? 1 : .055);
+        drawEarth(ctx, cx, cy, earthR, visibleHealth);
+
+        // Vẽ các trạm kỳ quan quanh quỹ đạo
+        stations.forEach((st, i) => {
+            const pos = getStationPos(i);
+            const isSelected = i === activeIdx;
+            const isDone = solved[i];
+            const isRight = answeredCorrectly[i];
+            const nodeR = isSelected ? (isPortrait ? 24 : 28) : (isPortrait ? 18 : 21);
+
+            if (isSelected) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, nodeR + 8 + Math.sin(tick * 0.1) * 3, 0, Math.PI * 2);
+                ctx.strokeStyle = isDone ? (isRight ? '#4ade80' : '#fbbf24') : '#38bdf8';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, nodeR, 0, Math.PI * 2);
+            ctx.fillStyle = isDone ? (isRight ? '#14532d' : '#78350f') : '#0f172a';
+            ctx.fill();
+            ctx.lineWidth = isSelected ? 3 : 2;
+            ctx.strokeStyle = isDone ? (isRight ? '#4ade80' : '#fbbf24') : st.color;
+            ctx.stroke();
+
+            const nodeSize = nodeR * 1.65;
+            drawSprite(ctx, art.sprites[st.icon], pos.x, pos.y, nodeSize, nodeSize, String(i + 1));
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            if (isDone) {
+                ctx.fillStyle = isRight ? '#acedd1' : '#ffdc99';
+                ctx.beginPath();
+                ctx.arc(pos.x + nodeR * .7, pos.y - nodeR * .7, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = '#16354a';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillText(isRight ? '✓' : '!', pos.x + nodeR * .7, pos.y - nodeR * .7);
+            }
+            ctx.font = `${isSelected ? 'bold 14px' : '13px'} "Be Vietnam Pro", "Segoe UI", sans-serif`;
+            ctx.fillStyle = isSelected ? '#ffffff' : '#e1f0ec';
+            const maxW = viewW < 640 ? 96 : viewH < 520 ? 110 : 170;
+            const words = st.name.split(' ');
+            const lines = [];
+            let cur = '';
+            for (const w of words) {
+                const t = cur ? cur + ' ' + w : w;
+                if (cur && ctx.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t;
+            }
+            if (cur) lines.push(cur);
+            const lw = Math.max(...lines.map(l => ctx.measureText(l).width));
+            const lx = Math.min(Math.max(pos.x, lw / 2 + 4), viewW - lw / 2 - 4);
+            const lh = 16;
+            const above = pos.y - nodeR - 14 - (lines.length - 1) * lh;
+            const useTop = viewH < 520 && pos.y < cy && above >= chrome.top + lh;
+            const labelY = useTop ? above : pos.y + nodeR + (isSelected ? 19 : 14);
+            ctx.fillStyle = '#183246';
+            ctx.beginPath();
+            ctx.roundRect(lx - lw / 2 - 3, labelY - lh / 2, lw + 6, lines.length * lh, 5);
+            ctx.fill();
+            ctx.fillStyle = isSelected ? '#ffffff' : '#e1f0ec';
+            lines.forEach((line, k) => ctx.fillText(line, lx, labelY + k * lh));
+            ctx.restore();
+        });
+
+        // Vệ tinh quan sát + tia quét radar chiếu xuống trạm đang chọn
+        const targetPos = getStationPos(activeIdx);
+        const satX = targetPos.x;
+        const satY = Math.max(chrome.top + 17, targetPos.y - (isPortrait ? 38 : 44) + Math.sin(tick * .08) * 3);
+
+        ctx.save();
+        const beamGrad = ctx.createLinearGradient(satX, satY + 8, targetPos.x, targetPos.y);
+        beamGrad.addColorStop(0, 'rgba(56, 189, 248, 0.42)');
+        beamGrad.addColorStop(1, 'rgba(74, 222, 128, 0.05)');
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(satX, satY + 6);
+        ctx.lineTo(targetPos.x - 16, targetPos.y);
+        ctx.lineTo(targetPos.x + 16, targetPos.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        drawSprite(ctx, art.sprites.satellite, satX, satY, 45, 34, '◇');
+
+        updateAndDrawFireworks();
+        requestAnimationFrame(animate);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    initSpace();
+    animate();
+</script>
+</body>
+</html>

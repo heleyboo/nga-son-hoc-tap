@@ -1,0 +1,2 @@
+Noto Sans — Copyright 2012 Google Inc. Licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
+Dùng để vẽ ảnh thẻ thành tích (/api/share/*/image).

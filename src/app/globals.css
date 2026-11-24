@@ -1,26 +1,290 @@
 @import "tailwindcss";
 
+/* Design tokens — đồng bộ với cổng chính cũ (index.html). Prototype mới sẽ thay ở đây. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #e0f7ff;
+  --bg-2: #f0fdf4;
+  --surface: rgb(255 255 255 / 0.9);
+  --text: #0f172a;
+  --muted: #475569;
+  --primary: #0284c7;
+  --primary-ink: #0369a1;
+  --accent: #10b981;
+  --amber: #d97706;
+  --ok: #16a34a;
+  --bad: #dc2626;
+  --ring: rgb(2 132 199 / 0.45);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --bg: #04111d;
+    --bg-2: #062016;
+    --surface: rgb(15 23 42 / 0.85);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --primary: #38bdf8;
+    --primary-ink: #7dd3fc;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #04111d;
+  --bg-2: #062016;
+  --surface: rgb(15 23 42 / 0.85);
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --primary: #38bdf8;
+  --primary-ink: #7dd3fc;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-accent: var(--accent);
+  --color-amber: var(--amber);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --font-sans: var(--font-be-vietnam), "Segoe UI", system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100dvh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 14% 16%, rgb(56 189 248 / 0.3), transparent 44%),
+    radial-gradient(circle at 86% 22%, rgb(250 204 21 / 0.22), transparent 42%),
+    radial-gradient(circle at 80% 85%, rgb(52 211 153 / 0.26), transparent 46%),
+    linear-gradient(155deg, var(--bg) 0%, var(--bg-2) 52%, var(--bg) 100%);
+  background-attachment: fixed;
 }
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+
+/* ==========================================================================
+   ĐẤU TRƯỜNG TRI THỨC — design system (chuyển từ dau-truong-prototype)
+   ========================================================================== */
+
+/* ============================================================
+   DESIGN TOKENS — Bright Futuristic Arena
+   Đồng bộ với cổng index.html: trời sáng, xanh trời + xanh ngọc,
+   hổ phách chỉ cho thành tích / CTA quan trọng.
+   ============================================================ */
+@theme {
+
+  --color-sky-brand: #0284c7;
+  --color-deep: #0369a1;
+  --color-emerald-brand: #10b981;
+  --color-emerald-deep: #059669;
+  --color-gold: #d97706;
+  --color-gold-soft: #fef3c7;
+  --color-ink: #1e293b;
+  --color-ink-2: #475569;
+  --color-ink-3: #64748b;
+  --color-pill: #e0f2fe;
+  --color-ok: #059669;
+  --color-ok-soft: #d1fae5;
+  --color-bad: #dc2626;
+  --color-bad-soft: #fee2e2;
+
+  --radius-card: 28px;
+  --radius-ctl: 18px;
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 18px 40px -18px rgba(2, 132, 199, 0.28), 0 4px 14px -6px rgba(2, 132, 199, 0.14);
+  --shadow-lift: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 26px 50px -20px rgba(2, 132, 199, 0.38), 0 8px 20px -8px rgba(2, 132, 199, 0.2);
+  --shadow-cta: 0 14px 30px -12px rgba(2, 132, 199, 0.65), 0 4px 10px -4px rgba(16, 185, 129, 0.45);
+
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Cỡ chữ co giãn — mobile 390 → projector 1920 */
+:root {
+  --fs-hero: clamp(2.1rem, 1rem + 3.7vw, 5.6rem);
+  --fs-h1: clamp(1.5rem, 1.1rem + 1.6vw, 2.75rem);
+  --fs-h2: clamp(1.15rem, 0.98rem + 0.75vw, 1.8rem);
+  --fs-q: clamp(1.2rem, 0.95rem + 1.1vw, 2.4rem);
+  --fs-ans: clamp(1rem, 0.9rem + 0.45vw, 1.6rem);
+  --fs-body: clamp(0.95rem, 0.9rem + 0.2vw, 1.2rem);
+  --fs-small: clamp(0.8rem, 0.77rem + 0.12vw, 0.98rem);
+  --container: min(100% - 32px, 1000px);
+  --portal-offset: 0px; /* chiều cao thanh tab cổng chính, nếu cần bù */
+}
+@media (min-width: 1700px) {
+  :root { --container: min(100% - 64px, 1380px); }
+}
+
+/* Gốc của Đấu Trường — thay cho body của prototype, không ảnh hưởng cổng chính */
+.arena-root, .arena-portal {
+  font-size: var(--fs-body);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+.arena-root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+/* .arena-portal: lớp bọc cho modal gắn vào <body> (cùng kiểu chữ/màu/focus như trong .arena-root) */
+.arena-root ::selection, .arena-portal ::selection { background: #bae6fd; }
+
+/* Focus rõ ràng cho bàn phím */
+.arena-root :where(button, a, input, textarea, [role="radio"], [role="checkbox"], [tabindex]):focus-visible,
+.arena-portal :where(button, a, input, textarea, [role="radio"], [role="checkbox"], [tabindex]):focus-visible {
+  outline: 3px solid #0284c7;
+  outline-offset: 3px;
+  border-radius: 14px;
+}
+
+@layer components {
+  .container-arena { width: var(--container); margin-inline: auto; }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.82);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-card);
+  }
+  .glass-soft {
+    background: rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+  }
+
+  .title-gradient {
+    background: linear-gradient(100deg, #0284c7 0%, #059669 58%, #d97706 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-top: 0.08em; /* chừa chỗ cho dấu tiếng Việt trên chữ hoa */
+  }
+
+  .btn-primary {
+    background: linear-gradient(100deg, #0284c7 0%, #0ea5a4 55%, #10b981 100%);
+    color: #fff;
+    box-shadow: var(--shadow-cta);
+  }
+  .btn-gold {
+    background: linear-gradient(100deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    box-shadow: 0 14px 30px -12px rgba(217, 119, 6, 0.6);
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4em;
+    background: #e0f2fe; color: #0369a1;
+    border-radius: 999px; padding: 0.3em 0.8em;
+    font-weight: 700; font-size: var(--fs-small);
+    white-space: nowrap;
+  }
+
+  .kbd {
+    display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em;
+    padding: 0 0.35em; border-radius: 6px; font-size: 0.75em; font-weight: 700;
+    background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-bottom-width: 2px;
+  }
+}
+
+/* ============================================================
+   NỀN — đốm sáng & hạt trôi
+   ============================================================ */
+.bg-orb { position: absolute; border-radius: 999px; filter: blur(60px); opacity: 0.55; pointer-events: none; }
+@keyframes float-up {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  10% { opacity: 0.9; }
+  90% { opacity: 0.7; }
+  100% { transform: translate3d(var(--dx, 20px), -110vh, 0); opacity: 0; }
+}
+.particle { position: absolute; bottom: -10px; border-radius: 999px; animation: float-up linear infinite; }
+
+/* ============================================================
+   ĐẤU TRƯỜNG 3D (hero)
+   ============================================================ */
+.arena-stage { perspective: 900px; perspective-origin: 50% 20%; }
+.arena-floor { transform-style: preserve-3d; transform: rotateX(68deg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin-rev { to { transform: rotate(-360deg); } }
+.ring-spin { animation: spin 28s linear infinite; }
+.ring-spin-rev { animation: spin-rev 40s linear infinite; }
+@keyframes hover-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.trophy-float { animation: hover-y 5s ease-in-out infinite; }
+@keyframes beam { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.6; } }
+.beam { animation: beam 6s ease-in-out infinite; }
+@keyframes shine { 0% { transform: translateX(-120%) skewX(-20deg); } 60%, 100% { transform: translateX(220%) skewX(-20deg); } }
+.shine::after {
+  content: ""; position: absolute; inset: 0; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: shine 4.5s ease-in-out infinite; pointer-events: none;
+}
+@keyframes pulse-ring { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
+.pulse-ring { animation: pulse-ring 2.4s ease-out infinite; }
+
+/* Timer cảnh báo */
+@keyframes tick-warn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.tick-warn { animation: tick-warn 1s ease-in-out infinite; }
+
+/* Ẩn thanh cuộn ngang của dải chip trên mobile */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Thanh cuộn mảnh, bo tròn, chừa góc bo của khung (modal, danh sách dài) */
+.scroll-pretty::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll-pretty::-webkit-scrollbar-track { background: transparent; margin-block: 22px; }
+.scroll-pretty::-webkit-scrollbar-thumb {
+  background: rgb(2 132 199 / 0.28); border-radius: 999px;
+  border: 3px solid transparent; background-clip: padding-box;
+}
+.scroll-pretty::-webkit-scrollbar-thumb:hover { background-color: rgb(2 132 199 / 0.5); }
+/* Firefox (không có ::-webkit-scrollbar) */
+@supports not selector(::-webkit-scrollbar) {
+  .scroll-pretty { scrollbar-width: thin; scrollbar-color: rgb(2 132 199 / 0.35) transparent; }
+}
+
+/* Hàng nút dính đáy trong modal cuộn — bù đúng padding của khung modal (p-5 / sm:p-7) */
+.modal-actions {
+  position: sticky; bottom: -1.25rem; z-index: 5;
+  margin: 0 -1.25rem -1.25rem; padding: .875rem 1.25rem;
+  display: flex; justify-content: flex-end; gap: .5rem;
+  background: rgb(255 255 255 / 0.92); backdrop-filter: blur(8px);
+  border-top: 1px solid rgb(186 230 253 / 0.8);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+}
+@media (min-width: 640px) {
+  .modal-actions { bottom: -1.75rem; margin: 0 -1.75rem -1.75rem; padding: 1rem 1.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .particle { display: none; }
+}
+
+/* Máy chiếu: tăng tương phản chữ phụ */
+@media (min-width: 1700px) {
+  .text-ink-3 { color: #475569; }
+}
+
+/* ---------- Công thức toán (KaTeX) ---------- */
+.katex { font-size: 1.1em; line-height: 1.2; }
+.math-inline .katex { white-space: nowrap; }
+/* công thức riêng dòng (vd hệ phương trình): căn giữa, dài quá thì cuộn ngang thay vì tràn khung */
+.math-display { display: block; margin: .5em 0; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: .1em 0; }
+.math-display .katex-display { margin: 0; }
+/* trên nút đáp án màu (lớp trực tiếp) công thức theo màu chữ của nút */
+.katex .mord, .katex .mbin, .katex .mrel { color: inherit; }
