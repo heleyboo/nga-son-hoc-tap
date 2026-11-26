@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { MathText, plainMath } from "../components/MathText";
 import { ReportDialog } from "../components/ReportDialog";
 import { useToast } from "../components/Toast";
-import { checkAnswer } from "../lib/api";
+import { checkAnswer, keepConnectionWarm } from "../lib/api";
 import { Button, Card, CountUp, IconButton, Modal, ProgressBar, SubjectBadge, cx } from "../components/ui";
 import { SoundToggle } from "../components/SoundToggle";
 import { sfx, vibrate } from "@/lib/sfx";
@@ -58,6 +58,7 @@ export function Quiz({ round, onFinish, onExit }: {
   const lastTick = useRef(0);
   const roundStart = useRef(0);
   useEffect(() => { roundStart.current = Date.now(); }, []);
+  useEffect(() => keepConnectionWarm(), []); // tránh kết nối bị cắt ngầm khi đang suy nghĩ
   const pausedMs = useRef(0);
   const pauseStarted = useRef<number | null>(null);
   const [, force] = useState(0);

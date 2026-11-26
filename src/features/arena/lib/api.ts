@@ -44,11 +44,50 @@ export async function fetchRound(config: GameConfig): Promise<RoundQuestion[]> {
   );
 }
 
+/**
+ * Gửi lại khi yêu cầu rớt giữa đường (fetch ném lỗi, chưa có phản hồi) hoặc treo quá lâu.
+ * Hay gặp trên điện thoại: trình duyệt dùng lại kết nối cũ đã bị Wi-Fi/4G/VPN cắt ngầm
+ * trong lúc học sinh suy nghĩ → lần đầu hỏng, lần sau mở kết nối mới là được.
+ * Chỉ dùng cho yêu cầu gửi lại vô hại (chấm câu chỉ đọc, không ghi gì).
+ */
+async function fetchRetry(url: string, init: RequestInit, tries = 3, waitMs = 4000): Promise<Response> {
+  for (let i = 1; ; i++) {
+    const ctl = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      // Hạn chót "cứng": kể cả khi trình duyệt không chịu huỷ fetch (gặp trên iOS), vẫn thôi chờ đúng hạn
+      return await Promise.race([
+        fetch(url, { ...init, cache: "no-store", signal: ctl.signal }),
+        new Promise<never>((_, rej) => { timer = setTimeout(() => { ctl.abort(); rej(new Error("timeout")); }, waitMs); }),
+      ]);
+    } catch (e) {
+      if (i >= tries) throw e;
+      await new Promise((r) => setTimeout(r, 250 * i));
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+}
+
+/**
+ * Giữ kết nối tới máy chủ luôn "nóng" trong lúc làm bài: cứ ~15 giây gửi một yêu cầu rất nhỏ,
+ * để Wi-Fi/4G/VPN không coi kết nối là bỏ không và cắt ngầm khi học sinh đang suy nghĩ.
+ * Trả về hàm dừng.
+ */
+export function keepConnectionWarm(everyMs = 15000) {
+  const ping = () => { if (document.visibilityState === "visible") fetch("/api/health", { cache: "no-store" }).catch(() => {}); };
+  const id = setInterval(ping, everyMs);
+  document.addEventListener("visibilitychange", ping); // quay lại tab/mở khoá máy → mở sẵn kết nối mới
+  return () => { clearInterval(id); document.removeEventListener("visibilitychange", ping); };
+}
+
 /** Chấm 1 câu. `selected` là chỉ số đã xáo; trả về chỉ số đã xáo của đáp án đúng. */
 export async function checkAnswer(q: RoundQuestion, selected: number | null) {
   const original = selected === null ? null : q.optionOrigin[selected];
   const r = await json<{ correct: boolean; answerIndex: number; explanation: string | null; explanationReviewed: boolean }>(
-    await post(`/api/questions/${q.dbId}/check`, { selectedIndex: original }),
+    await fetchRetry(`/api/questions/${q.dbId}/check`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ selectedIndex: original }),
+    }),
   );
   return {
     correct: r.correct,
