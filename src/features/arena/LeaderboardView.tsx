@@ -116,7 +116,7 @@ export function LeaderboardView({ initial, switcher }: { initial: BoardQuery; sw
 
           {/* ---------- Bục vinh quang ---------- */}
           {podium.length > 0 && (
-            <section aria-label="Top 3" className="mt-5 grid gap-3 sm:grid-cols-3 sm:items-end">
+            <section aria-label="Top 3" className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-end [&>*]:min-w-0">
               {podium.map((e, slot) => (
                 // mobile: 1-2-3 từ trên xuống; desktop: 2-1-3 như bục trao giải
                 <PodiumCard key={`${e.rank}-${e.name}-${slot}`} e={e} showScope={q.grade === "all" || q.level === "all"}
@@ -259,7 +259,7 @@ function PodiumCard({ e, showScope, className, reduce, delay }: { e: BoardEntry;
             <div className="font-extrabold text-ink text-[clamp(1.05rem,1rem+.4vw,1.5rem)] truncate">{e.name}{e.isMe && <span className="ml-1.5 text-xs text-sky-700">(bạn)</span>}</div>
             <div className="text-xs text-ink-3 font-semibold">{[e.className && `Lớp ${e.className}`, showScope && scopeText(e)].filter(Boolean).join(" · ") || " "}</div>
           </div>
-          <div className="sm:mt-2 text-right sm:text-center">
+          <div className="shrink-0 sm:mt-2 text-right sm:text-center">
             <div className="font-black tabular-nums title-gradient text-[clamp(1.4rem,1.1rem+1.4vw,2.6rem)] leading-none">{e.score.toLocaleString("vi-VN")}</div>
             <div className="mt-1 text-xs text-ink-3 font-semibold whitespace-nowrap">{e.correctCount}/{e.totalQuestions} câu · {fmtTime(e.durationSec)}</div>
           </div>
