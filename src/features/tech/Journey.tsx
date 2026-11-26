@@ -74,6 +74,8 @@ const QUIZ = [
   { q: "Đồng hồ đếm ngược 20 giây ở Đấu Trường được làm bằng gì?", o: ["HTML", "CSS", "JavaScript", "Cơ sở dữ liệu"], a: 2, why: "JavaScript làm cho trang “hành động”: đếm giờ, chấm điểm, phản hồi khi bấm." },
   { q: "Hơn 2.000 câu hỏi của trang web được cất ở đâu?", o: ["Trong file CSS", "Trong cơ sở dữ liệu", "Trong điện thoại của em", "Trong thẻ <button>"], a: 1, why: "Cơ sở dữ liệu là “tủ hồ sơ” cất câu hỏi, điểm số, bảng xếp hạng." },
   { q: "Thẻ HTML nào dùng để tạo một nút bấm?", o: ["<p>", "<h1>", "<button>", "<ul>"], a: 2, why: "<button> … </button> tạo nút bấm." },
+  { q: "Em sửa code xong và muốn tạo một “điểm lưu” kèm ghi chú. Đó là việc gì trong Git?", o: ["push", "commit", "delete", "<button>"], a: 1, why: "commit = chụp lại code thành một điểm lưu kèm ghi chú; sau đó push để đẩy lên GitHub." },
+  { q: "Điều gì KHÔNG được đưa lên GitHub công khai?", o: ["File HTML", "File CSS", "Mật khẩu và khoá bí mật", "Ghi chú commit"], a: 2, why: "Thứ gì công khai thì ai cũng đọc được, nên mật khẩu và dữ liệu riêng tư phải giữ kín." },
   { q: "Câu SQL nào lấy các bạn lớp 7B?", o: ["SELECT * FROM hoc_sinh WHERE lop = '7B'", "DELETE lop 7B", "<p>7B</p>", "color: 7B;"], a: 0, why: "SELECT … FROM … WHERE … là câu “hỏi” dữ liệu có điều kiện." },
 ];
 
@@ -113,7 +115,7 @@ export function TechQuiz() {
       ))}
       {done && (
         <div className="glass p-5 text-center" aria-live="polite">
-          <p className="text-4xl" aria-hidden>{score === QUIZ.length ? "🏆" : score >= 3 ? "🌟" : "💪"}</p>
+          <p className="text-4xl" aria-hidden>{score === QUIZ.length ? "🏆" : score >= 5 ? "🌟" : "💪"}</p>
           <p className="mt-1 font-black text-ink text-xl">Em đúng {score}/{QUIZ.length} câu!</p>
           <p className="text-ink-2">{score === QUIZ.length ? "Xuất sắc — em đã hiểu cách một trang web hoạt động." : "Kéo lên xem lại các phần rồi thử lần nữa nhé."}</p>
           <button type="button" onClick={() => setPicks(QUIZ.map(() => null))} className="mt-3 min-h-11 px-5 rounded-2xl bg-white border border-sky-100 font-bold text-deep cursor-pointer">Làm lại</button>

@@ -1,15 +1,16 @@
 "use client";
-import { Blocks, Database, FileCode2, Home, Layers, Palette, Rocket, Route, Sparkles, Trophy, Zap } from "lucide-react";
+import { Blocks, Database, FileCode2, GitBranch, Home, Layers, Palette, Rocket, Route, Sparkles, Trophy, Zap } from "lucide-react";
 import { ArenaShell } from "@/features/arena/ArenaShell";
 import { TopBar } from "@/features/arena/components/TopBar";
 import { CardBuilder, HouseAnalogy } from "./Builder";
+import { GitIdeas, GitLab } from "./GitLab";
 import { Journey, TechQuiz } from "./Journey";
 import { CssLab, DbLab, HtmlLab, JsLab } from "./Labs";
 import { Remember, Section, TECH } from "./shared";
 
 const TOC = [
   ["vi-von", "Ngôi nhà"], ["lap-rap", "Lắp ráp"], ["html", "HTML"], ["css", "CSS"], ["javascript", "JavaScript"],
-  ["co-so-du-lieu", "Cơ sở dữ liệu"], ["hanh-trinh", "Hành trình"], ["app-nay", "App này"], ["do-vui", "Đố vui"],
+  ["co-so-du-lieu", "Cơ sở dữ liệu"], ["hanh-trinh", "Hành trình"], ["app-nay", "App này"], ["git", "Git & GitHub"], ["do-vui", "Đố vui"],
 ] as const;
 
 const STACK: { tech: keyof typeof TECH | "other"; name: string; what: string }[] = [
@@ -18,6 +19,7 @@ const STACK: { tech: keyof typeof TECH | "other"; name: string; what: string }[]
   { tech: "js", name: "JavaScript (React, Next.js)", what: "Đếm giờ, chấm điểm, âm thanh, lớp học trực tiếp. Phía máy chủ cũng viết bằng JavaScript." },
   { tech: "db", name: "Cơ sở dữ liệu SQLite", what: "Một file dữ liệu cất câu hỏi, lượt làm bài, điểm, bài tập và thử thách mỗi ngày." },
   { tech: "other", name: "KaTeX", what: "Vẽ công thức toán đẹp như sách: phân số, căn, số mũ." },
+  { tech: "git", name: "Git và GitHub", what: "Ghi lại từng lần sửa code để quay lại được khi lỡ tay, và cất bản sao công khai trên GitHub cho mọi người cùng xem." },
   { tech: "other", name: "Máy chủ, tên miền, Cloudflare", what: "Một máy tính chạy suốt ngày đêm ở trung tâm dữ liệu, có địa chỉ thcsngason.online, được bảo vệ và tăng tốc." },
 ];
 
@@ -110,7 +112,28 @@ export function TechApp() {
           </div>
         </Section>
 
-        <Section id="do-vui" icon={Trophy} kicker="Phần 9 · Kiểm tra nhanh" title="Đố vui: em đã hiểu chưa?">
+        <Section id="git" tech="git" icon={GitBranch} kicker="Phần 9 · Git và GitHub" title="Git và GitHub: cỗ máy thời gian cho code">
+          <p className="text-ink-2 text-lg leading-relaxed">
+            Em đang làm bài thuyết trình, lỡ tay xoá mất một trang, bấm “Hoàn tác” mãi mà không lấy lại được. Lập trình viên cũng sợ điều đó, vì một ứng dụng có hàng nghìn dòng code.
+            Vì vậy họ dùng <b className="text-ink">Git</b> để lưu lại từng bước làm việc, và <b className="text-ink">GitHub</b> để cất code trên Internet.
+          </p>
+          <GitIdeas />
+          <GitLab />
+          <div className="glass p-5 sm:p-6 space-y-2 text-ink-2 leading-relaxed">
+            <p className="font-black text-ink text-lg">🔎 Code của chính trang web này ở trên GitHub</p>
+            <p>
+              Toàn bộ mã nguồn của Web Học Tập THCS Nga Sơn được để công khai tại{" "}
+              <a href="https://github.com/heleyboo/nga-son-hoc-tap" target="_blank" rel="noopener noreferrer" className="font-bold text-deep underline break-all">github.com/heleyboo/nga-son-hoc-tap</a>.
+              Ai cũng có thể vào xem các file HTML, CSS, JavaScript và kho câu hỏi. Mục <b className="text-ink">Commits</b> là “album điểm lưu” giống hệt khu thực hành bên trên.
+            </p>
+            <p>
+              ⚠️ <b className="text-ink">Bài học an toàn:</b> thứ gì để công khai thì cả thế giới đều đọc được. Vì vậy mật khẩu, khoá bí mật và điểm số của các bạn học sinh <b className="text-ink">không bao giờ</b> được đưa lên GitHub. Chúng được cất riêng trên máy chủ và Git được dặn “bỏ qua” chúng (file <code>.gitignore</code>).
+            </p>
+          </div>
+          <Remember tech="git"><b>Git</b> lưu lại lịch sử sửa code trong máy em; mỗi điểm lưu là một <b>commit</b> kèm ghi chú. <b>GitHub</b> là trang web cất bản sao trên Internet; đẩy code lên gọi là <b>push</b>. Nhờ vậy em không sợ mất code, quay lại được bản cũ và làm chung với bạn bè.</Remember>
+        </Section>
+
+        <Section id="do-vui" icon={Trophy} kicker="Phần 10 · Kiểm tra nhanh" title="Đố vui: em đã hiểu chưa?">
           <TechQuiz />
         </Section>
       </main>

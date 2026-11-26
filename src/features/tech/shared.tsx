@@ -9,6 +9,8 @@ export const TECH = {
   css: { name: "CSS", color: "#2965f1", soft: "#eef3ff", ink: "#1d3fa8", role: "Sơn & trang trí" },
   js: { name: "JavaScript", color: "#b88a00", soft: "#fff8db", ink: "#7a5b00", role: "Điện & nước" },
   db: { name: "Cơ sở dữ liệu", color: "#059669", soft: "#e8fbf3", ink: "#065f46", role: "Tủ hồ sơ" },
+  // Git không phải “một phần của ngôi nhà” mà là cuốn sổ ghi lại quá trình xây nhà
+  git: { name: "Git", color: "#f05032", soft: "#fff0ec", ink: "#a8321b", role: "Sổ nhật ký xây nhà" },
 } as const;
 export type TechKey = keyof typeof TECH;
 
